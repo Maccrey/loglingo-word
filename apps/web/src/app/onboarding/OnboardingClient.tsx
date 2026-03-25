@@ -53,8 +53,52 @@ function LanguageSelect(props: {
 export default function OnboardingClient() {
   const [state, setState] = useState<OnboardingState>({});
   const [error, setError] = useState<string>("");
+  const [saveState, setSaveState] = useState<"idle" | "loading" | "success">(
+    "idle"
+  );
 
   const currentStep = getNextOnboardingStep(state);
+  const canSave = currentStep === "complete";
+
+  async function handleSaveProfile() {
+    if (!state.nativeLanguage || !state.targetLanguage || !state.goal || !state.startedAt) {
+      setError("온보딩을 모두 완료한 뒤 저장할 수 있습니다.");
+      return;
+    }
+
+    try {
+      setError("");
+      setSaveState("loading");
+
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: "demo-user",
+          nativeLanguage: state.nativeLanguage,
+          targetLanguage: state.targetLanguage,
+          goal: state.goal,
+          startedAt: state.startedAt
+        })
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json()) as { message?: string };
+        throw new Error(payload.message ?? "프로필 저장에 실패했습니다.");
+      }
+
+      setSaveState("success");
+    } catch (caughtError) {
+      setSaveState("idle");
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "프로필 저장에 실패했습니다."
+      );
+    }
+  }
 
   return (
     <main style={{ padding: 24, display: "grid", gap: 16 }}>
@@ -161,6 +205,13 @@ export default function OnboardingClient() {
           첫 학습 시작
         </button>
         <p>시작 여부: {state.startedAt ? "완료" : "대기"}</p>
+      </section>
+
+      <section style={{ display: "grid", gap: 8 }}>
+        <button type="button" disabled={!canSave || saveState === "loading"} onClick={handleSaveProfile}>
+          {saveState === "loading" ? "저장 중..." : "온보딩 저장"}
+        </button>
+        <p>저장 상태: {saveState === "success" ? "성공" : "대기"}</p>
       </section>
 
       {error ? (

@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./curriculum": "./src/curriculum.ts",
+    "./profile": "./src/profile.ts",
     "./onboarding": "./src/onboarding.ts"
   },
   "scripts": {
