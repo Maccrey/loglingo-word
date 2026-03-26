@@ -2,6 +2,10 @@ import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
 import {
+  type AIChatMessage,
+  type AIChatMessageDocumentStore
+} from '@wordflow/ai';
+import {
   type UserProfileDocumentStore,
   type UserProfileRecord
 } from '@wordflow/core/profile';
@@ -55,6 +59,32 @@ export function createFirestoreUserProfileStore(): UserProfileDocumentStore {
     },
     async set(collection, id, data) {
       await firestore.collection(collection).doc(id).set(data);
+    }
+  };
+}
+
+export function createFirestoreAIChatStore(): AIChatMessageDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async addMany(messages) {
+      const batch = firestore.batch();
+
+      for (const message of messages) {
+        const docRef = firestore.collection('chat_messages').doc();
+        batch.set(docRef, message);
+      }
+
+      await batch.commit();
+    },
+    async listByUserId(userId) {
+      const snapshot = await firestore
+        .collection('chat_messages')
+        .where('userId', '==', userId)
+        .orderBy('createdAt', 'asc')
+        .get();
+
+      return snapshot.docs.map((doc) => doc.data() as AIChatMessage);
     }
   };
 }
