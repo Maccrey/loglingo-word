@@ -1,22 +1,22 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
 import {
   getCurriculumByLevel,
   getCurriculumUnits
-} from "../../services/core/src/curriculum";
+} from '../../services/core/src/curriculum';
 
-describe("curriculum", () => {
-  it("sorts curriculum units by level and order", () => {
+describe('curriculum', () => {
+  it('sorts curriculum units by level and order', () => {
     const units = getCurriculumUnits();
 
     expect(units.map((unit) => unit.id)).toEqual([
-      "starter-basics",
-      "starter-routine",
-      "travel-checkin"
+      'starter-basics',
+      'starter-routine',
+      'travel-checkin'
     ]);
   });
 
-  it("filters curriculum units by level", () => {
+  it('filters curriculum units by level', () => {
     const levelOneUnits = getCurriculumByLevel(1);
 
     expect(levelOneUnits).toHaveLength(2);

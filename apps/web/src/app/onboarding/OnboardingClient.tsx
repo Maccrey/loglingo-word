@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 import {
   supportedLanguages,
   type SupportedLanguage
-} from "@wordflow/shared/languages";
+} from '@wordflow/shared/languages';
 import {
   getNextOnboardingStep,
   markFirstLessonStarted,
@@ -13,13 +13,13 @@ import {
   type OnboardingState,
   updateGoal,
   updateLanguages
-} from "@wordflow/core/onboarding";
+} from '@wordflow/core/onboarding';
 
 const goals: Array<{ value: LearningGoal; label: string }> = [
-  { value: "daily_habit", label: "매일 꾸준히 학습" },
-  { value: "travel", label: "여행 회화" },
-  { value: "business", label: "업무 영어" },
-  { value: "conversation", label: "자연스러운 대화" }
+  { value: 'daily_habit', label: '매일 꾸준히 학습' },
+  { value: 'travel', label: '여행 회화' },
+  { value: 'business', label: '업무 영어' },
+  { value: 'conversation', label: '자연스러운 대화' }
 ];
 
 function LanguageSelect(props: {
@@ -32,11 +32,11 @@ function LanguageSelect(props: {
   const { id, label, value, options, onChange } = props;
 
   return (
-    <label htmlFor={id} style={{ display: "grid", gap: 8 }}>
+    <label htmlFor={id} style={{ display: 'grid', gap: 8 }}>
       <span>{label}</span>
       <select
         id={id}
-        value={value ?? ""}
+        value={value ?? ''}
         onChange={(event) => onChange(event.target.value)}
       >
         <option value="">선택하세요</option>
@@ -52,31 +52,36 @@ function LanguageSelect(props: {
 
 export default function OnboardingClient() {
   const [state, setState] = useState<OnboardingState>({});
-  const [error, setError] = useState<string>("");
-  const [saveState, setSaveState] = useState<"idle" | "loading" | "success">(
-    "idle"
+  const [error, setError] = useState<string>('');
+  const [saveState, setSaveState] = useState<'idle' | 'loading' | 'success'>(
+    'idle'
   );
 
   const currentStep = getNextOnboardingStep(state);
-  const canSave = currentStep === "complete";
+  const canSave = currentStep === 'complete';
 
   async function handleSaveProfile() {
-    if (!state.nativeLanguage || !state.targetLanguage || !state.goal || !state.startedAt) {
-      setError("온보딩을 모두 완료한 뒤 저장할 수 있습니다.");
+    if (
+      !state.nativeLanguage ||
+      !state.targetLanguage ||
+      !state.goal ||
+      !state.startedAt
+    ) {
+      setError('온보딩을 모두 완료한 뒤 저장할 수 있습니다.');
       return;
     }
 
     try {
-      setError("");
-      setSaveState("loading");
+      setError('');
+      setSaveState('loading');
 
-      const response = await fetch("/api/users", {
-        method: "POST",
+      const response = await fetch('/api/users', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: "demo-user",
+          id: 'demo-user',
           nativeLanguage: state.nativeLanguage,
           targetLanguage: state.targetLanguage,
           goal: state.goal,
@@ -86,26 +91,26 @@ export default function OnboardingClient() {
 
       if (!response.ok) {
         const payload = (await response.json()) as { message?: string };
-        throw new Error(payload.message ?? "프로필 저장에 실패했습니다.");
+        throw new Error(payload.message ?? '프로필 저장에 실패했습니다.');
       }
 
-      setSaveState("success");
+      setSaveState('success');
     } catch (caughtError) {
-      setSaveState("idle");
+      setSaveState('idle');
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "프로필 저장에 실패했습니다."
+          : '프로필 저장에 실패했습니다.'
       );
     }
   }
 
   return (
-    <main style={{ padding: 24, display: "grid", gap: 16 }}>
+    <main style={{ padding: 24, display: 'grid', gap: 16 }}>
       <h1>온보딩</h1>
       <p>현재 단계: {currentStep}</p>
 
-      <section style={{ display: "grid", gap: 12 }}>
+      <section style={{ display: 'grid', gap: 12 }}>
         <LanguageSelect
           id="nativeLanguage"
           label="모국어"
@@ -113,19 +118,19 @@ export default function OnboardingClient() {
           options={supportedLanguages}
           onChange={(nativeLanguage) => {
             try {
-              setError("");
+              setError('');
               setState((currentState) =>
                 updateLanguages(
                   currentState,
                   nativeLanguage,
-                  currentState.targetLanguage ?? ""
+                  currentState.targetLanguage ?? ''
                 )
               );
             } catch (caughtError) {
               setError(
                 caughtError instanceof Error
                   ? caughtError.message
-                  : "언어를 선택할 수 없습니다."
+                  : '언어를 선택할 수 없습니다.'
               );
             }
           }}
@@ -138,11 +143,11 @@ export default function OnboardingClient() {
           options={supportedLanguages}
           onChange={(targetLanguage) => {
             try {
-              setError("");
+              setError('');
               setState((currentState) =>
                 updateLanguages(
                   currentState,
-                  currentState.nativeLanguage ?? "",
+                  currentState.nativeLanguage ?? '',
                   targetLanguage
                 )
               );
@@ -150,29 +155,31 @@ export default function OnboardingClient() {
               setError(
                 caughtError instanceof Error
                   ? caughtError.message
-                  : "언어를 선택할 수 없습니다."
+                  : '언어를 선택할 수 없습니다.'
               );
             }
           }}
         />
       </section>
 
-      <section style={{ display: "grid", gap: 8 }}>
+      <section style={{ display: 'grid', gap: 8 }}>
         <p>학습 목표</p>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {goals.map((goal) => (
             <button
               key={goal.value}
               type="button"
               onClick={() => {
                 try {
-                  setError("");
-                  setState((currentState) => updateGoal(currentState, goal.value));
+                  setError('');
+                  setState((currentState) =>
+                    updateGoal(currentState, goal.value)
+                  );
                 } catch (caughtError) {
                   setError(
                     caughtError instanceof Error
                       ? caughtError.message
-                      : "목표를 선택할 수 없습니다."
+                      : '목표를 선택할 수 없습니다.'
                   );
                 }
               }}
@@ -181,15 +188,15 @@ export default function OnboardingClient() {
             </button>
           ))}
         </div>
-        <p>선택된 목표: {state.goal ?? "없음"}</p>
+        <p>선택된 목표: {state.goal ?? '없음'}</p>
       </section>
 
-      <section style={{ display: "grid", gap: 8 }}>
+      <section style={{ display: 'grid', gap: 8 }}>
         <button
           type="button"
           onClick={() => {
             try {
-              setError("");
+              setError('');
               setState((currentState) =>
                 markFirstLessonStarted(currentState, new Date().toISOString())
               );
@@ -197,25 +204,29 @@ export default function OnboardingClient() {
               setError(
                 caughtError instanceof Error
                   ? caughtError.message
-                  : "첫 학습을 시작할 수 없습니다."
+                  : '첫 학습을 시작할 수 없습니다.'
               );
             }
           }}
         >
           첫 학습 시작
         </button>
-        <p>시작 여부: {state.startedAt ? "완료" : "대기"}</p>
+        <p>시작 여부: {state.startedAt ? '완료' : '대기'}</p>
       </section>
 
-      <section style={{ display: "grid", gap: 8 }}>
-        <button type="button" disabled={!canSave || saveState === "loading"} onClick={handleSaveProfile}>
-          {saveState === "loading" ? "저장 중..." : "온보딩 저장"}
+      <section style={{ display: 'grid', gap: 8 }}>
+        <button
+          type="button"
+          disabled={!canSave || saveState === 'loading'}
+          onClick={handleSaveProfile}
+        >
+          {saveState === 'loading' ? '저장 중...' : '온보딩 저장'}
         </button>
-        <p>저장 상태: {saveState === "success" ? "성공" : "대기"}</p>
+        <p>저장 상태: {saveState === 'success' ? '성공' : '대기'}</p>
       </section>
 
       {error ? (
-        <p role="alert" style={{ color: "crimson" }}>
+        <p role="alert" style={{ color: 'crimson' }}>
           {error}
         </p>
       ) : null}

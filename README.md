@@ -7,17 +7,17 @@ AI 기반 글로벌 언어 학습 플랫폼
 단어 → 문장 → 대화까지 연결되는 학습 시스템
 
 2. 주요 기능
-단어 학습
-AI 대화
-리더보드
-SNS 공유
-결제 시스템
+   단어 학습
+   AI 대화
+   리더보드
+   SNS 공유
+   결제 시스템
 3. 기술 스택
-Next.js 15
-TypeScript
-Firebase (Firestore)
-Polar.sh (결제)
-OpenAI (ChatGPT)
+   Next.js 15
+   TypeScript
+   Firebase (Firestore)
+   Polar.sh (결제)
+   OpenAI (ChatGPT)
 4. 프로젝트 구조
 
 apps/web → UI (Antigravity)
@@ -32,11 +32,11 @@ pnpm install
 pnpm dev
 
 6. AI 사용 전략
-대화 → 항상 사용
-추천 → 주 1회
-예문 → fallback
+   대화 → 항상 사용
+   추천 → 주 1회
+   예문 → fallback
 7. 결제 (Polar)
-설치
+   설치
 
 pnpm add @polar-sh/sdk
 
@@ -57,8 +57,8 @@ ko.json
 en.json
 
 9. 품질 기준
-테스트 커버리지 ≥ 80%
-Lighthouse ≥ 90
+   테스트 커버리지 ≥ 80%
+   Lighthouse ≥ 90
 10. 배포
-Vercel
-Firebase Hosting
+    Vercel
+    Firebase Hosting

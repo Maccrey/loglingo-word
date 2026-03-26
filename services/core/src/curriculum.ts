@@ -1,66 +1,66 @@
 import {
   curriculumUnitSchema,
   type CurriculumUnit
-} from "@wordflow/shared/curriculum";
+} from '@wordflow/shared/curriculum';
 
 export const curriculumSeed: CurriculumUnit[] = [
   {
-    id: "starter-basics",
+    id: 'starter-basics',
     level: 1,
     order: 1,
-    title: "기초 인사",
+    title: '기초 인사',
     words: [
       {
-        id: "hello",
-        term: "hello",
-        meaning: "안녕하세요",
-        example: "Hello, nice to meet you."
+        id: 'hello',
+        term: 'hello',
+        meaning: '안녕하세요',
+        example: 'Hello, nice to meet you.'
       },
       {
-        id: "thanks",
-        term: "thanks",
-        meaning: "고마워요",
-        example: "Thanks for your help."
+        id: 'thanks',
+        term: 'thanks',
+        meaning: '고마워요',
+        example: 'Thanks for your help.'
       }
     ]
   },
   {
-    id: "starter-routine",
+    id: 'starter-routine',
     level: 1,
     order: 2,
-    title: "일상 표현",
+    title: '일상 표현',
     words: [
       {
-        id: "breakfast",
-        term: "breakfast",
-        meaning: "아침 식사",
-        example: "I eat breakfast at seven."
+        id: 'breakfast',
+        term: 'breakfast',
+        meaning: '아침 식사',
+        example: 'I eat breakfast at seven.'
       },
       {
-        id: "subway",
-        term: "subway",
-        meaning: "지하철",
-        example: "I take the subway to work."
+        id: 'subway',
+        term: 'subway',
+        meaning: '지하철',
+        example: 'I take the subway to work.'
       }
     ]
   },
   {
-    id: "travel-checkin",
+    id: 'travel-checkin',
     level: 2,
     order: 1,
-    title: "여행 체크인",
+    title: '여행 체크인',
     words: [
       {
-        id: "reservation",
-        term: "reservation",
-        meaning: "예약",
-        example: "I have a reservation under Kim."
+        id: 'reservation',
+        term: 'reservation',
+        meaning: '예약',
+        example: 'I have a reservation under Kim.'
       },
       {
-        id: "passport",
-        term: "passport",
-        meaning: "여권",
-        example: "Please show me your passport."
+        id: 'passport',
+        term: 'passport',
+        meaning: '여권',
+        example: 'Please show me your passport.'
       }
     ]
   }
@@ -81,4 +81,3 @@ export function getCurriculumUnits(): CurriculumUnit[] {
 export function getCurriculumByLevel(level: number): CurriculumUnit[] {
   return getCurriculumUnits().filter((unit) => unit.level === level);
 }
-

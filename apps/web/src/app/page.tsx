@@ -1,10 +1,11 @@
-export default function HomePage() {
-  return (
-    <main style={{ padding: 24, display: "grid", gap: 12 }}>
-      <h1>WordFlow</h1>
-      <p>Tasklist 기반 초기 구현이 시작되었습니다.</p>
-      <a href="/onboarding">온보딩 시작</a>
-    </main>
-  );
-}
+import HomeDashboard from './HomeDashboard';
+import { resolveLocale } from './i18n';
 
+type HomePageProps = {
+  searchParams?: Promise<{ locale?: string }>;
+};
+
+export default async function HomePage(props: HomePageProps) {
+  const searchParams = await props.searchParams;
+  return <HomeDashboard locale={resolveLocale(searchParams?.locale)} />;
+}

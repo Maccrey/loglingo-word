@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const curriculumWordSchema = z.object({
   id: z.string().min(1),
@@ -17,4 +17,3 @@ export const curriculumUnitSchema = z.object({
 
 export type CurriculumWord = z.infer<typeof curriculumWordSchema>;
 export type CurriculumUnit = z.infer<typeof curriculumUnitSchema>;
-

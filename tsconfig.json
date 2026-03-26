@@ -6,9 +6,10 @@
   "include": [
     "vitest.config.ts",
     "tests/**/*.ts",
+    "tests/**/*.tsx",
     "packages/**/*.ts",
     "apps/**/*.ts",
+    "apps/**/*.tsx",
     "services/**/*.ts"
   ]
 }
-

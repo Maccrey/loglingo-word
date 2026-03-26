@@ -1,4 +1,11 @@
 export const coreServiceReady = true;
-export * from "./curriculum";
-export * from "./onboarding";
-export * from "./profile";
+export * from './curriculum';
+export * from './gamification';
+export * from './learning';
+export * from './memory';
+export * from './onboarding';
+export * from './profile';
+export * from './quiz';
+export * from './settings';
+export * from './social';
+export * from './sentence';

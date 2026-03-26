@@ -1,12 +1,15 @@
-import { canPairLanguages, isSupportedLanguage } from "@wordflow/shared/languages";
+import {
+  canPairLanguages,
+  isSupportedLanguage
+} from '@wordflow/shared/languages';
 
-export type OnboardingStep = "language" | "goal" | "start" | "complete";
+export type OnboardingStep = 'language' | 'goal' | 'start' | 'complete';
 
 export type LearningGoal =
-  | "daily_habit"
-  | "travel"
-  | "business"
-  | "conversation";
+  | 'daily_habit'
+  | 'travel'
+  | 'business'
+  | 'conversation';
 
 export type OnboardingState = {
   nativeLanguage?: string;
@@ -16,10 +19,10 @@ export type OnboardingState = {
 };
 
 const onboardingStepOrder: OnboardingStep[] = [
-  "language",
-  "goal",
-  "start",
-  "complete"
+  'language',
+  'goal',
+  'start',
+  'complete'
 ];
 
 export function getOnboardingStepIndex(step: OnboardingStep): number {
@@ -29,8 +32,8 @@ export function getOnboardingStepIndex(step: OnboardingStep): number {
 export function canAdvanceFromLanguage(state: OnboardingState): boolean {
   return Boolean(
     state.nativeLanguage &&
-      state.targetLanguage &&
-      canPairLanguages(state.nativeLanguage, state.targetLanguage)
+    state.targetLanguage &&
+    canPairLanguages(state.nativeLanguage, state.targetLanguage)
   );
 }
 
@@ -44,18 +47,18 @@ export function canAdvanceFromStart(state: OnboardingState): boolean {
 
 export function getNextOnboardingStep(state: OnboardingState): OnboardingStep {
   if (!canAdvanceFromLanguage(state)) {
-    return "language";
+    return 'language';
   }
 
   if (!canAdvanceFromGoal(state)) {
-    return "goal";
+    return 'goal';
   }
 
   if (!canAdvanceFromStart(state)) {
-    return "start";
+    return 'start';
   }
 
-  return "complete";
+  return 'complete';
 }
 
 export function updateLanguages(
@@ -63,12 +66,15 @@ export function updateLanguages(
   nativeLanguage: string,
   targetLanguage: string
 ): OnboardingState {
-  if (!isSupportedLanguage(nativeLanguage) || !isSupportedLanguage(targetLanguage)) {
-    throw new Error("Unsupported language selected.");
+  if (
+    !isSupportedLanguage(nativeLanguage) ||
+    !isSupportedLanguage(targetLanguage)
+  ) {
+    throw new Error('Unsupported language selected.');
   }
 
   if (nativeLanguage === targetLanguage) {
-    throw new Error("Native and target language must differ.");
+    throw new Error('Native and target language must differ.');
   }
 
   return {
@@ -83,7 +89,7 @@ export function updateGoal(
   goal: LearningGoal
 ): OnboardingState {
   if (!canAdvanceFromLanguage(state)) {
-    throw new Error("Language step must be completed first.");
+    throw new Error('Language step must be completed first.');
   }
 
   return {
@@ -97,7 +103,7 @@ export function markFirstLessonStarted(
   startedAt: string
 ): OnboardingState {
   if (!canAdvanceFromGoal(state)) {
-    throw new Error("Goal step must be completed first.");
+    throw new Error('Goal step must be completed first.');
   }
 
   return {
@@ -105,4 +111,3 @@ export function markFirstLessonStarted(
     startedAt
   };
 }
-

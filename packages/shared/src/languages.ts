@@ -5,10 +5,10 @@ export type SupportedLanguage = {
 };
 
 export const supportedLanguages: SupportedLanguage[] = [
-  { code: "ko", nativeLabel: "한국어", englishLabel: "Korean" },
-  { code: "en", nativeLabel: "영어", englishLabel: "English" },
-  { code: "ja", nativeLabel: "일본어", englishLabel: "Japanese" },
-  { code: "es", nativeLabel: "스페인어", englishLabel: "Spanish" }
+  { code: 'ko', nativeLabel: '한국어', englishLabel: 'Korean' },
+  { code: 'en', nativeLabel: '영어', englishLabel: 'English' },
+  { code: 'ja', nativeLabel: '일본어', englishLabel: 'Japanese' },
+  { code: 'es', nativeLabel: '스페인어', englishLabel: 'Spanish' }
 ];
 
 export function isSupportedLanguage(code: string): boolean {
@@ -25,4 +25,3 @@ export function canPairLanguages(
     nativeLanguage !== targetLanguage
   );
 }
-

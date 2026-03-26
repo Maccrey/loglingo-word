@@ -5,8 +5,15 @@
   "type": "module",
   "exports": {
     "./curriculum": "./src/curriculum.ts",
+    "./gamification": "./src/gamification.ts",
+    "./learning": "./src/learning.ts",
+    "./memory": "./src/memory.ts",
     "./profile": "./src/profile.ts",
-    "./onboarding": "./src/onboarding.ts"
+    "./onboarding": "./src/onboarding.ts",
+    "./quiz": "./src/quiz.ts",
+    "./settings": "./src/settings.ts",
+    "./social": "./src/social.ts",
+    "./sentence": "./src/sentence.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

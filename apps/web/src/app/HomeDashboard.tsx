@@ -1,0 +1,252 @@
+import React from 'react';
+import Link from 'next/link';
+
+import {
+  calculateDailyGoal,
+  calculateLevelProgress,
+  calculateRewardPoints,
+  updateLearningStreak
+} from '@wordflow/core/gamification';
+import { buildReviewSelection } from '@wordflow/core/memory';
+import { resolveLocale, t, type AppLocale } from './i18n';
+
+type HomeDashboardProps = {
+  loading?: boolean;
+  locale?: AppLocale;
+};
+
+const surfaceStyle: Record<string, string | number> = {
+  minHeight: '100vh',
+  padding: '32px 20px 56px',
+  background: 'linear-gradient(180deg, #f7f1df 0%, #f4c89d 18%, #173246 100%)',
+  color: '#faf7f1'
+};
+
+const shellStyle: Record<string, string | number> = {
+  width: '100%',
+  maxWidth: 1040,
+  margin: '0 auto',
+  display: 'grid',
+  gap: 24
+};
+
+const panelStyle: Record<string, string | number> = {
+  borderRadius: 28,
+  padding: 24,
+  background: 'rgba(12, 20, 31, 0.76)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
+  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+};
+
+const badgeStyle: Record<string, string | number> = {
+  display: 'inline-flex',
+  width: 'fit-content',
+  borderRadius: 999,
+  padding: '8px 14px',
+  background: 'rgba(255, 212, 135, 0.14)',
+  color: '#ffd699',
+  fontSize: 13,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase'
+};
+
+function buildDashboardState() {
+  const rewards = calculateRewardPoints([
+    { type: 'lesson_complete', awardId: 'lesson-2026-03-25' },
+    { type: 'correct_streak', awardId: 'streak-2026-03-25', value: 3 },
+    { type: 'quest_complete', awardId: 'quest-2026-03-25' }
+  ]);
+  const streak = updateLearningStreak(
+    {
+      currentStreak: 4,
+      lastLearnedOn: '2026-03-24'
+    },
+    '2026-03-25T09:00:00.000Z'
+  );
+  const dailyGoal = calculateDailyGoal(7, 10);
+  const level = calculateLevelProgress(rewards.ledger.totalPoints + 135);
+  const reviewSelection = buildReviewSelection({
+    now: '2026-03-25T12:00:00.000Z',
+    progress: [
+      {
+        wordId: 'subway',
+        correctStreak: 2,
+        storageStrength: 1.1,
+        retrievalStrength: 1,
+        nextReviewAt: '2026-03-25T08:00:00.000Z'
+      },
+      {
+        wordId: 'passport',
+        correctStreak: 1,
+        storageStrength: 0.5,
+        retrievalStrength: 0.4,
+        nextReviewAt: '2026-03-24T00:00:00.000Z'
+      }
+    ],
+    limit: 4,
+    reviewShare: 0.5
+  });
+
+  return {
+    points: rewards.ledger.totalPoints,
+    streak,
+    dailyGoal,
+    level,
+    reviewSelection
+  };
+}
+
+export default function HomeDashboard(props: HomeDashboardProps) {
+  const { loading = false, locale = 'ko' } = props;
+  const dashboard = buildDashboardState();
+
+  return (
+    <main style={surfaceStyle}>
+      <div style={shellStyle}>
+        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
+          <div style={badgeStyle}>{t(locale, 'home.title')}</div>
+          <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+            {t(locale, 'home.heading')}
+          </h1>
+          <p
+            style={{
+              margin: 0,
+              maxWidth: 640,
+              lineHeight: 1.6,
+              color: 'rgba(250, 247, 241, 0.8)'
+            }}
+          >
+            {t(locale, 'home.description')}
+          </p>
+          {loading ? (
+            <p style={{ margin: 0, color: '#ffd699' }}>
+              {t(locale, 'home.loading')}
+            </p>
+          ) : (
+            <p style={{ margin: 0, color: '#b7f8db' }}>
+              {t(locale, 'home.ready')}
+            </p>
+          )}
+        </section>
+
+        <section
+          data-testid="home-summary-grid"
+          style={{
+            display: 'grid',
+            gap: 18,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))'
+          }}
+        >
+          <article style={panelStyle}>
+            <div style={badgeStyle}>{t(locale, 'home.summary.today')}</div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              {dashboard.reviewSelection.mixedQueue.length}
+            </h2>
+            <p style={{ margin: 0 }}>{t(locale, 'home.summary.today')}</p>
+          </article>
+
+          <article style={panelStyle}>
+            <div style={badgeStyle}>{t(locale, 'home.summary.streak')}</div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              {dashboard.streak.currentStreak}일
+            </h2>
+            <p style={{ margin: 0 }}>{t(locale, 'home.summary.streak')}</p>
+          </article>
+
+          <article style={panelStyle}>
+            <div style={badgeStyle}>{t(locale, 'home.summary.points')}</div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              {dashboard.points} pt
+            </h2>
+            <p style={{ margin: 0 }}>{t(locale, 'home.summary.points')}</p>
+          </article>
+
+          <article style={panelStyle}>
+            <div style={badgeStyle}>{t(locale, 'home.summary.level')}</div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              Lv. {dashboard.level.level}
+            </h2>
+            <p style={{ margin: 0 }}>
+              다음 레벨까지 {dashboard.level.pointsToNextLevel}pt
+            </p>
+          </article>
+        </section>
+
+        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
+          <div style={badgeStyle}>{t(locale, 'home.goal')}</div>
+          <h2 style={{ margin: 0 }}>
+            {t(locale, 'home.goal')} {dashboard.dailyGoal.completed}/
+            {dashboard.dailyGoal.target}
+          </h2>
+          <div
+            aria-label="daily-goal-progress"
+            style={{
+              height: 14,
+              borderRadius: 999,
+              background: 'rgba(255,255,255,0.08)',
+              overflow: 'hidden'
+            }}
+          >
+            <div
+              style={{
+                width: `${dashboard.dailyGoal.progressPercent}%`,
+                height: '100%',
+                background: '#b7f8db'
+              }}
+            />
+          </div>
+          <p style={{ margin: 0 }}>
+            {dashboard.dailyGoal.progressPercent}% ·{' '}
+            {dashboard.dailyGoal.isComplete
+              ? t(locale, 'home.goal.complete')
+              : t(locale, 'home.goal.in_progress')}
+          </p>
+        </section>
+
+        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
+          <div style={badgeStyle}>{t(locale, 'home.quick_start')}</div>
+          <p style={{ margin: 0, lineHeight: 1.6 }}>
+            {t(locale, 'home.quick_start.description')}
+          </p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link
+              href="/learn"
+              aria-label={t(locale, 'common.action.quick_start')}
+              style={{ color: '#ffd699' }}
+            >
+              {t(locale, 'common.action.quick_start')}
+            </Link>
+            <Link
+              href="/quiz"
+              aria-label={t(locale, 'quiz.title')}
+              style={{ color: '#b7f8db' }}
+            >
+              {t(locale, 'quiz.title')}
+            </Link>
+            <Link
+              href="/sentence"
+              aria-label={t(locale, 'sentence.title')}
+              style={{ color: '#8ce7ff' }}
+            >
+              {t(locale, 'sentence.title')}
+            </Link>
+            <Link
+              href="/chat"
+              aria-label={t(locale, 'chat.title')}
+              style={{ color: '#ffcfe1' }}
+            >
+              {t(locale, 'chat.title')}
+            </Link>
+            <Link
+              href="/feed"
+              aria-label={t(locale, 'feed.title')}
+              style={{ color: '#ffe29f' }}
+            >
+              {t(locale, 'feed.title')}
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

@@ -13,12 +13,14 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@wordflow/core/*": [
-        "services/core/src/*"
-      ],
-      "@wordflow/shared/*": [
-        "packages/shared/src/*"
-      ]
+      "@wordflow/ai": ["services/ai/src/index.ts"],
+      "@wordflow/ai/*": ["services/ai/src/*"],
+      "@wordflow/core/*": ["services/core/src/*"],
+      "@wordflow/payment": ["services/payment/src/index.ts"],
+      "@wordflow/payment/*": ["services/payment/src/*"],
+      "@wordflow/leaderboard": ["services/leaderboard/src/index.ts"],
+      "@wordflow/leaderboard/*": ["services/leaderboard/src/*"],
+      "@wordflow/shared/*": ["packages/shared/src/*"]
     }
   }
 }
