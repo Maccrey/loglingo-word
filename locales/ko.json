@@ -11,6 +11,8 @@
   "home.summary.points": "누적 포인트",
   "home.summary.level": "레벨",
   "home.summary.leaderboard": "주간 리더보드 점수",
+  "home.summary.leaderboard_rank": "이번 주 순위",
+  "home.summary.leaderboard_empty": "이번 주 리더보드 기록이 아직 없습니다.",
   "home.heading": "오늘의 학습 흐름",
   "home.description": "오늘의 학습량과 보상을 한 눈에 보고, 바로 다음 학습으로 이어집니다.",
   "home.ready": "대시보드 데이터가 준비되었습니다.",

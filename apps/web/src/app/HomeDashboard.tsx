@@ -20,6 +20,16 @@ type HomeDashboardProps = {
   pendingPoints?: string;
   pendingLeaderboardScore?: string;
   initialStats?: UserDashboardStats | null;
+  leaderboardPreview?: {
+    weekId: string;
+    myRank: number | null;
+    topEntries: Array<{
+      userId: string;
+      rank: number;
+      score: number;
+      isCurrentUser: boolean;
+    }>;
+  } | null;
 };
 
 type RecommendationState = {
@@ -134,7 +144,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     pendingSource,
     pendingPoints,
     pendingLeaderboardScore,
-    initialStats = null
+    initialStats = null,
+    leaderboardPreview = null
   } = props;
   const dashboard = buildDashboardState();
   const pendingPointsValue =
@@ -361,6 +372,45 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               {totalLeaderboardScore} pt
             </h2>
             <p style={{ margin: 0 }}>
+              {leaderboardPreview?.myRank
+                ? `${t(locale, 'home.summary.leaderboard_rank')} #${leaderboardPreview.myRank}`
+                : t(locale, 'home.summary.leaderboard_empty')}
+            </p>
+            {leaderboardPreview?.topEntries.length ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gap: 8,
+                  marginTop: 14
+                }}
+              >
+                <span style={{ color: 'var(--text-faded)', fontSize: 13 }}>
+                  {leaderboardPreview.weekId}
+                </span>
+                {leaderboardPreview.topEntries.map((entry) => (
+                  <div
+                    key={`${leaderboardPreview.weekId}-${entry.userId}`}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '40px 1fr auto',
+                      gap: 8,
+                      alignItems: 'center',
+                      padding: '8px 10px',
+                      borderRadius: 10,
+                      background: entry.isCurrentUser
+                        ? 'var(--accent-pink)'
+                        : 'var(--bg-paper)',
+                      border: '1px solid var(--border-pencil)'
+                    }}
+                  >
+                    <strong>#{entry.rank}</strong>
+                    <span>{entry.isCurrentUser ? '나' : entry.userId}</span>
+                    <strong>{entry.score} pt</strong>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            <p style={{ margin: '14px 0 0' }}>
               <Link
                 href="/leaderboard"
                 style={{

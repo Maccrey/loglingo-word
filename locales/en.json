@@ -11,6 +11,8 @@
   "home.summary.points": "Total Points",
   "home.summary.level": "Level",
   "home.summary.leaderboard": "Weekly Leaderboard Score",
+  "home.summary.leaderboard_rank": "This Week's Rank",
+  "home.summary.leaderboard_empty": "There is no leaderboard record for this week yet.",
   "home.heading": "Today's Learning Flow",
   "home.description": "See today's progress and rewards at a glance, then jump straight into the next study flow.",
   "home.ready": "Dashboard data is ready.",

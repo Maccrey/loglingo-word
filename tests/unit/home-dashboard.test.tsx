@@ -17,12 +17,35 @@ beforeEach(() => {
 
 describe('home dashboard', () => {
   it('renders the main summary cards', () => {
-    render(<HomeDashboard />);
+    render(
+      <HomeDashboard
+        leaderboardPreview={{
+          weekId: '2026-W13',
+          myRank: 2,
+          topEntries: [
+            {
+              userId: 'user-2',
+              rank: 1,
+              score: 8,
+              isCurrentUser: false
+            },
+            {
+              userId: 'demo-user',
+              rank: 2,
+              score: 4,
+              isCurrentUser: true
+            }
+          ]
+        }}
+      />
+    );
 
     expect(screen.getAllByText('오늘 할 학습').length).toBeGreaterThan(0);
     expect(screen.getAllByText('연속 학습 streak').length).toBeGreaterThan(0);
     expect(screen.getAllByText('누적 포인트').length).toBeGreaterThan(0);
     expect(screen.getAllByText('주간 리더보드 점수').length).toBeGreaterThan(0);
+    expect(screen.getByText('이번 주 순위 #2')).toBeTruthy();
+    expect(screen.getByText('2026-W13')).toBeTruthy();
   });
 
   it('renders a quick start link to the study flow', () => {
@@ -120,5 +143,21 @@ describe('home dashboard', () => {
 
     expect(screen.getByText('120 pt')).toBeTruthy();
     expect(screen.getByText('4 pt')).toBeTruthy();
+  });
+
+  it('shows an empty leaderboard preview message when no weekly entry exists', () => {
+    render(
+      <HomeDashboard
+        leaderboardPreview={{
+          weekId: '2026-W13',
+          myRank: null,
+          topEntries: []
+        }}
+      />
+    );
+
+    expect(
+      screen.getByText('이번 주 리더보드 기록이 아직 없습니다.')
+    ).toBeTruthy();
   });
 });
