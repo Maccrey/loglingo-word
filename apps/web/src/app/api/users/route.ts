@@ -1,12 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 import {
+  FirestoreUserProfileRepository,
   InMemoryUserProfileRepository,
   onboardingProfileInputSchema,
   saveOnboardingProfile
-} from "@wordflow/core/profile";
+} from '@wordflow/core/profile';
 
-const userProfileRepository = new InMemoryUserProfileRepository();
+import {
+  createFirestoreUserProfileStore,
+  hasFirebaseAdminConfig
+} from '../../../lib/firebase-admin';
+
+const userProfileRepository = hasFirebaseAdminConfig()
+  ? new FirestoreUserProfileRepository(createFirestoreUserProfileStore())
+  : new InMemoryUserProfileRepository();
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +23,7 @@ export async function POST(request: Request) {
     const result = await saveOnboardingProfile(input, userProfileRepository);
 
     return NextResponse.json(result, {
-      status: result.operation === "created" ? 201 : 200
+      status: result.operation === 'created' ? 201 : 200
     });
   } catch (error) {
     return NextResponse.json(
@@ -23,7 +31,7 @@ export async function POST(request: Request) {
         message:
           error instanceof Error
             ? error.message
-            : "사용자 프로필 저장에 실패했습니다."
+            : '사용자 프로필 저장에 실패했습니다.'
       },
       {
         status: 400
@@ -31,4 +39,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

@@ -1,18 +1,20 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { userSchema, type User } from "@wordflow/shared/types";
+import { userSchema, type User } from '@wordflow/shared/types';
 
-import { type LearningGoal } from "./onboarding";
+import { type LearningGoal } from './onboarding';
 
 export const onboardingProfileInputSchema = z.object({
   id: z.string().min(1),
   nativeLanguage: z.string().min(2),
   targetLanguage: z.string().min(2),
-  goal: z.enum(["daily_habit", "travel", "business", "conversation"]),
+  goal: z.enum(['daily_habit', 'travel', 'business', 'conversation']),
   startedAt: z.string().datetime()
 });
 
-export type OnboardingProfileInput = z.infer<typeof onboardingProfileInputSchema>;
+export type OnboardingProfileInput = z.infer<
+  typeof onboardingProfileInputSchema
+>;
 
 export type UserProfileRecord = User & {
   goal: LearningGoal;
@@ -20,7 +22,7 @@ export type UserProfileRecord = User & {
 };
 
 export type UserDocument = {
-  collection: "users";
+  collection: 'users';
   id: string;
   data: UserProfileRecord;
 };
@@ -28,6 +30,18 @@ export type UserDocument = {
 export type UserProfileRepository = {
   findById(id: string): Promise<UserProfileRecord | null>;
   save(profile: UserProfileRecord): Promise<UserProfileRecord>;
+};
+
+export type UserProfileDocumentStore = {
+  get(
+    collection: UserDocument['collection'],
+    id: string
+  ): Promise<UserProfileRecord | null>;
+  set(
+    collection: UserDocument['collection'],
+    id: string,
+    data: UserProfileRecord
+  ): Promise<void>;
 };
 
 export function toUserRecord(input: OnboardingProfileInput): UserProfileRecord {
@@ -52,7 +66,7 @@ export function toUserRecord(input: OnboardingProfileInput): UserProfileRecord {
 
 export function toUserDocument(profile: UserProfileRecord): UserDocument {
   return {
-    collection: "users",
+    collection: 'users',
     id: profile.id,
     data: profile
   };
@@ -61,7 +75,7 @@ export function toUserDocument(profile: UserProfileRecord): UserDocument {
 export async function saveOnboardingProfile(
   input: OnboardingProfileInput,
   repository: UserProfileRepository
-): Promise<{ profile: UserProfileRecord; operation: "created" | "updated" }> {
+): Promise<{ profile: UserProfileRecord; operation: 'created' | 'updated' }> {
   const validatedInput = onboardingProfileInputSchema.parse(input);
   const existingProfile = await repository.findById(validatedInput.id);
 
@@ -79,7 +93,7 @@ export async function saveOnboardingProfile(
 
   return {
     profile: savedProfile,
-    operation: existingProfile ? "updated" : "created"
+    operation: existingProfile ? 'updated' : 'created'
   };
 }
 
@@ -96,3 +110,16 @@ export class InMemoryUserProfileRepository implements UserProfileRepository {
   }
 }
 
+export class FirestoreUserProfileRepository implements UserProfileRepository {
+  constructor(private readonly store: UserProfileDocumentStore) {}
+
+  async findById(id: string): Promise<UserProfileRecord | null> {
+    return this.store.get('users', id);
+  }
+
+  async save(profile: UserProfileRecord): Promise<UserProfileRecord> {
+    const document = toUserDocument(profile);
+    await this.store.set(document.collection, document.id, document.data);
+    return profile;
+  }
+}
