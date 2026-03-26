@@ -95,8 +95,12 @@ CAT_SICK_AFTER_NO_PLAY_HOURS=15
 CAT_STAGE_JUNIOR_DAYS=30
 # DEFAULT: 90
 CAT_STAGE_ADULT_DAYS=90
-# DEFAULT: 180
-CAT_STAGE_VETERAN_DAYS=180
+# DEFAULT: 150
+CAT_STAGE_MIDDLE_AGE_DAYS=150
+# DEFAULT: 210
+CAT_STAGE_SENIOR_DAYS=210
+# DEFAULT: 280
+CAT_STAGE_VETERAN_DAYS=280
 # DEFAULT: 365
 CAT_STAGE_LEGACY_DAYS=365
 # DEFAULT: 365
@@ -112,7 +116,15 @@ CAT_EXTRA_KITTEN_REWARD_DAYS=365
 - `assets/prompts/nano-banana/cats/kitten-base.txt`
 - `assets/prompts/nano-banana/cats/kitten-hungry.txt`
 - `assets/prompts/nano-banana/cats/kitten-sick.txt`
+- `assets/prompts/nano-banana/cats/kitten-smelly.txt`
+- `assets/prompts/nano-banana/cats/kitten-stressed.txt`
+- `assets/prompts/nano-banana/cats/kitten-critical.txt`
+- `assets/prompts/nano-banana/cats/kitten-dead.txt`
+- `assets/prompts/nano-banana/cats/junior-healthy.txt`
 - `assets/prompts/nano-banana/cats/adult-healthy.txt`
+- `assets/prompts/nano-banana/cats/middle-age-healthy.txt`
+- `assets/prompts/nano-banana/cats/senior-healthy.txt`
+- `assets/prompts/nano-banana/cats/veteran-healthy.txt`
 - `assets/prompts/nano-banana/cats/adult-legacy.txt`
 
 ### 프롬프트 작성 규칙
@@ -154,3 +166,11 @@ No text, no watermark.
 - `PRD.md`: 제품 기획
 - `UI.md`: 화면 구조와 UX 규칙
 - `Tasklist.md`: 최소 함수 단위 기준 구현 태스크
+
+## 추후 파이어베이스 연동 로드맵 (Phase 8)
+
+현재 UI 시각화 단계(Phase 6)는 프론트엔드 단독 시뮬레이션을 위해 `LocalStorage` 기반의 Mock 전역 상태를 활용하여 임시 구동됩니다.
+향후 다음과 같은 Firebase 연동(Backend) 작업을 진행할 예정입니다:
+- **Cat 상태 원격 동기화**: `useCat` 훅을 Firebase Firestore 등과 연경하여 데이터 지속성을 보장합니다.
+- **포인트 렛저 분산 동기화**: 오프라인/로컬에서 발생한 돌봄 포인트 변동 내역을 서버와 안전하게 배칭 동기화(`syncPendingPoints`)합니다.
+
