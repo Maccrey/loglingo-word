@@ -44,10 +44,11 @@ export function createSharedFeedPost(input: {
     return null;
   }
 
+  const joinedWords = words.join(', ');
   const body =
     leaderboard > 0
-      ? `추천 단어 ${completed}개를 학습하고 ${points}포인트를 획득했어요. 리더보드 점수 ${leaderboard}점도 반영됐습니다. ${words.join(', ')} 복습을 마쳤습니다.`
-      : `추천 단어 ${completed}개를 학습하고 ${points}포인트를 획득했어요. ${words.join(', ')} 복습을 마쳤습니다.`;
+      ? `추천 단어 ${completed}개를 학습해 ${points}포인트를 획득했고 리더보드 점수 ${leaderboard}점도 반영됐어요. 복습 완료 단어: ${joinedWords}.`
+      : `추천 단어 ${completed}개를 학습해 ${points}포인트를 획득했어요. 복습 완료 단어: ${joinedWords}.`;
 
   return createLearningResultPost({
     id: 'shared-recommendation-post',
