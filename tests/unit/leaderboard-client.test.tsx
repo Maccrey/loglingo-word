@@ -78,6 +78,7 @@ describe('leaderboard ui', () => {
 
     expect(screen.getByText('주변 순위')).toBeTruthy();
     expect(screen.queryByText('랭킹')).toBeNull();
+    expect(window.location.search).toContain('view=nearby');
   });
 
   it('returns focus to the current user', async () => {
@@ -123,6 +124,31 @@ describe('leaderboard ui', () => {
 
     expect(screen.getByText('선택한 사용자')).toBeTruthy();
     expect(screen.getByText('user-2 순위 #2 · 4pt')).toBeTruthy();
+  });
+
+  it('syncs focused user state into the url', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2'
+    });
+
+    window.history.replaceState(null, '', '/leaderboard');
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+      />
+    );
+
+    expect(window.location.search).toContain('userId=user-2');
+
+    await user.click(
+      screen.getByRole('button', { name: '내 위치로 돌아가기' })
+    );
+
+    expect(window.location.search).not.toContain('userId=');
   });
 
   it('shows a fallback when the leaderboard is empty', () => {

@@ -8,6 +8,7 @@ type LeaderboardPageProps = {
     source?: string;
     score?: string;
     userId?: string;
+    view?: string;
   }>;
 };
 
@@ -20,6 +21,7 @@ export default async function LeaderboardPage(props: LeaderboardPageProps) {
       entries={state.entries}
       currentUserId={state.currentUserId}
       focusedUserId={state.focusedUserId}
+      initialViewMode={state.initialViewMode}
       {...(state.pendingScoreDelta !== undefined
         ? { pendingScoreDelta: state.pendingScoreDelta }
         : {})}

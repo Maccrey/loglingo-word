@@ -7,6 +7,8 @@ import {
 
 import { getLeaderboardRepository } from '../../lib/leaderboard-repository';
 
+export type LeaderboardViewMode = 'all' | 'nearby';
+
 function buildDefaultEntries(weekId: string): LeaderboardEntryRecord[] {
   let entries: LeaderboardEntryRecord[] = [];
 
@@ -48,6 +50,7 @@ export async function buildLeaderboardPageState(
     source?: string;
     score?: string;
     userId?: string;
+    view?: string;
   },
   repository: LeaderboardRepository = getLeaderboardRepository()
 ) {
@@ -68,6 +71,9 @@ export async function buildLeaderboardPageState(
     entries,
     currentUserId: actualCurrentUserId,
     focusedUserId,
+    initialViewMode: (input?.view === 'nearby'
+      ? 'nearby'
+      : 'all') as LeaderboardViewMode,
     pendingScoreDelta:
       input?.source === 'recommendation' ? scoreDelta : undefined
   };

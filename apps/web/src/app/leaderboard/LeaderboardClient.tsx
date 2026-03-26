@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { type LeaderboardEntryRecord } from '@wordflow/leaderboard';
 import { getLeaderboardWeek } from '@wordflow/leaderboard';
+import { type LeaderboardViewMode } from './state';
 import { t, type AppLocale } from '../i18n';
 
 type LeaderboardClientProps = {
   entries?: LeaderboardEntryRecord[];
   currentUserId?: string;
   focusedUserId?: string;
+  initialViewMode?: LeaderboardViewMode;
   pendingScoreDelta?: number;
 };
 
@@ -72,6 +74,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     entries = [],
     currentUserId = 'demo-user',
     focusedUserId = currentUserId,
+    initialViewMode = 'all',
     pendingScoreDelta
   } = props;
   const [activeFocusedUserId, setActiveFocusedUserId] = useState(focusedUserId);
@@ -81,7 +84,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     entries.find((entry) => entry.userId === activeFocusedUserId) ?? null;
   const isViewingOwnEntry = activeFocusedUserId === currentUserId;
   const focusedWindow = getFocusedWindow(entries, activeFocusedUserId);
-  const [viewMode, setViewMode] = useState<'all' | 'nearby'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'nearby'>(initialViewMode);
 
   function moveFocus(nextUserId: string) {
     if (nextUserId === activeFocusedUserId) {
@@ -104,6 +107,26 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
       return current.slice(0, -1);
     });
   }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (activeFocusedUserId === currentUserId) {
+      searchParams.delete('userId');
+    } else {
+      searchParams.set('userId', activeFocusedUserId);
+    }
+
+    if (viewMode === 'nearby') {
+      searchParams.set('view', 'nearby');
+    } else {
+      searchParams.delete('view');
+    }
+
+    const nextSearch = searchParams.toString();
+    const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`;
+    window.history.replaceState(null, '', nextUrl);
+  }, [activeFocusedUserId, currentUserId, viewMode]);
 
   return (
     <main style={surfaceStyle}>
