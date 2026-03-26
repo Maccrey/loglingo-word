@@ -6,6 +6,10 @@ import {
   type AIChatMessageDocumentStore
 } from '@wordflow/ai';
 import {
+  type AIRecommendationDocumentStore,
+  type AIRecommendationRecord
+} from '@wordflow/ai/recommendation';
+import {
   type UserProfileDocumentStore,
   type UserProfileRecord
 } from '@wordflow/core/profile';
@@ -85,6 +89,29 @@ export function createFirestoreAIChatStore(): AIChatMessageDocumentStore {
         .get();
 
       return snapshot.docs.map((doc) => doc.data() as AIChatMessage);
+    }
+  };
+}
+
+export function createFirestoreAIRecommendationStore(): AIRecommendationDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async get(userId, weekId) {
+      const snapshot = await firestore
+        .collection('ai_recommendations')
+        .doc(`${userId}:${weekId}`)
+        .get();
+
+      return snapshot.exists
+        ? (snapshot.data() as AIRecommendationRecord)
+        : null;
+    },
+    async set(record) {
+      await firestore
+        .collection('ai_recommendations')
+        .doc(`${record.userId}:${record.weekId}`)
+        .set(record);
     }
   };
 }

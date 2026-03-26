@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type RecommendationWindow = {
   allowed: boolean;
   currentWeekId: string;
@@ -15,6 +17,19 @@ export type RecommendationWord = {
   id: string;
 };
 
+export const aiRecommendationRequestSchema = z.object({
+  userId: z.string().min(1),
+  nativeLanguage: z.string().min(2),
+  targetLanguage: z.string().min(2),
+  now: z.string().datetime(),
+  lastRequestedAt: z.string().datetime().optional(),
+  fallbackWords: z.array(z.string().min(1)).min(1)
+});
+
+export type AIRecommendationRequest = z.infer<
+  typeof aiRecommendationRequestSchema
+>;
+
 export type RecommendationPromptInput = {
   userId: string;
   weekId: string;
@@ -25,6 +40,32 @@ export type RecommendationPromptInput = {
 
 export type RecommendationServiceInput = RecommendationPromptInput & {
   rawResponse: string;
+};
+
+export type RecommendationCompletionClient = {
+  complete(input: RecommendationPromptInput): Promise<{ rawResponse: string }>;
+};
+
+export type AIRecommendationRecord = {
+  userId: string;
+  weekId: string;
+  words: string[];
+  source: 'openai' | 'fallback';
+  prompt: string;
+  requestedAt: string;
+};
+
+export type AIRecommendationRepository = {
+  save(record: AIRecommendationRecord): Promise<AIRecommendationRecord>;
+  findByUserIdAndWeekId(
+    userId: string,
+    weekId: string
+  ): Promise<AIRecommendationRecord | null>;
+};
+
+export type AIRecommendationDocumentStore = {
+  get(userId: string, weekId: string): Promise<AIRecommendationRecord | null>;
+  set(record: AIRecommendationRecord): Promise<void>;
 };
 
 function startOfUtcDay(timestamp: string): Date {
@@ -171,5 +212,104 @@ export function resolveRecommendationWords(input: RecommendationServiceInput): {
       source: 'fallback',
       prompt
     };
+  }
+}
+
+export async function handleAIRecommendation(
+  input: unknown,
+  dependencies: {
+    repository: AIRecommendationRepository;
+    client: RecommendationCompletionClient;
+  }
+): Promise<{
+  recommendation: AIRecommendationRecord;
+  window: RecommendationWindow;
+}> {
+  const request = aiRecommendationRequestSchema.parse(input);
+  const window = canRequestWeeklyRecommendation(
+    request.now,
+    request.lastRequestedAt
+  );
+
+  const existing = await dependencies.repository.findByUserIdAndWeekId(
+    request.userId,
+    window.currentWeekId
+  );
+
+  if (existing) {
+    return {
+      recommendation: existing,
+      window: {
+        ...window,
+        allowed: false
+      }
+    };
+  }
+
+  if (!window.allowed) {
+    throw new Error('이번 주 추천은 이미 요청했습니다.');
+  }
+
+  const completion = await dependencies.client.complete({
+    userId: request.userId,
+    weekId: window.currentWeekId,
+    nativeLanguage: request.nativeLanguage,
+    targetLanguage: request.targetLanguage,
+    fallbackWords: request.fallbackWords
+  });
+  const resolved = resolveRecommendationWords({
+    userId: request.userId,
+    weekId: window.currentWeekId,
+    nativeLanguage: request.nativeLanguage,
+    targetLanguage: request.targetLanguage,
+    fallbackWords: request.fallbackWords,
+    rawResponse: completion.rawResponse
+  });
+  const recommendation: AIRecommendationRecord = {
+    userId: request.userId,
+    weekId: window.currentWeekId,
+    words: resolved.words,
+    source: resolved.source,
+    prompt: resolved.prompt,
+    requestedAt: request.now
+  };
+
+  await dependencies.repository.save(recommendation);
+
+  return {
+    recommendation,
+    window
+  };
+}
+
+export class InMemoryAIRecommendationRepository implements AIRecommendationRepository {
+  private readonly store = new Map<string, AIRecommendationRecord>();
+
+  async save(record: AIRecommendationRecord): Promise<AIRecommendationRecord> {
+    this.store.set(`${record.userId}:${record.weekId}`, record);
+    return record;
+  }
+
+  async findByUserIdAndWeekId(
+    userId: string,
+    weekId: string
+  ): Promise<AIRecommendationRecord | null> {
+    return this.store.get(`${userId}:${weekId}`) ?? null;
+  }
+}
+
+export class FirestoreAIRecommendationRepository implements AIRecommendationRepository {
+  constructor(private readonly store: AIRecommendationDocumentStore) {}
+
+  async save(record: AIRecommendationRecord): Promise<AIRecommendationRecord> {
+    await this.store.set(record);
+    return record;
+  }
+
+  async findByUserIdAndWeekId(
+    userId: string,
+    weekId: string
+  ): Promise<AIRecommendationRecord | null> {
+    return this.store.get(userId, weekId);
   }
 }
