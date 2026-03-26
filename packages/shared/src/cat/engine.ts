@@ -13,6 +13,10 @@ export interface EnvThresholds {
   CAT_STAGE_SENIOR_DAYS: number;
   CAT_STAGE_VETERAN_DAYS: number;
   CAT_STAGE_LEGACY_DAYS: number;
+  CAT_COST_FEED: number;
+  CAT_COST_WASH: number;
+  CAT_COST_PLAY: number;
+  CAT_COST_HEAL: number;
 }
 
 const MS_PER_HOUR = 60 * 60 * 1000;
@@ -31,6 +35,10 @@ const DEFAULT_THRESHOLDS: EnvThresholds = {
   CAT_STAGE_SENIOR_DAYS: 210,
   CAT_STAGE_VETERAN_DAYS: 280,
   CAT_STAGE_LEGACY_DAYS: 365,
+  CAT_COST_FEED: 100,
+  CAT_COST_WASH: 150,
+  CAT_COST_PLAY: 200,
+  CAT_COST_HEAL: 1000,
 };
 
 /**
