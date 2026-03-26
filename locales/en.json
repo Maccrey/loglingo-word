@@ -96,6 +96,7 @@
   "leaderboard.focused_position": "Selected User",
   "leaderboard.nearby": "Nearby Rank",
   "leaderboard.back_to_me": "Back to My Position",
+  "leaderboard.back_previous": "Back to Previous User",
   "leaderboard.empty": "There is no leaderboard data yet.",
   "settings.title": "Settings",
   "settings.heading": "Settings",

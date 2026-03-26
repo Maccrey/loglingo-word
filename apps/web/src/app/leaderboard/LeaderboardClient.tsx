@@ -75,12 +75,35 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     pendingScoreDelta
   } = props;
   const [activeFocusedUserId, setActiveFocusedUserId] = useState(focusedUserId);
+  const [focusHistory, setFocusHistory] = useState<string[]>([]);
   const currentWeek = getLeaderboardWeek('2026-03-25T12:00:00.000Z');
   const focusedEntry =
     entries.find((entry) => entry.userId === activeFocusedUserId) ?? null;
   const isViewingOwnEntry = activeFocusedUserId === currentUserId;
   const focusedWindow = getFocusedWindow(entries, activeFocusedUserId);
   const [viewMode, setViewMode] = useState<'all' | 'nearby'>('all');
+
+  function moveFocus(nextUserId: string) {
+    if (nextUserId === activeFocusedUserId) {
+      return;
+    }
+
+    setFocusHistory((current) => [...current, activeFocusedUserId]);
+    setActiveFocusedUserId(nextUserId);
+  }
+
+  function restorePreviousFocus() {
+    setFocusHistory((current) => {
+      const previousUserId = current.at(-1);
+
+      if (!previousUserId) {
+        return current;
+      }
+
+      setActiveFocusedUserId(previousUserId);
+      return current.slice(0, -1);
+    });
+  }
 
   return (
     <main style={surfaceStyle}>
@@ -168,6 +191,22 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                   >
                     {t(locale, 'leaderboard.view_nearby')}
                   </button>
+                  {focusHistory.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={restorePreviousFocus}
+                      style={{
+                        borderRadius: 999,
+                        border: '1px solid var(--border-pencil)',
+                        padding: '8px 14px',
+                        background: 'var(--accent-yellow)',
+                        color: 'var(--text-ink)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {t(locale, 'leaderboard.back_previous')}
+                    </button>
+                  ) : null}
                 </div>
               </section>
             ) : null}
@@ -181,8 +220,10 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                     const isFocused = entry.userId === activeFocusedUserId;
 
                     return (
-                      <article
+                      <button
+                        type="button"
                         key={`${entry.weekId}-${entry.userId}`}
+                        onClick={() => moveFocus(entry.userId)}
                         data-current-user={isCurrentUser ? 'true' : 'false'}
                         data-focused-user={isFocused ? 'true' : 'false'}
                         style={{
@@ -192,6 +233,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                           gridTemplateColumns: '72px 1fr auto',
                           gap: 12,
                           alignItems: 'center',
+                          width: '100%',
                           color: 'var(--text-ink)',
                           background: isCurrentUser
                             ? 'var(--accent-pink)'
@@ -200,13 +242,15 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                               : 'transparent',
                           border: isFocused
                             ? '2px solid var(--border-pencil)'
-                            : '1px solid var(--border-pencil)'
+                            : '1px solid var(--border-pencil)',
+                          cursor: 'pointer',
+                          textAlign: 'left'
                         }}
                       >
                         <strong>#{entry.rank}</strong>
                         <span>{isCurrentUser ? '나' : entry.userId}</span>
                         <strong>{entry.score} pt</strong>
-                      </article>
+                      </button>
                     );
                   })}
                 </div>
@@ -258,8 +302,10 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                     const isFocused = entry.userId === activeFocusedUserId;
 
                     return (
-                      <article
+                      <button
+                        type="button"
                         key={`nearby-${entry.weekId}-${entry.userId}`}
+                        onClick={() => moveFocus(entry.userId)}
                         data-nearby-user={isFocused ? 'true' : 'false'}
                         style={{
                           borderRadius: 16,
@@ -268,19 +314,22 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                           gridTemplateColumns: '56px 1fr auto',
                           gap: 10,
                           alignItems: 'center',
+                          width: '100%',
                           color: 'var(--text-ink)',
                           background: isFocused
                             ? 'var(--accent-blue)'
                             : isCurrentUser
                               ? 'var(--accent-pink)'
                               : 'transparent',
-                          border: '1px solid var(--border-pencil)'
+                          border: '1px solid var(--border-pencil)',
+                          cursor: 'pointer',
+                          textAlign: 'left'
                         }}
                       >
                         <strong>#{entry.rank}</strong>
                         <span>{isCurrentUser ? '나' : entry.userId}</span>
                         <strong>{entry.score} pt</strong>
-                      </article>
+                      </button>
                     );
                   })}
                 </div>

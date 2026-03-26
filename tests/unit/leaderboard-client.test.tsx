@@ -102,6 +102,29 @@ describe('leaderboard ui', () => {
     expect(screen.getByText('현재 순위 #1 · 6pt')).toBeTruthy();
   });
 
+  it('returns to the previous focused user from history', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2'
+    });
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /나/ }));
+    await user.click(
+      screen.getByRole('button', { name: '이전 사용자로 돌아가기' })
+    );
+
+    expect(screen.getByText('선택한 사용자')).toBeTruthy();
+    expect(screen.getByText('user-2 순위 #2 · 4pt')).toBeTruthy();
+  });
+
   it('shows a fallback when the leaderboard is empty', () => {
     render(<LeaderboardClient entries={[]} />);
 
