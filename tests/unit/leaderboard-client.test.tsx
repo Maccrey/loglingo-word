@@ -186,6 +186,9 @@ describe('leaderboard ui', () => {
     await user.click(screen.getByRole('button', { name: '현재 뷰 링크 복사' }));
 
     expect(writeText).toHaveBeenCalledWith(expectedUrl);
+    expect(
+      screen.getByText('user-2의 현재 순위는 #2, 점수는 4pt입니다.')
+    ).toBeTruthy();
     expect(screen.getByText('현재 리더보드 링크를 복사했습니다.')).toBeTruthy();
   });
 
@@ -221,7 +224,7 @@ describe('leaderboard ui', () => {
 
     expect(share).toHaveBeenCalledWith({
       title: '주간 리더보드',
-      text: '현재 보고 있는 리더보드 뷰를 공유해보세요.',
+      text: 'user-2의 현재 순위는 #2, 점수는 4pt입니다.',
       url: `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
     });
     expect(
@@ -259,14 +262,16 @@ describe('leaderboard ui', () => {
 
     await user.click(screen.getByRole('button', { name: '현재 뷰 공유' }));
 
+    const externalShareUrl = new URL(String(open.mock.calls[0]?.[0]));
+
     expect(open).toHaveBeenCalledTimes(1);
-    expect(open.mock.calls[0]?.[0]).toContain(
-      'https://twitter.com/intent/tweet'
+    expect(externalShareUrl.origin).toBe('https://twitter.com');
+    expect(externalShareUrl.pathname).toBe('/intent/tweet');
+    expect(externalShareUrl.searchParams.get('text')).toBe(
+      'user-2의 현재 순위는 #2, 점수는 4pt입니다.'
     );
-    expect(open.mock.calls[0]?.[0]).toContain(
-      encodeURIComponent(
-        `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
-      )
+    expect(externalShareUrl.searchParams.get('url')).toBe(
+      `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
     );
     expect(
       screen.getByText('현재 리더보드 공유 화면을 열었습니다.')

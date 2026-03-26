@@ -70,6 +70,24 @@ function getFocusedWindow(
   return entries.slice(Math.max(0, focusedIndex - 1), focusedIndex + 2);
 }
 
+function getSharePreviewText(
+  entry: LeaderboardEntryRecord | null,
+  currentUserId: string,
+  locale: AppLocale
+) {
+  if (!entry) {
+    return t(locale, 'leaderboard.share_message');
+  }
+
+  const displayName =
+    entry.userId === currentUserId ? t(locale, 'leaderboard.me') : entry.userId;
+
+  return t(locale, 'leaderboard.share_preview')
+    .replace('{user}', displayName)
+    .replace('{rank}', String(entry.rank))
+    .replace('{score}', String(entry.score));
+}
+
 export default function LeaderboardClient(props: LeaderboardClientProps) {
   const locale: AppLocale = 'ko';
   const {
@@ -88,6 +106,11 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const focusedWindow = getFocusedWindow(entries, activeFocusedUserId);
   const [viewMode, setViewMode] = useState<'all' | 'nearby'>(initialViewMode);
   const [shareStatus, setShareStatus] = useState<ShareStatus>('idle');
+  const sharePreviewText = getSharePreviewText(
+    focusedEntry,
+    currentUserId,
+    locale
+  );
 
   function getCurrentViewUrl() {
     return window.location.href;
@@ -98,7 +121,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
 
     return {
       title: t(locale, 'leaderboard.heading'),
-      text: t(locale, 'leaderboard.share_message'),
+      text: sharePreviewText,
       url: shareUrl
     };
   }
@@ -223,6 +246,9 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
             {focusedWindow.length > 0 ? (
               <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
                 <div style={badgeStyle}>{t(locale, 'leaderboard.view')}</div>
+                <p style={{ margin: 0, color: 'var(--text-faded)' }}>
+                  {sharePreviewText}
+                </p>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   <button
                     type="button"
