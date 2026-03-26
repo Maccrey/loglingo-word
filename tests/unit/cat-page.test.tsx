@@ -16,6 +16,11 @@ describe('cat detail page', () => {
     render(<CatDetailScreen />);
 
     expect(screen.getByText('나비 상세 정보')).toBeTruthy();
+    expect(
+      screen.getByText(
+        '나비가 안정적인 상태예요. 지금처럼 학습과 돌봄을 이어가면 됩니다.'
+      )
+    ).toBeTruthy();
     expect(screen.getByText('상태 게이지')).toBeTruthy();
     expect(screen.getByRole('button', { name: /밥주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /놀아주기/ })).toBeTruthy();
