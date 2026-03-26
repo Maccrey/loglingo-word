@@ -60,6 +60,20 @@ describe('home dashboard', () => {
     expect(quickStart.getAttribute('href')).toBe('/learn');
   });
 
+  it('renders the cat card and quick start panel in the same feature row', () => {
+    const { container } = render(<HomeDashboard />);
+
+    const featureRow = container.querySelector('.home-feature-row');
+    const catArea = container.querySelector('.home-feature-row__cat');
+    const quickArea = container.querySelector('.home-feature-row__quick');
+
+    expect(featureRow).toBeTruthy();
+    expect(catArea).toBeTruthy();
+    expect(quickArea).toBeTruthy();
+    expect(featureRow?.contains(catArea ?? null)).toBe(true);
+    expect(featureRow?.contains(quickArea ?? null)).toBe(true);
+  });
+
   it('shows the loading state when dashboard data is pending', () => {
     render(<HomeDashboard loading />);
 
