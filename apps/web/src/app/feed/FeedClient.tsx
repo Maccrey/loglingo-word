@@ -101,7 +101,44 @@ export default function FeedClient(props: FeedClientProps) {
     awardedIds: [],
     totalPoints: 0
   });
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
+  const [shareRewardMessage, setShareRewardMessage] = useState<string | null>(
+    null
+  );
+  const [shareFlowMessage, setShareFlowMessage] = useState<string | null>(null);
+
+  function getSharePreviewText(post: LearningResultPost) {
+    return t(locale, 'feed.share_preview')
+      .replace('{user}', post.userId)
+      .replace('{points}', String(post.earnedPoints))
+      .replace('{streak}', String(post.streak));
+  }
+
+  function getShareData(post: LearningResultPost) {
+    return {
+      title: t(locale, 'feed.heading'),
+      text: getSharePreviewText(post),
+      url: window.location.href
+    };
+  }
+
+  async function sharePost(post: LearningResultPost) {
+    const shareData = getShareData(post);
+
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share(shareData);
+      } else {
+        const shareIntentUrl = new URL('https://twitter.com/intent/tweet');
+        shareIntentUrl.searchParams.set('text', shareData.text);
+        shareIntentUrl.searchParams.set('url', shareData.url);
+        window.open(shareIntentUrl.toString(), '_blank', 'noopener,noreferrer');
+      }
+
+      setShareFlowMessage(t(locale, 'feed.share_external_success'));
+    } catch {
+      setShareFlowMessage(t(locale, 'feed.share_error'));
+    }
+  }
 
   return (
     <main style={surfaceStyle}>
@@ -155,6 +192,9 @@ export default function FeedClient(props: FeedClientProps) {
                 </div>
               </div>
               <p style={{ margin: 0, lineHeight: 1.7 }}>{post.body}</p>
+              <p style={{ margin: 0, color: 'var(--text-faded)', fontSize: 14 }}>
+                {getSharePreviewText(post)}
+              </p>
               {post.achievedSentence ? (
                 <div
                   style={{
@@ -203,7 +243,7 @@ export default function FeedClient(props: FeedClientProps) {
                     );
                     setRewardLedger((current: RewardLedger) => {
                       const reward = applyShareQuestReward(post.id, current);
-                      setShareMessage(
+                      setShareRewardMessage(
                         reward.points > 0
                           ? `${t(locale, 'feed.share_reward')} +${reward.points}pt`
                           : t(locale, 'feed.share_reward_claimed')
@@ -211,6 +251,7 @@ export default function FeedClient(props: FeedClientProps) {
                       return reward.ledger;
                     });
                     props.onShare?.(post);
+                    void sharePost(post);
                   }}
                   style={{
                     borderRadius: 999,
@@ -233,9 +274,14 @@ export default function FeedClient(props: FeedClientProps) {
           <p style={{ margin: 0 }}>
             {t(locale, 'feed.total_reward_points')} {rewardLedger.totalPoints}pt
           </p>
-          {shareMessage ? (
+          {shareRewardMessage ? (
             <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>
-              {shareMessage}
+              {shareRewardMessage}
+            </p>
+          ) : null}
+          {shareFlowMessage ? (
+            <p role="alert" style={{ margin: 0, color: '#2d7a4d' }}>
+              {shareFlowMessage}
             </p>
           ) : null}
         </section>
