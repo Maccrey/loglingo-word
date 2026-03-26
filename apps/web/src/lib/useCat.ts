@@ -3,6 +3,7 @@ import {
   type Cat, 
   type PointLedger, 
   type EnvThresholds,
+  type ActionResult,
   calculateCatStatus,
   calculateCatStage,
   feedCat,
@@ -90,7 +91,12 @@ export function useCat() {
 
   // Action Helpers
   const performAction = useCallback((
-    actionFn: (c: Cat, pts: number, time: number, env: EnvThresholds) => { cat: Cat; cost: number } | null,
+    actionFn: (
+      c: Cat,
+      pts: number,
+      time: number,
+      env: EnvThresholds
+    ) => ActionResult,
     reasonInfo: string
   ) => {
     if (!cat) return false;
@@ -99,12 +105,12 @@ export function useCat() {
       const updatedCatBeforeAction = calculateGrowthDays(cat, now, MOCK_ENV as EnvThresholds);
       
       const res = actionFn(updatedCatBeforeAction, points, now, MOCK_ENV as EnvThresholds);
-      if (!res) {
+      if (!res.success) {
         // failed (e.g. not enough points or already dead)
         return false;
       }
 
-      const newCat = res.cat;
+      const newCat = res.newCat;
       const ledgerEntry = createPointLedgerEntry(newCat.userId, -res.cost, reasonInfo as any, now);
       
       const newLedgers = [...ledgers, ledgerEntry];
