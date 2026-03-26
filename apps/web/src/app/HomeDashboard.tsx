@@ -453,7 +453,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                 {optimisticLeaderboardPreview.topEntries.map((entry) => (
                   <Link
                     key={`${optimisticLeaderboardPreview.weekId}-${entry.userId}`}
-                    href={`/leaderboard?userId=${encodeURIComponent(entry.userId)}`}
+                    href={`/leaderboard?userId=${encodeURIComponent(
+                      entry.userId
+                    )}&view=nearby`}
                     aria-label={`리더보드에서 ${entry.isCurrentUser ? '나' : entry.userId} 보기`}
                     style={{
                       display: 'grid',

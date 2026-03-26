@@ -50,7 +50,7 @@ describe('home dashboard', () => {
       screen
         .getByRole('link', { name: '리더보드에서 user-2 보기' })
         .getAttribute('href')
-    ).toBe('/leaderboard?userId=user-2');
+    ).toBe('/leaderboard?userId=user-2&view=nearby');
   });
 
   it('renders a quick start link to the study flow', () => {
