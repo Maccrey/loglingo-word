@@ -74,11 +74,12 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     focusedUserId = currentUserId,
     pendingScoreDelta
   } = props;
+  const [activeFocusedUserId, setActiveFocusedUserId] = useState(focusedUserId);
   const currentWeek = getLeaderboardWeek('2026-03-25T12:00:00.000Z');
   const focusedEntry =
-    entries.find((entry) => entry.userId === focusedUserId) ?? null;
-  const isViewingOwnEntry = focusedUserId === currentUserId;
-  const focusedWindow = getFocusedWindow(entries, focusedUserId);
+    entries.find((entry) => entry.userId === activeFocusedUserId) ?? null;
+  const isViewingOwnEntry = activeFocusedUserId === currentUserId;
+  const focusedWindow = getFocusedWindow(entries, activeFocusedUserId);
   const [viewMode, setViewMode] = useState<'all' | 'nearby'>('all');
 
   return (
@@ -177,7 +178,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                 <div style={{ display: 'grid', gap: 10 }}>
                   {entries.map((entry) => {
                     const isCurrentUser = entry.userId === currentUserId;
-                    const isFocused = entry.userId === focusedUserId;
+                    const isFocused = entry.userId === activeFocusedUserId;
 
                     return (
                       <article
@@ -225,6 +226,26 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                     : `${focusedEntry.userId} 순위`}{' '}
                   #{focusedEntry.rank} · {focusedEntry.score}pt
                 </p>
+                {!isViewingOwnEntry ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveFocusedUserId(currentUserId);
+                      setViewMode('all');
+                    }}
+                    style={{
+                      width: 'fit-content',
+                      borderRadius: 999,
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 14px',
+                      background: 'var(--accent-pink)',
+                      color: 'var(--text-ink)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {t(locale, 'leaderboard.back_to_me')}
+                  </button>
+                ) : null}
               </section>
             ) : null}
 
@@ -234,7 +255,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                 <div style={{ display: 'grid', gap: 10 }}>
                   {focusedWindow.map((entry) => {
                     const isCurrentUser = entry.userId === currentUserId;
-                    const isFocused = entry.userId === focusedUserId;
+                    const isFocused = entry.userId === activeFocusedUserId;
 
                     return (
                       <article
