@@ -26,4 +26,21 @@ describe('parseEnv', () => {
       })
     ).toThrow();
   });
+
+  it('applies default values for cat and point configurations', () => {
+    const parsed = parseEnv(validEnv);
+    expect(parsed.CAT_STAGE_JUNIOR_DAYS).toBe(30);
+    expect(parsed.CAT_STAGE_LEGACY_DAYS).toBe(365);
+    expect(parsed.POINTS_LEARNING_BASE).toBe(500);
+    expect(parsed.CAT_COST_HEAL).toBe(1000);
+    expect(parsed.CAT_DEAD_DAYS).toBe(3);
+  });
+
+  it('coerces string numbers for cat and point configurations', () => {
+    const parsed = parseEnv({
+      ...validEnv,
+      CAT_STAGE_JUNIOR_DAYS: '40',
+    });
+    expect(parsed.CAT_STAGE_JUNIOR_DAYS).toBe(40);
+  });
 });

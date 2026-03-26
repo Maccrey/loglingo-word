@@ -8,7 +8,8 @@
     "./curriculum": "./src/curriculum.ts",
     "./env": "./src/env.ts",
     "./languages": "./src/languages.ts",
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./cat": "./src/cat/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
