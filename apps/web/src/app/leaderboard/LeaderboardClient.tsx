@@ -16,7 +16,7 @@ type LeaderboardClientProps = {
   pendingScoreDelta?: number;
 };
 
-type ShareStatus = 'idle' | 'copied' | 'error';
+type ShareStatus = 'idle' | 'copied' | 'shared' | 'error';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -89,6 +89,20 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const [viewMode, setViewMode] = useState<'all' | 'nearby'>(initialViewMode);
   const [shareStatus, setShareStatus] = useState<ShareStatus>('idle');
 
+  function getCurrentViewUrl() {
+    return window.location.href;
+  }
+
+  function getCurrentViewShareData() {
+    const shareUrl = getCurrentViewUrl();
+
+    return {
+      title: t(locale, 'leaderboard.heading'),
+      text: t(locale, 'leaderboard.share_message'),
+      url: shareUrl
+    };
+  }
+
   function moveFocus(nextUserId: string) {
     if (nextUserId === activeFocusedUserId) {
       return;
@@ -113,8 +127,27 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
 
   async function copyCurrentViewLink() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(getCurrentViewUrl());
       setShareStatus('copied');
+    } catch {
+      setShareStatus('error');
+    }
+  }
+
+  async function shareCurrentView() {
+    const shareData = getCurrentViewShareData();
+
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share(shareData);
+      } else {
+        const shareIntentUrl = new URL('https://twitter.com/intent/tweet');
+        shareIntentUrl.searchParams.set('text', shareData.text);
+        shareIntentUrl.searchParams.set('url', shareData.url);
+        window.open(shareIntentUrl.toString(), '_blank', 'noopener,noreferrer');
+      }
+
+      setShareStatus('shared');
     } catch {
       setShareStatus('error');
     }
@@ -259,20 +292,38 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                   >
                     {t(locale, 'leaderboard.share_view')}
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void shareCurrentView();
+                    }}
+                    style={{
+                      borderRadius: 999,
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 14px',
+                      background: 'var(--accent-pink)',
+                      color: 'var(--text-ink)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {t(locale, 'leaderboard.share_external')}
+                  </button>
                 </div>
                 {shareStatus !== 'idle' ? (
                   <p
                     style={{
                       margin: 0,
                       color:
-                        shareStatus === 'copied'
+                        shareStatus === 'copied' || shareStatus === 'shared'
                           ? '#2d7a4d'
                           : 'var(--accent-red)'
                     }}
                   >
                     {shareStatus === 'copied'
                       ? t(locale, 'leaderboard.share_success')
-                      : t(locale, 'leaderboard.share_error')}
+                      : shareStatus === 'shared'
+                        ? t(locale, 'leaderboard.share_external_success')
+                        : t(locale, 'leaderboard.share_error')}
                   </p>
                 ) : null}
               </section>

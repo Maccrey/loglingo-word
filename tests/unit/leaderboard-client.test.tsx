@@ -11,6 +11,7 @@ import { buildLeaderboardPageState } from '../../apps/web/src/app/leaderboard/st
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 describe('leaderboard ui', () => {
@@ -186,6 +187,90 @@ describe('leaderboard ui', () => {
 
     expect(writeText).toHaveBeenCalledWith(expectedUrl);
     expect(screen.getByText('현재 리더보드 링크를 복사했습니다.')).toBeTruthy();
+  });
+
+  it('shares the current focused leaderboard view with the web share api', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2',
+      view: 'nearby'
+    });
+    const share = vi.fn().mockResolvedValue(undefined);
+
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share
+    });
+
+    window.history.replaceState(
+      null,
+      '',
+      '/leaderboard?userId=user-2&view=nearby'
+    );
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+        initialViewMode={state.initialViewMode}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: '현재 뷰 공유' }));
+
+    expect(share).toHaveBeenCalledWith({
+      title: '주간 리더보드',
+      text: '현재 보고 있는 리더보드 뷰를 공유해보세요.',
+      url: `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
+    });
+    expect(
+      screen.getByText('현재 리더보드 공유 화면을 열었습니다.')
+    ).toBeTruthy();
+  });
+
+  it('falls back to an external share url when web share is unavailable', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2',
+      view: 'nearby'
+    });
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: undefined
+    });
+
+    window.history.replaceState(
+      null,
+      '',
+      '/leaderboard?userId=user-2&view=nearby'
+    );
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+        initialViewMode={state.initialViewMode}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: '현재 뷰 공유' }));
+
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open.mock.calls[0]?.[0]).toContain(
+      'https://twitter.com/intent/tweet'
+    );
+    expect(open.mock.calls[0]?.[0]).toContain(
+      encodeURIComponent(
+        `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
+      )
+    );
+    expect(
+      screen.getByText('현재 리더보드 공유 화면을 열었습니다.')
+    ).toBeTruthy();
   });
 
   it('shows a fallback when the leaderboard is empty', () => {
