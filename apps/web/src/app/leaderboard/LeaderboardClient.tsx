@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 import { type LeaderboardEntryRecord } from '@wordflow/leaderboard';
@@ -79,6 +79,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     entries.find((entry) => entry.userId === focusedUserId) ?? null;
   const isViewingOwnEntry = focusedUserId === currentUserId;
   const focusedWindow = getFocusedWindow(entries, focusedUserId);
+  const [viewMode, setViewMode] = useState<'all' | 'nearby'>('all');
 
   return (
     <main style={surfaceStyle}>
@@ -126,44 +127,90 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
           </section>
         ) : (
           <>
-            <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
-              <div style={badgeStyle}>{t(locale, 'leaderboard.ranking')}</div>
-              <div style={{ display: 'grid', gap: 10 }}>
-                {entries.map((entry) => {
-                  const isCurrentUser = entry.userId === currentUserId;
-                  const isFocused = entry.userId === focusedUserId;
+            {focusedWindow.length > 0 ? (
+              <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
+                <div style={badgeStyle}>{t(locale, 'leaderboard.view')}</div>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('all')}
+                    aria-pressed={viewMode === 'all'}
+                    style={{
+                      borderRadius: 999,
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 14px',
+                      background:
+                        viewMode === 'all'
+                          ? 'var(--accent-blue)'
+                          : 'transparent',
+                      color: 'var(--text-ink)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {t(locale, 'leaderboard.view_all')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('nearby')}
+                    aria-pressed={viewMode === 'nearby'}
+                    style={{
+                      borderRadius: 999,
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 14px',
+                      background:
+                        viewMode === 'nearby'
+                          ? 'var(--accent-blue)'
+                          : 'transparent',
+                      color: 'var(--text-ink)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {t(locale, 'leaderboard.view_nearby')}
+                  </button>
+                </div>
+              </section>
+            ) : null}
 
-                  return (
-                    <article
-                      key={`${entry.weekId}-${entry.userId}`}
-                      data-current-user={isCurrentUser ? 'true' : 'false'}
-                      data-focused-user={isFocused ? 'true' : 'false'}
-                      style={{
-                        borderRadius: 20,
-                        padding: '16px 18px',
-                        display: 'grid',
-                        gridTemplateColumns: '72px 1fr auto',
-                        gap: 12,
-                        alignItems: 'center',
-                        color: 'var(--text-ink)',
-                        background: isCurrentUser
-                          ? 'var(--accent-pink)'
-                          : isFocused
-                            ? 'var(--accent-blue)'
-                            : 'transparent',
-                        border: isFocused
-                          ? '2px solid var(--border-pencil)'
-                          : '1px solid var(--border-pencil)'
-                      }}
-                    >
-                      <strong>#{entry.rank}</strong>
-                      <span>{isCurrentUser ? '나' : entry.userId}</span>
-                      <strong>{entry.score} pt</strong>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
+            {viewMode === 'all' ? (
+              <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
+                <div style={badgeStyle}>{t(locale, 'leaderboard.ranking')}</div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {entries.map((entry) => {
+                    const isCurrentUser = entry.userId === currentUserId;
+                    const isFocused = entry.userId === focusedUserId;
+
+                    return (
+                      <article
+                        key={`${entry.weekId}-${entry.userId}`}
+                        data-current-user={isCurrentUser ? 'true' : 'false'}
+                        data-focused-user={isFocused ? 'true' : 'false'}
+                        style={{
+                          borderRadius: 20,
+                          padding: '16px 18px',
+                          display: 'grid',
+                          gridTemplateColumns: '72px 1fr auto',
+                          gap: 12,
+                          alignItems: 'center',
+                          color: 'var(--text-ink)',
+                          background: isCurrentUser
+                            ? 'var(--accent-pink)'
+                            : isFocused
+                              ? 'var(--accent-blue)'
+                              : 'transparent',
+                          border: isFocused
+                            ? '2px solid var(--border-pencil)'
+                            : '1px solid var(--border-pencil)'
+                        }}
+                      >
+                        <strong>#{entry.rank}</strong>
+                        <span>{isCurrentUser ? '나' : entry.userId}</span>
+                        <strong>{entry.score} pt</strong>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : null}
 
             {focusedEntry ? (
               <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
@@ -181,7 +228,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
               </section>
             ) : null}
 
-            {focusedWindow.length > 0 ? (
+            {focusedWindow.length > 0 && viewMode === 'nearby' ? (
               <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
                 <div style={badgeStyle}>{t(locale, 'leaderboard.nearby')}</div>
                 <div style={{ display: 'grid', gap: 10 }}>

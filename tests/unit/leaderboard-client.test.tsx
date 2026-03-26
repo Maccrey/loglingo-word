@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import { InMemoryLeaderboardRepository } from '../../services/leaderboard/src';
 
@@ -52,9 +53,31 @@ describe('leaderboard ui', () => {
     expect(focusedUserCard?.textContent).toContain('user-2');
     expect(focusedUserCard?.textContent).not.toContain('나');
     expect(screen.getByText('선택한 사용자')).toBeTruthy();
-    expect(screen.getByText('주변 순위')).toBeTruthy();
     expect(screen.getAllByText('#1').length).toBeGreaterThan(0);
     expect(screen.getAllByText('#2').length).toBeGreaterThan(0);
+  });
+
+  it('toggles between full ranking and nearby ranking views', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2'
+    });
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+      />
+    );
+
+    expect(screen.getByText('랭킹')).toBeTruthy();
+    expect(screen.queryByText('주변 순위')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: '주변 순위 보기' }));
+
+    expect(screen.getByText('주변 순위')).toBeTruthy();
+    expect(screen.queryByText('랭킹')).toBeNull();
   });
 
   it('shows a fallback when the leaderboard is empty', () => {
