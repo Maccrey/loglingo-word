@@ -45,4 +45,19 @@ describe('flashcards ui', () => {
     expect(screen.getByText('카드 1 / 2')).toBeTruthy();
     expect(screen.getByText('추천 단어 2개')).toBeTruthy();
   });
+
+  it('shows a share link after completing a focused recommendation session', async () => {
+    const user = userEvent.setup();
+
+    render(<FlashcardsClient focusWordIds={['passport']} />);
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+
+    expect(
+      screen
+        .getByRole('link', { name: '추천 학습 결과 공유' })
+        .getAttribute('href')
+    ).toBe('/feed?source=recommendation&completed=1&points=4&words=passport');
+  });
 });

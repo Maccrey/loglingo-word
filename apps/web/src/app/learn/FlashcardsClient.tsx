@@ -95,6 +95,12 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   const reviewedCount = session.logs.length;
   const totalCount = session.cards.length;
   const completed = currentCard === null;
+  const shareHref =
+    props.focusWordIds && props.focusWordIds.length > 0
+      ? `/feed?source=recommendation&completed=${reviewedCount}&points=${reviewedCount * 4}&words=${encodeURIComponent(
+          props.focusWordIds.join(',')
+        )}`
+      : null;
 
   return (
     <main style={surfaceStyle}>
@@ -169,9 +175,16 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               <p style={{ margin: 0, color: 'rgba(247, 243, 234, 0.75)' }}>
                 마지막 난이도 선택: {session.lastRating ?? '없음'}
               </p>
-              <Link href="/" style={{ color: '#f7d487' }}>
-                홈으로 돌아가기
-              </Link>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <Link href="/" style={{ color: '#f7d487' }}>
+                  홈으로 돌아가기
+                </Link>
+                {shareHref ? (
+                  <Link href={shareHref} style={{ color: '#8ce7ff' }}>
+                    추천 학습 결과 공유
+                  </Link>
+                ) : null}
+              </div>
             </div>
           ) : (
             <>
