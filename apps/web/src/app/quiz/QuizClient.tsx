@@ -15,8 +15,8 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f8eedf 0%, #ffd8b6 18%, #143042 100%)',
-  color: '#f9f5ef'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -24,39 +24,41 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 980,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.76)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(255, 245, 215, 0.15)',
-  color: '#ffd699',
+  padding: '6px 12px',
+  background: 'var(--accent-yellow)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 function feedbackColor(status: 'idle' | 'success' | 'error'): string {
   if (status === 'success') {
-    return '#d5ff74';
+    return '#2d7a4d';
   }
 
   if (status === 'error') {
-    return '#ff9f8f';
+    return '#d32f2f';
   }
 
-  return 'rgba(249, 245, 239, 0.72)';
+  return 'var(--text-faded)';
 }
 
 export default function QuizClient() {
@@ -77,13 +79,13 @@ export default function QuizClient() {
                 margin: 0,
                 maxWidth: 620,
                 lineHeight: 1.6,
-                color: 'rgba(249, 245, 239, 0.8)'
+                color: 'var(--text-faded)'
               }}
             >
               {t(locale, 'quiz.description')}
             </p>
           </div>
-          <Link href="/learn" style={{ color: '#ffd699' }}>
+          <Link href="/learn" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'learn.title')}
           </Link>
         </section>
@@ -105,16 +107,16 @@ export default function QuizClient() {
                     )
                   }
                   style={{
-                    borderRadius: 18,
+                    borderRadius: 16,
                     border: selected
-                      ? '2px solid #ffd699'
-                      : '1px solid rgba(255,255,255,0.12)',
+                      ? '2px solid var(--text-ink)'
+                      : '1px solid var(--border-pencil)',
                     padding: '16px 18px',
                     textAlign: 'left',
                     background: selected
-                      ? 'rgba(255, 214, 153, 0.18)'
-                      : 'rgba(255,255,255,0.04)',
-                    color: '#f9f5ef',
+                      ? 'var(--accent-yellow)'
+                      : 'var(--bg-paper)',
+                    color: 'var(--text-ink)',
                     cursor: 'pointer'
                   }}
                 >
@@ -133,14 +135,15 @@ export default function QuizClient() {
               }));
             }}
             style={{
-              border: 0,
-              borderRadius: 18,
-              padding: '16px 18px',
+              border: '1px solid var(--btn-primary-border)',
+              borderRadius: 999,
+              padding: '12px 24px',
               fontSize: 16,
               fontWeight: 700,
-              background: '#ffd699',
-              color: '#2d1b0e',
-              cursor: 'pointer'
+              background: 'var(--btn-primary-bg)',
+              color: '#fff',
+              cursor: 'pointer',
+              boxShadow: 'var(--shadow-card)'
             }}
           >
             {session.loading
@@ -153,7 +156,7 @@ export default function QuizClient() {
           <span style={badgeStyle}>{t(locale, 'quiz.short_answer')}</span>
           <h2 style={{ margin: 0 }}>{t(locale, 'quiz.short_answer')}</h2>
           <label style={{ display: 'grid', gap: 8 }}>
-            <span style={{ color: 'rgba(249, 245, 239, 0.72)' }}>
+            <span style={{ color: 'var(--text-faded)' }}>
               뜻: {session.multipleChoiceQuiz.word.meaning}
             </span>
             <input
@@ -167,10 +170,11 @@ export default function QuizClient() {
               placeholder={t(locale, 'quiz.title')}
               style={{
                 borderRadius: 16,
-                border: '1px solid rgba(255,255,255,0.18)',
+                border: '1px solid var(--border-pencil)',
                 padding: '14px 16px',
-                background: 'rgba(255,255,255,0.06)',
-                color: '#f9f5ef'
+                background: 'var(--bg-paper)',
+                color: 'var(--text-ink)',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
               }}
             />
           </label>
@@ -184,14 +188,15 @@ export default function QuizClient() {
               }));
             }}
             style={{
-              border: 0,
-              borderRadius: 18,
-              padding: '16px 18px',
+              border: '1px solid var(--btn-primary-border)',
+              borderRadius: 999,
+              padding: '12px 24px',
               fontSize: 16,
               fontWeight: 700,
-              background: '#8ce7ff',
-              color: '#0f2231',
-              cursor: 'pointer'
+              background: 'var(--btn-primary-bg)',
+              color: '#fff',
+              cursor: 'pointer',
+              boxShadow: 'var(--shadow-card)'
             }}
           >
             {session.loading
@@ -200,7 +205,7 @@ export default function QuizClient() {
           </button>
 
           {session.shortAnswerGrade ? (
-            <p style={{ margin: 0, color: 'rgba(249, 245, 239, 0.72)' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               오타 거리 {session.shortAnswerGrade.distance} / 허용{' '}
               {session.shortAnswerGrade.allowedTypos}
             </p>

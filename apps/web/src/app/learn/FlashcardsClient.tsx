@@ -17,9 +17,8 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background:
-    'radial-gradient(circle at top, rgba(255, 244, 214, 0.95), rgba(242, 107, 76, 0.12) 36%, rgba(19, 31, 44, 0.96) 100%)',
-  color: '#f7f3ea'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -27,16 +26,15 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 960,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.72)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)',
-  backdropFilter: 'blur(14px)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)',
 };
 
 const badgeStyle: Record<string, string | number> = {
@@ -45,12 +43,14 @@ const badgeStyle: Record<string, string | number> = {
   gap: 8,
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
+  padding: '6px 12px',
   fontSize: 13,
-  letterSpacing: '0.08em',
+  letterSpacing: '0.04em',
   textTransform: 'uppercase',
-  background: 'rgba(247, 190, 88, 0.14)',
-  color: '#f7d487'
+  fontWeight: 600,
+  background: 'var(--accent-pink)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)'
 };
 
 const ratingButtonPalette: Record<
@@ -58,16 +58,16 @@ const ratingButtonPalette: Record<
   { background: string; color: string }
 > = {
   easy: {
-    background: '#d5ff74',
-    color: '#172110'
+    background: 'var(--accent-green)',
+    color: 'var(--text-ink)'
   },
   normal: {
-    background: '#8ce7ff',
-    color: '#0f2231'
+    background: 'var(--accent-blue)',
+    color: 'var(--text-ink)'
   },
   hard: {
-    background: '#ff8b7b',
-    color: '#35110d'
+    background: 'var(--accent-orange)',
+    color: 'var(--text-ink)'
   }
 };
 
@@ -141,7 +141,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 style={{
                   margin: 0,
                   maxWidth: 580,
-                  color: 'rgba(247, 243, 234, 0.78)',
+                  color: 'var(--text-faded)',
                   lineHeight: 1.6
                 }}
               >
@@ -161,14 +161,14 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               <strong style={{ fontSize: 32 }}>
                 {reviewedCount}/{totalCount}
               </strong>
-              <span style={{ color: 'rgba(247, 243, 234, 0.72)' }}>
+              <span style={{ color: 'var(--text-faded)' }}>
                 완료한 카드 수
               </span>
-              <span style={{ color: 'rgba(247, 212, 135, 0.86)' }}>
+              <span style={{ color: 'var(--text-faded)' }}>
                 오답 큐 {session.wrongWordQueue.length}개
               </span>
               {props.focusWordIds && props.focusWordIds.length > 0 ? (
-                <span style={{ color: 'rgba(140, 231, 255, 0.9)' }}>
+                <span style={{ color: 'var(--text-faded)' }}>
                   추천 단어 {props.focusWordIds.length}개
                 </span>
               ) : null}
@@ -189,25 +189,25 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               <h2 style={{ margin: 0, fontSize: 34 }}>
                 오늘 학습을 마쳤습니다.
               </h2>
-              <p style={{ margin: 0, color: 'rgba(247, 243, 234, 0.75)' }}>
+              <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                 마지막 난이도 선택: {session.lastRating ?? '없음'}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link href="/" style={{ color: '#f7d487' }}>
+                <Link href="/" style={{ background: 'var(--accent-yellow)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
                   홈으로 돌아가기
                 </Link>
                 {homeHref ? (
-                  <Link href={homeHref} style={{ color: '#b7f8db' }}>
+                  <Link href={homeHref} style={{ background: 'var(--accent-green)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
                     홈 요약 반영 보기
                   </Link>
                 ) : null}
                 {shareHref ? (
-                  <Link href={shareHref} style={{ color: '#8ce7ff' }}>
+                  <Link href={shareHref} style={{ background: 'var(--accent-blue)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
                     추천 학습 결과 공유
                   </Link>
                 ) : null}
                 {leaderboardHref ? (
-                  <Link href={leaderboardHref} style={{ color: '#d9c0ff' }}>
+                  <Link href={leaderboardHref} style={{ background: 'var(--accent-pink)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
                     리더보드 반영 보기
                   </Link>
                 ) : null}
@@ -227,7 +227,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 <span style={badgeStyle}>
                   {reasonLabel(currentCard.reason)}
                 </span>
-                <span style={{ color: 'rgba(247, 243, 234, 0.72)' }}>
+                <span style={{ color: 'var(--text-faded)' }}>
                   카드 {session.currentIndex + 1} / {totalCount}
                 </span>
               </div>
@@ -241,9 +241,9 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                   display: 'grid',
                   gap: 18,
                   alignContent: 'space-between',
-                  background:
-                    'linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05))',
-                  border: '1px solid rgba(255,255,255,0.12)'
+                  background: 'var(--bg-paper)',
+                  border: '1px solid var(--border-pencil)',
+                  boxShadow: 'var(--shadow-card)'
                 }}
               >
                 <div style={{ display: 'grid', gap: 8 }}>
@@ -252,7 +252,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                       fontSize: 12,
                       letterSpacing: '0.18em',
                       textTransform: 'uppercase',
-                      color: 'rgba(247, 243, 234, 0.56)'
+                      color: 'var(--text-faded)'
                     }}
                   >
                     {session.flipped ? 'Meaning' : 'Word'}
@@ -268,7 +268,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                   <p
                     style={{
                       margin: 0,
-                      color: 'rgba(247, 243, 234, 0.82)',
+                      color: 'var(--text-faded)',
                       lineHeight: 1.6
                     }}
                   >
@@ -280,7 +280,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                     <p
                       style={{
                         margin: 0,
-                        color: 'rgba(247, 212, 135, 0.9)'
+                        color: 'var(--text-faded)'
                       }}
                     >
                       난이도를 선택하면 다음 카드로 진행됩니다.
@@ -306,8 +306,9 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                     padding: '16px 18px',
                     fontSize: 16,
                     fontWeight: 700,
-                    background: '#f7d487',
-                    color: '#211609',
+                    background: 'var(--btn-primary-bg)',
+                    color: '#fff',
+                    boxShadow: 'var(--shadow-card)',
                     cursor: 'pointer'
                   }}
                 >
@@ -344,6 +345,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                         background: ratingButtonPalette[rating].background,
                         color: ratingButtonPalette[rating].color,
                         opacity: session.flipped ? 1 : 0.45,
+                        boxShadow: 'var(--shadow-card)',
                         cursor: session.flipped ? 'pointer' : 'not-allowed'
                       }}
                     >

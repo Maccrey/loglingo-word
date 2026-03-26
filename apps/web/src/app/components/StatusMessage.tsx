@@ -14,24 +14,24 @@ function getStatusStyles(tone: StatusTone): {
 } {
   if (tone === 'success') {
     return {
-      color: '#dfffea',
-      borderColor: 'rgba(183, 248, 219, 0.34)',
-      background: 'rgba(183, 248, 219, 0.12)'
+      color: '#2d7a4d',
+      borderColor: 'var(--border-pencil)',
+      background: 'var(--accent-green)'
     };
   }
 
   if (tone === 'error') {
     return {
-      color: '#ffd4cc',
-      borderColor: 'rgba(255, 180, 168, 0.34)',
-      background: 'rgba(255, 180, 168, 0.12)'
+      color: '#d32f2f',
+      borderColor: 'var(--border-pencil)',
+      background: 'var(--accent-pink)'
     };
   }
 
   return {
-    color: '#ffe2b0',
-    borderColor: 'rgba(255, 214, 153, 0.34)',
-    background: 'rgba(255, 214, 153, 0.12)'
+    color: 'var(--text-ink)',
+    borderColor: 'var(--border-pencil)',
+    background: 'var(--accent-yellow)'
   };
 }
 

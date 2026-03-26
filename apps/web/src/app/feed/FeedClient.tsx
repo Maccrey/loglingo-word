@@ -15,8 +15,8 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f6efe6 0%, #ffd0b8 14%, #173143 100%)',
-  color: '#f7f4ef'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -24,27 +24,29 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 980,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.78)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(255, 209, 184, 0.16)',
-  color: '#ffd699',
+  padding: '6px 12px',
+  background: 'var(--accent-pink)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 type FeedClientProps = {
@@ -114,12 +116,12 @@ export default function FeedClient(props: FeedClientProps) {
               margin: 0,
               maxWidth: 640,
               lineHeight: 1.6,
-              color: 'rgba(247, 244, 239, 0.8)'
+              color: 'var(--text-faded)'
             }}
           >
             {t(locale, 'feed.description')}
           </p>
-          <Link href="/" style={{ color: '#ffd699' }}>
+          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
@@ -144,7 +146,7 @@ export default function FeedClient(props: FeedClientProps) {
                 <div style={badgeStyle}>
                   {t(locale, 'feed.card.learning_result')}
                 </div>
-                <div style={{ color: 'rgba(247, 244, 239, 0.7)' }}>
+                <div style={{ color: 'var(--text-faded)' }}>
                   {t(locale, 'feed.points')} {post.earnedPoints}pt ·{' '}
                   {t(locale, 'feed.streak')} {post.streak}
                 </div>
@@ -153,10 +155,11 @@ export default function FeedClient(props: FeedClientProps) {
               {post.achievedSentence ? (
                 <div
                   style={{
-                    borderRadius: 18,
+                    borderRadius: 16,
                     padding: '14px 16px',
-                    background: 'rgba(183, 248, 219, 0.12)',
-                    color: '#dfffea'
+                    background: 'var(--accent-green)',
+                    color: 'var(--text-ink)',
+                    border: '1px solid var(--border-pencil)'
                   }}
                 >
                   {post.achievedSentence}
@@ -175,12 +178,12 @@ export default function FeedClient(props: FeedClientProps) {
                   }
                   style={{
                     borderRadius: 999,
-                    border: 0,
+                    border: '1px solid var(--border-pencil)',
                     padding: '12px 16px',
                     background: post.likedByUser
-                      ? '#ffb4a8'
-                      : 'rgba(255,255,255,0.08)',
-                    color: post.likedByUser ? '#2b1511' : '#f7f4ef',
+                      ? 'var(--accent-pink)'
+                      : 'var(--bg-paper)',
+                    color: 'var(--text-ink)',
                     cursor: 'pointer'
                   }}
                 >
@@ -208,10 +211,10 @@ export default function FeedClient(props: FeedClientProps) {
                   }}
                   style={{
                     borderRadius: 999,
-                    border: 0,
+                    border: '1px solid var(--border-pencil)',
                     padding: '12px 16px',
-                    background: '#8ce7ff',
-                    color: '#102533',
+                    background: 'var(--accent-blue)',
+                    color: 'var(--text-ink)',
                     cursor: 'pointer'
                   }}
                 >
@@ -228,7 +231,7 @@ export default function FeedClient(props: FeedClientProps) {
             {t(locale, 'feed.total_reward_points')} {rewardLedger.totalPoints}pt
           </p>
           {shareMessage ? (
-            <p role="status" style={{ margin: 0, color: '#b7f8db' }}>
+            <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>
               {shareMessage}
             </p>
           ) : null}

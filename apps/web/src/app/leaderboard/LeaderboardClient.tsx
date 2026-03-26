@@ -16,8 +16,8 @@ type LeaderboardClientProps = {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f5efe4 0%, #e0c9ff 16%, #16263d 100%)',
-  color: '#fbf8ff'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -25,27 +25,29 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 980,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.78)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(213, 184, 255, 0.15)',
-  color: '#e4caff',
+  padding: '6px 12px',
+  background: 'var(--accent-blue)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 export default function LeaderboardClient(props: LeaderboardClientProps) {
@@ -71,13 +73,13 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
             style={{
               margin: 0,
               lineHeight: 1.6,
-              color: 'rgba(251, 248, 255, 0.8)'
+              color: 'var(--text-faded)'
             }}
           >
             {currentWeek.weekId} · {currentWeek.weekStart} ~{' '}
             {currentWeek.weekEnd}
           </p>
-          <Link href="/" style={{ color: '#e4caff' }}>
+          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
@@ -85,7 +87,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
         {pendingScoreDelta && pendingScoreDelta > 0 ? (
           <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
             <div style={badgeStyle}>Weekly Update</div>
-            <p style={{ margin: 0, color: '#dfffea' }}>
+            <p style={{ margin: 0, color: '#2d7a4d' }}>
               이번 추천 학습으로 리더보드 점수 {pendingScoreDelta}점이
               반영됐습니다.
             </p>
@@ -96,7 +98,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
           <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
             <div style={badgeStyle}>{t(locale, 'common.status.empty')}</div>
             <h2 style={{ margin: 0 }}>{t(locale, 'leaderboard.empty')}</h2>
-            <p style={{ margin: 0, color: 'rgba(251, 248, 255, 0.72)' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               이번 주 첫 학습으로 순위표를 시작하세요.
             </p>
           </section>
@@ -119,12 +121,11 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                         gridTemplateColumns: '72px 1fr auto',
                         gap: 12,
                         alignItems: 'center',
+                        color: 'var(--text-ink)',
                         background: isMe
-                          ? 'rgba(228, 202, 255, 0.16)'
-                          : 'rgba(255,255,255,0.04)',
-                        border: isMe
-                          ? '1px solid rgba(228, 202, 255, 0.45)'
-                          : '1px solid rgba(255,255,255,0.08)'
+                          ? 'var(--accent-pink)'
+                          : 'var(--bg-paper)',
+                        border: '1px solid var(--border-pencil)'
                       }}
                     >
                       <strong>#{entry.rank}</strong>

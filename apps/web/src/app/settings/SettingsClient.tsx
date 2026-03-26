@@ -17,8 +17,8 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f4efe7 0%, #c9e7d4 18%, #173347 100%)',
-  color: '#f7fbf8'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -26,27 +26,29 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 920,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.76)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(183, 248, 219, 0.14)',
-  color: '#b7f8db',
+  padding: '6px 12px',
+  background: 'var(--accent-green)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 type SettingsClientProps = {
@@ -120,7 +122,7 @@ export default function SettingsClient(props: SettingsClientProps) {
           <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
             {t(locale, 'settings.heading')}
           </h1>
-          <Link href="/" style={{ color: '#b7f8db' }}>
+          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
@@ -183,12 +185,12 @@ export default function SettingsClient(props: SettingsClientProps) {
               style={{
                 width: 'fit-content',
                 borderRadius: 999,
-                border: 0,
+                border: '1px solid var(--border-pencil)',
                 padding: '12px 16px',
                 background: settings.notificationsEnabled
-                  ? '#b7f8db'
-                  : '#ffb4a8',
-                color: '#10211d',
+                  ? 'var(--accent-green)'
+                  : 'var(--accent-pink)',
+                color: 'var(--text-ink)',
                 cursor: 'pointer'
               }}
             >
@@ -217,7 +219,8 @@ export default function SettingsClient(props: SettingsClientProps) {
                 style={{
                   borderRadius: 20,
                   padding: '16px 18px',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'var(--bg-paper)',
+                  border: '1px solid var(--border-pencil)',
                   display: 'grid',
                   gap: 8
                 }}
@@ -233,7 +236,7 @@ export default function SettingsClient(props: SettingsClientProps) {
                   <strong>{product.name}</strong>
                   <span>{product.priceLabel}</span>
                 </div>
-                <p style={{ margin: 0, color: 'rgba(247, 251, 248, 0.8)' }}>
+                <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                   {product.description}
                 </p>
                 <button
@@ -242,12 +245,15 @@ export default function SettingsClient(props: SettingsClientProps) {
                   onClick={() => void startCheckout(product.id)}
                   style={{
                     width: 'fit-content',
-                    borderRadius: 18,
-                    border: 0,
-                    padding: '12px 16px',
-                    background: '#8ce7ff',
-                    color: '#0f2231',
-                    cursor: 'pointer'
+                    border: '1px solid var(--btn-primary-border)',
+                    borderRadius: 999,
+                    padding: '12px 24px',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    background: 'var(--btn-primary-bg)',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    boxShadow: 'var(--shadow-card)'
                   }}
                 >
                   {t(locale, 'settings.premium_cta')}
@@ -279,7 +285,7 @@ export default function SettingsClient(props: SettingsClientProps) {
           </div>
 
           {checkoutMessage ? (
-            <p role="status" style={{ margin: 0, color: '#b7f8db' }}>
+            <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>
               {checkoutMessage}
             </p>
           ) : null}

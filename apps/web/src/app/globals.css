@@ -1,0 +1,41 @@
+:root {
+  /* Paper Aesthetic Theme Tokens */
+  --bg-paper: #fdfbf7;
+  --bg-card: #ffffff;
+  --text-ink: #2c2a25;
+  --text-faded: #7a756d;
+  --border-pencil: #e8e3d8;
+  --shadow-paper: 0 8px 24px rgba(44, 42, 37, 0.08);
+  --shadow-card: 0 4px 12px rgba(44, 42, 37, 0.04);
+  
+  /* Accent Colors (Highlighter / Stamp / Soft Ink) */
+  --accent-yellow: #fceeb5;
+  --accent-green: #d1ebd8;
+  --accent-blue: #d6f2fa;
+  --accent-pink: #fae1e9;
+  --accent-orange: #ffe8cc;
+  
+  /* Action Buttons */
+  --btn-primary-bg: #e8b066;
+  --btn-primary-hover: #dfa04e;
+  --btn-primary-border: #c98c3b;
+  --btn-disabled-bg: #e8e3d8;
+  --btn-disabled-color: #a8a398;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: var(--bg-paper);
+  color: var(--text-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base link styling */
+a {
+  color: inherit;
+  text-decoration: none;
+}

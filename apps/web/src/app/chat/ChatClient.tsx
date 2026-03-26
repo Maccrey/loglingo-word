@@ -12,8 +12,8 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f4efe7 0%, #ffd6bb 16%, #122f40 100%)',
-  color: '#f7f4ef'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -21,27 +21,29 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 980,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.78)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(255, 223, 187, 0.14)',
-  color: '#ffd699',
+  padding: '6px 12px',
+  background: 'var(--accent-yellow)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 type ChatClientProps = {
@@ -135,12 +137,12 @@ export default function ChatClient(props: ChatClientProps) {
               margin: 0,
               maxWidth: 640,
               lineHeight: 1.6,
-              color: 'rgba(247, 244, 239, 0.8)'
+              color: 'var(--text-faded)'
             }}
           >
             {t(locale, 'chat.description')}
           </p>
-          <Link href="/" style={{ color: '#ffd699' }}>
+          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
@@ -152,7 +154,7 @@ export default function ChatClient(props: ChatClientProps) {
           <div style={badgeStyle}>{t(locale, 'chat.conversation')}</div>
           <div style={{ display: 'grid', gap: 12 }}>
             {messages.length === 0 ? (
-              <p style={{ margin: 0, color: 'rgba(247, 244, 239, 0.72)' }}>
+              <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                 {t(locale, 'chat.empty')}
               </p>
             ) : (
@@ -160,14 +162,16 @@ export default function ChatClient(props: ChatClientProps) {
                 <article
                   key={`${message.role}-${index}-${message.createdAt}`}
                   style={{
-                    borderRadius: 20,
+                    borderRadius: 16,
                     padding: '14px 16px',
+                    border: '1px solid var(--border-pencil)',
+                    boxShadow: '0 2px 4px rgba(44,42,37,0.03)',
                     background:
                       message.role === 'user'
-                        ? 'rgba(140, 231, 255, 0.14)'
+                        ? 'var(--accent-blue)'
                         : message.role === 'assistant'
-                          ? 'rgba(255, 214, 153, 0.14)'
-                          : 'rgba(183, 248, 219, 0.14)'
+                          ? 'var(--accent-yellow)'
+                          : 'var(--accent-green)'
                   }}
                 >
                   <div
@@ -175,7 +179,7 @@ export default function ChatClient(props: ChatClientProps) {
                       fontSize: 12,
                       letterSpacing: '0.08em',
                       textTransform: 'uppercase',
-                      color: 'rgba(247, 244, 239, 0.7)',
+                      color: 'var(--text-faded)',
                       marginBottom: 8
                     }}
                   >
@@ -199,12 +203,13 @@ export default function ChatClient(props: ChatClientProps) {
                 placeholder={t(locale, 'chat.placeholder')}
                 rows={4}
                 style={{
-                  borderRadius: 18,
-                  border: '1px solid rgba(255,255,255,0.18)',
+                  borderRadius: 16,
+                  border: '1px solid var(--border-pencil)',
                   padding: '14px 16px',
-                  background: 'rgba(255,255,255,0.06)',
-                  color: '#f7f4ef',
-                  resize: 'vertical'
+                  background: 'var(--bg-paper)',
+                  color: 'var(--text-ink)',
+                  resize: 'vertical',
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                 }}
               />
             </label>
@@ -214,14 +219,15 @@ export default function ChatClient(props: ChatClientProps) {
               disabled={loading}
               style={{
                 width: 'fit-content',
-                border: 0,
-                borderRadius: 18,
-                padding: '14px 18px',
+                border: '1px solid var(--btn-primary-border)',
+                borderRadius: 999,
+                padding: '12px 24px',
                 fontSize: 16,
                 fontWeight: 700,
-                background: loading ? 'rgba(255, 214, 153, 0.6)' : '#ffd699',
-                color: '#2d1b0e',
-                cursor: loading ? 'wait' : 'pointer'
+                background: loading ? 'var(--btn-disabled-bg)' : 'var(--btn-primary-bg)',
+                color: loading ? 'var(--btn-disabled-color)' : '#fff',
+                cursor: loading ? 'wait' : 'pointer',
+                boxShadow: 'var(--shadow-card)'
               }}
             >
               {loading
@@ -260,7 +266,7 @@ export default function ChatClient(props: ChatClientProps) {
               </div>
             </>
           ) : (
-            <p style={{ margin: 0, color: 'rgba(247, 244, 239, 0.72)' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               {t(locale, 'chat.correction_empty')}
             </p>
           )}

@@ -38,8 +38,8 @@ type SyncState = {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #f7f1df 0%, #f4c89d 18%, #173246 100%)',
-  color: '#faf7f1'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -47,27 +47,29 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 1040,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.76)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(255, 212, 135, 0.14)',
-  color: '#ffd699',
+  padding: '6px 12px',
+  background: 'var(--accent-yellow)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 function buildDashboardState() {
@@ -275,17 +277,17 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               margin: 0,
               maxWidth: 640,
               lineHeight: 1.6,
-              color: 'rgba(250, 247, 241, 0.8)'
+              color: 'var(--text-faded)'
             }}
           >
             {t(locale, 'home.description')}
           </p>
           {loading ? (
-            <p style={{ margin: 0, color: '#ffd699' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               {t(locale, 'home.loading')}
             </p>
           ) : (
-            <p style={{ margin: 0, color: '#b7f8db' }}>
+            <p style={{ margin: 0, color: 'var(--text-ink)' }}>
               {t(locale, 'home.ready')}
             </p>
           )}
@@ -295,7 +297,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         (pendingPointsValue > 0 || pendingLeaderboardValue > 0) ? (
           <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
             <div style={badgeStyle}>{t(locale, 'home.sync.title')}</div>
-            <p style={{ margin: 0, color: '#b7f8db', lineHeight: 1.6 }}>
+            <p style={{ margin: 0, color: 'var(--text-ink)', lineHeight: 1.6 }}>
               {t(locale, 'home.sync.description')} +{pendingPointsValue}pt
               {pendingLeaderboardValue > 0
                 ? ` · leaderboard +${pendingLeaderboardValue}`
@@ -361,7 +363,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             style={{
               height: 14,
               borderRadius: 999,
-              background: 'rgba(255,255,255,0.08)',
+              background: 'var(--border-pencil)',
               overflow: 'hidden'
             }}
           >
@@ -369,7 +371,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               style={{
                 width: `${dashboard.dailyGoal.progressPercent}%`,
                 height: '100%',
-                background: '#b7f8db'
+                background: 'var(--accent-green)'
               }}
             />
           </div>
@@ -396,12 +398,13 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             style={{
               width: 'fit-content',
               borderRadius: 999,
-              border: '1px solid rgba(255, 214, 153, 0.4)',
+              border: '1px solid var(--btn-primary-border)',
               padding: '10px 16px',
-              background: recommendation.loading ? '#7d6b55' : '#ffd699',
-              color: '#173246',
+              background: recommendation.loading ? 'var(--btn-disabled-bg)' : 'var(--btn-primary-bg)',
+              color: recommendation.loading ? 'var(--btn-disabled-color)' : '#fff',
               fontWeight: 700,
-              cursor: recommendation.loading ? 'progress' : 'pointer'
+              cursor: recommendation.loading ? 'progress' : 'pointer',
+              boxShadow: 'var(--shadow-card)'
             }}
           >
             {recommendation.loading
@@ -409,13 +412,13 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               : t(locale, 'home.recommendation.action')}
           </button>
           {recommendation.error ? (
-            <p role="alert" style={{ margin: 0, color: '#ffb4b4' }}>
+            <p role="alert" style={{ margin: 0, color: '#d32f2f' }}>
               {recommendation.error}
             </p>
           ) : null}
           {recommendation.words.length > 0 ? (
             <div style={{ display: 'grid', gap: 10 }}>
-              <p style={{ margin: 0, color: '#b7f8db' }}>
+              <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                 {t(locale, 'home.recommendation.result')}{' '}
                 {recommendation.weekId}
               </p>
@@ -426,8 +429,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                     style={{
                       borderRadius: 999,
                       padding: '8px 12px',
-                      background: 'rgba(183, 248, 219, 0.12)',
-                      border: '1px solid rgba(183, 248, 219, 0.3)'
+                      background: 'var(--bg-card)',
+                      border: '1px dashed var(--border-pencil)',
+                      boxShadow: '0 2px 4px rgba(44,42,37,0.03)'
                     }}
                   >
                     {word}
@@ -438,13 +442,13 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                 href={`/learn?focus=${encodeURIComponent(
                   recommendation.words.join(',')
                 )}`}
-                style={{ color: '#ffd699', fontWeight: 700 }}
+                style={{ color: 'var(--text-ink)', fontWeight: 700, textDecoration: 'underline' }}
               >
                 {t(locale, 'home.recommendation.start')}
               </Link>
             </div>
           ) : (
-            <p style={{ margin: 0, color: 'rgba(250, 247, 241, 0.72)' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               {t(locale, 'home.recommendation.empty')}
             </p>
           )}
@@ -459,35 +463,35 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             <Link
               href="/learn"
               aria-label={t(locale, 'common.action.quick_start')}
-              style={{ color: '#ffd699' }}
+              style={{ background: 'var(--accent-yellow)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
             >
               {t(locale, 'common.action.quick_start')}
             </Link>
             <Link
               href="/quiz"
               aria-label={t(locale, 'quiz.title')}
-              style={{ color: '#b7f8db' }}
+              style={{ background: 'var(--accent-green)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
             >
               {t(locale, 'quiz.title')}
             </Link>
             <Link
               href="/sentence"
               aria-label={t(locale, 'sentence.title')}
-              style={{ color: '#8ce7ff' }}
+              style={{ background: 'var(--accent-blue)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
             >
               {t(locale, 'sentence.title')}
             </Link>
             <Link
               href="/chat"
               aria-label={t(locale, 'chat.title')}
-              style={{ color: '#ffcfe1' }}
+              style={{ background: 'var(--accent-pink)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
             >
               {t(locale, 'chat.title')}
             </Link>
             <Link
               href="/feed"
               aria-label={t(locale, 'feed.title')}
-              style={{ color: '#ffe29f' }}
+              style={{ background: 'var(--accent-orange)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
             >
               {t(locale, 'feed.title')}
             </Link>

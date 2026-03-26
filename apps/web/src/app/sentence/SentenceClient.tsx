@@ -15,8 +15,8 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'linear-gradient(180deg, #eef5d7 0%, #a1d7c1 20%, #113347 100%)',
-  color: '#f4f7f1'
+  background: 'var(--bg-paper)',
+  color: 'var(--text-ink)'
 };
 
 const shellStyle: Record<string, string | number> = {
@@ -24,37 +24,40 @@ const shellStyle: Record<string, string | number> = {
   maxWidth: 980,
   margin: '0 auto',
   display: 'grid',
-  gap: 24
+  gap: 32
 };
 
 const panelStyle: Record<string, string | number> = {
-  borderRadius: 28,
-  padding: 24,
-  background: 'rgba(12, 20, 31, 0.78)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
-  boxShadow: '0 24px 80px rgba(6, 10, 16, 0.28)'
+  borderRadius: 16,
+  padding: 32,
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-pencil)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
   display: 'inline-flex',
   width: 'fit-content',
   borderRadius: 999,
-  padding: '8px 14px',
-  background: 'rgba(199, 255, 228, 0.14)',
-  color: '#b7f8db',
+  padding: '6px 12px',
+  background: 'var(--accent-green)',
+  color: 'var(--text-ink)',
+  border: '1px dashed var(--border-pencil)',
   fontSize: 13,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase'
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  fontWeight: 600
 };
 
 function tokenStyle(active: boolean): Record<string, string | number> {
   return {
     borderRadius: 999,
-    border: '1px solid rgba(255,255,255,0.12)',
+    border: '1px solid var(--border-pencil)',
     padding: '12px 16px',
-    background: active ? 'rgba(183, 248, 219, 0.16)' : 'rgba(255,255,255,0.06)',
-    color: '#f4f7f1',
-    cursor: 'pointer'
+    background: active ? 'var(--accent-green)' : 'var(--bg-card)',
+    color: 'var(--text-ink)',
+    cursor: 'pointer',
+    boxShadow: 'var(--shadow-card)'
   };
 }
 
@@ -75,12 +78,12 @@ export default function SentenceClient() {
               margin: 0,
               maxWidth: 620,
               lineHeight: 1.6,
-              color: 'rgba(244, 247, 241, 0.8)'
+              color: 'var(--text-faded)'
             }}
           >
             {t(locale, 'sentence.description')}
           </p>
-          <Link href="/quiz" style={{ color: '#b7f8db' }}>
+          <Link href="/quiz" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
             {t(locale, 'quiz.title')}
           </Link>
         </section>
@@ -88,7 +91,7 @@ export default function SentenceClient() {
         <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>
           <span style={badgeStyle}>{t(locale, 'sentence.title')}</span>
           <h2 style={{ margin: 0 }}>{session.exercise.prompt}</h2>
-          <p style={{ margin: 0, color: 'rgba(244, 247, 241, 0.72)' }}>
+          <p style={{ margin: 0, color: 'var(--text-faded)' }}>
             뜻: {session.exercise.word.meaning}
           </p>
         </section>
@@ -122,8 +125,8 @@ export default function SentenceClient() {
               gap: 10,
               flexWrap: 'wrap',
               alignItems: 'center',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px dashed rgba(255,255,255,0.2)'
+              background: 'var(--bg-paper)',
+              border: '1px dashed var(--border-pencil)'
             }}
           >
             {session.assembledTokens.length > 0 ? (
@@ -142,7 +145,7 @@ export default function SentenceClient() {
                 </button>
               ))
             ) : (
-              <span style={{ color: 'rgba(244, 247, 241, 0.56)' }}>
+              <span style={{ color: 'var(--text-faded)' }}>
                 {t(locale, 'sentence.description')}
               </span>
             )}
@@ -155,14 +158,15 @@ export default function SentenceClient() {
                 setSession((current) => submitSentenceSession(current))
               }
               style={{
-                border: 0,
-                borderRadius: 18,
-                padding: '16px 18px',
+                border: '1px solid var(--btn-primary-border)',
+                borderRadius: 999,
+                padding: '12px 24px',
                 fontSize: 16,
                 fontWeight: 700,
-                background: '#b7f8db',
-                color: '#123128',
-                cursor: 'pointer'
+                background: 'var(--btn-primary-bg)',
+                color: '#fff',
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-card)'
               }}
             >
               {t(locale, 'sentence.submit')}
@@ -173,14 +177,15 @@ export default function SentenceClient() {
                 setSession((current) => resetSentenceSession(current))
               }
               style={{
-                border: '1px solid rgba(255,255,255,0.16)',
-                borderRadius: 18,
-                padding: '16px 18px',
+                border: '1px solid var(--border-pencil)',
+                borderRadius: 999,
+                padding: '12px 24px',
                 fontSize: 16,
-                fontWeight: 700,
-                background: 'transparent',
-                color: '#f4f7f1',
-                cursor: 'pointer'
+                fontWeight: 600,
+                background: 'var(--bg-paper)',
+                color: 'var(--text-ink)',
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-card)'
               }}
             >
               {t(locale, 'common.action.reset')}
@@ -196,16 +201,16 @@ export default function SentenceClient() {
               margin: 0,
               color:
                 session.feedback.status === 'success'
-                  ? '#d5ff74'
+                  ? '#2d7a4d'
                   : session.feedback.status === 'error'
-                    ? '#ff9f8f'
-                    : 'rgba(244, 247, 241, 0.72)'
+                    ? '#d32f2f'
+                    : 'var(--text-faded)'
             }}
           >
             {session.feedback.message}
           </p>
           {session.result && !session.result.isCorrect ? (
-            <p style={{ margin: 0, color: 'rgba(244, 247, 241, 0.68)' }}>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
               누락 토큰: {session.result.missingTokens.join(', ') || '없음'}
             </p>
           ) : null}
