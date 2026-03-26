@@ -110,6 +110,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
           props.focusWordIds.join(',')
         )}`
       : null;
+  const leaderboardHref =
+    props.focusWordIds && props.focusWordIds.length > 0
+      ? `/leaderboard?source=recommendation&score=${leaderboardDelta}&userId=demo-user`
+      : null;
 
   return (
     <main style={surfaceStyle}>
@@ -191,6 +195,11 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 {shareHref ? (
                   <Link href={shareHref} style={{ color: '#8ce7ff' }}>
                     추천 학습 결과 공유
+                  </Link>
+                ) : null}
+                {leaderboardHref ? (
+                  <Link href={leaderboardHref} style={{ color: '#d9c0ff' }}>
+                    리더보드 반영 보기
                   </Link>
                 ) : null}
               </div>

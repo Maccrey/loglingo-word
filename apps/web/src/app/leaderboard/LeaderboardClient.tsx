@@ -3,16 +3,14 @@
 import React from 'react';
 import Link from 'next/link';
 
-import {
-  upsertLeaderboardScore,
-  type LeaderboardEntryRecord
-} from '@wordflow/leaderboard';
+import { type LeaderboardEntryRecord } from '@wordflow/leaderboard';
 import { getLeaderboardWeek } from '@wordflow/leaderboard';
 import { t, type AppLocale } from '../i18n';
 
 type LeaderboardClientProps = {
   entries?: LeaderboardEntryRecord[];
   currentUserId?: string;
+  pendingScoreDelta?: number;
 };
 
 const surfaceStyle: Record<string, string | number> = {
@@ -50,38 +48,13 @@ const badgeStyle: Record<string, string | number> = {
   textTransform: 'uppercase'
 };
 
-function buildDemoEntries(): LeaderboardEntryRecord[] {
-  const weekId = getLeaderboardWeek('2026-03-25T12:00:00.000Z').weekId;
-
-  let entries: LeaderboardEntryRecord[] = [];
-
-  entries = upsertLeaderboardScore({
-    entries,
-    weekId,
-    userId: 'user-2',
-    scoreDelta: 4
-  }).entries;
-
-  entries = upsertLeaderboardScore({
-    entries,
-    weekId,
-    userId: 'demo-user',
-    scoreDelta: 6
-  }).entries;
-
-  entries = upsertLeaderboardScore({
-    entries,
-    weekId,
-    userId: 'user-3',
-    scoreDelta: 2
-  }).entries;
-
-  return entries;
-}
-
 export default function LeaderboardClient(props: LeaderboardClientProps) {
   const locale: AppLocale = 'ko';
-  const { entries = buildDemoEntries(), currentUserId = 'demo-user' } = props;
+  const {
+    entries = [],
+    currentUserId = 'demo-user',
+    pendingScoreDelta
+  } = props;
   const currentWeek = getLeaderboardWeek('2026-03-25T12:00:00.000Z');
   const myEntry =
     entries.find((entry) => entry.userId === currentUserId) ?? null;
@@ -108,6 +81,16 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
+
+        {pendingScoreDelta && pendingScoreDelta > 0 ? (
+          <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
+            <div style={badgeStyle}>Weekly Update</div>
+            <p style={{ margin: 0, color: '#dfffea' }}>
+              이번 추천 학습으로 리더보드 점수 {pendingScoreDelta}점이
+              반영됐습니다.
+            </p>
+          </section>
+        ) : null}
 
         {entries.length === 0 ? (
           <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
