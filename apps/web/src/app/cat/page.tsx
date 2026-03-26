@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCat } from '../../lib/useCat';
+import { getCatImagePath } from '../../components/CatCard';
 
 function getStatusSummary(status: string) {
   switch (status) {
@@ -28,6 +29,7 @@ function getStatusSummary(status: string) {
 export default function CatDetailScreen() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
+  const [actionOverlay, setActionOverlay] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -36,6 +38,14 @@ export default function CatDetailScreen() {
   if (!mounted || !cat) {
     return <div style={{ padding: 20 }}>Loading...</div>;
   }
+
+  const handleAction = (actionFn: () => boolean, overlayName: string) => {
+    const success = actionFn();
+    if (success) {
+      setActionOverlay(overlayName);
+      setTimeout(() => setActionOverlay(null), 2000);
+    }
+  };
 
   const now = Date.now();
   const MS_PER_HOUR = 60 * 60 * 1000;
@@ -49,11 +59,9 @@ export default function CatDetailScreen() {
   const stressPercent = Math.max(0, 100 - (hoursSincePlay / 24) * 100);
   const statusSummary = getStatusSummary(currentStatus);
 
-  let imageNameStatus = currentStatus as string;
-  if (cat.stage === 'kitten' && currentStatus === 'healthy') {
-    imageNameStatus = 'base';
-  }
-  const imagePath = `/images/cats/${cat.stage}-${imageNameStatus}.png`;
+  const currentImagePath = actionOverlay 
+    ? `/images/cats/action-${actionOverlay}.png` 
+    : getCatImagePath(cat.stage, currentStatus as string);
 
   return (
     <main style={{ padding: '32px 20px', maxWidth: 640, margin: '0 auto', color: 'var(--text-ink)' }}>
@@ -74,7 +82,7 @@ export default function CatDetailScreen() {
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
         <img 
-          src={imagePath} 
+          src={currentImagePath} 
           alt="Cat Large View" 
           style={{ width: 300, height: 300, objectFit: 'contain' }}
           onError={(e) => {
@@ -91,11 +99,11 @@ export default function CatDetailScreen() {
         <GaugeBar label="행복도 (Stress)" percent={stressPercent} color="var(--accent-blue)" />
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 16 }}>
-          <button onClick={handleFeed} style={btnStyle('var(--accent-orange)')}>🐟 밥주기 (100pt)</button>
-          <button onClick={handlePlay} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
-          <button onClick={handleWash} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
+          <button onClick={() => handleAction(handleFeed, 'feed')} style={btnStyle('var(--accent-orange)')}>🐟 밥주기 (100pt)</button>
+          <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
+          <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
           {(currentStatus === 'sick' || currentStatus === 'critical') && (
-            <button onClick={handleHeal} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
+            <button onClick={() => handleAction(handleHeal, 'heal')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
           )}
         </div>
       </section>

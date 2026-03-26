@@ -7,6 +7,7 @@ import { useCat } from '../lib/useCat';
 export default function CatCard() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
+  const [actionOverlay, setActionOverlay] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -20,15 +21,18 @@ export default function CatCard() {
     );
   }
 
-  // Derive image path using stage and status
-  // e.g., kitten-base.png, junior-hungry.png
-  // Mappings for 'healthy' -> 'base' (if kitten), else 'healthy'
-  let imageNameStatus = currentStatus as string;
-  if (cat.stage === 'kitten' && currentStatus === 'healthy') {
-    imageNameStatus = 'base';
-  }
+  // Handle action overlays for 2 seconds
+  const handleAction = (actionFn: () => boolean, overlayName: string) => {
+    const success = actionFn();
+    if (success) {
+      setActionOverlay(overlayName);
+      setTimeout(() => setActionOverlay(null), 2000);
+    }
+  };
 
-  const imagePath = `/images/cats/${cat.stage}-${imageNameStatus}.png`;
+  const currentImagePath = actionOverlay 
+    ? `/images/cats/action-${actionOverlay}.png` 
+    : getCatImagePath(cat.stage, currentStatus as string);
 
   return (
     <section 
@@ -56,7 +60,7 @@ export default function CatCard() {
 
       <div style={{ position: 'relative', width: 240, height: 240, marginBottom: 16, alignSelf: 'center' }}>
         <img 
-          src={imagePath} 
+          src={currentImagePath} 
           alt={`${cat.stage} cat feeling ${currentStatus}`}
           style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12 }}
           onError={(e) => {
@@ -123,4 +127,47 @@ function btnStyle(bg: string): React.CSSProperties {
     boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
     transition: 'transform 0.1s',
   };
+}
+
+// Image resolution logic according to Nano-Banana.md
+const availableStatusImages: Record<string, string[]> = {
+  kitten: ['base', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead'],
+  junior: ['healthy', 'hungry', 'smelly', 'stressed'],
+  adult: ['healthy'],
+  'middle-age': ['healthy'],
+  senior: ['healthy'],
+  veteran: ['healthy'],
+  legacy: ['healthy'],
+};
+
+const stageFallbackChain = ['veteran', 'senior', 'middle-age', 'adult', 'junior', 'kitten'];
+
+export function getCatImagePath(stage: string, status: string): string {
+  // 1. Normalize stage name
+  let normalizedStage = stage === 'middleAge' ? 'middle-age' : stage;
+  
+  // 2. Normalize status for healthy kitten
+  let mappedStatus = status;
+  if (normalizedStage === 'kitten' && status === 'healthy') {
+    mappedStatus = 'base';
+  }
+
+  // 3. Check if exact file exists in our registry
+  if (availableStatusImages[normalizedStage]?.includes(mappedStatus)) {
+    return `/images/cats/${normalizedStage}-${mappedStatus}.png`;
+  }
+
+  // 4. Fallback chain if status image is missing for this stage
+  const startIndex = stageFallbackChain.indexOf(normalizedStage);
+  if (startIndex !== -1) {
+    for (let i = startIndex + 1; i < stageFallbackChain.length; i++) {
+      const fallbackStage = stageFallbackChain[i] as string;
+      if (availableStatusImages[fallbackStage]?.includes(mappedStatus)) {
+        return `/images/cats/${fallbackStage}-${mappedStatus}.png`;
+      }
+    }
+  }
+
+  // 5. Final fallback
+  return '/images/cats/kitten-base.png';
 }
