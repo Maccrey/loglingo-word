@@ -75,4 +75,20 @@ describe('home dashboard', () => {
       screen.getByRole('link', { name: '추천 학습 시작' }).getAttribute('href')
     ).toBe('/learn?focus=passport%2Csubway%2Creservation');
   });
+
+  it('applies pending recommendation totals to the home summary', () => {
+    render(
+      <HomeDashboard
+        pendingSource="recommendation"
+        pendingPoints="10"
+        pendingLeaderboardScore="2"
+      />
+    );
+
+    expect(screen.getByText('학습 반영 완료')).toBeTruthy();
+    expect(
+      screen.getByText(/추천 학습 결과가 홈 요약에 반영됐습니다\./)
+    ).toBeTruthy();
+    expect(screen.getByText('55 pt')).toBeTruthy();
+  });
 });

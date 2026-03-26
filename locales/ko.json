@@ -26,6 +26,8 @@
   "home.recommendation.start": "추천 학습 시작",
   "home.recommendation.empty": "아직 추천된 단어가 없습니다.",
   "home.recommendation.error": "주간 추천을 불러오지 못했습니다.",
+  "home.sync.title": "학습 반영 완료",
+  "home.sync.description": "추천 학습 결과가 홈 요약에 반영됐습니다.",
   "home.quick_start": "바로 학습 시작",
   "home.quick_start.description": "복습과 신규 학습이 섞인 오늘의 큐에서 바로 시작합니다.",
   "learn.title": "플래시카드 학습",

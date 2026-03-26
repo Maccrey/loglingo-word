@@ -15,6 +15,9 @@ import { t, type AppLocale } from './i18n';
 type HomeDashboardProps = {
   loading?: boolean;
   locale?: AppLocale;
+  pendingSource?: string;
+  pendingPoints?: string;
+  pendingLeaderboardScore?: string;
 };
 
 type RecommendationState = {
@@ -106,9 +109,34 @@ function buildDashboardState() {
   };
 }
 
+function parsePositiveInteger(value?: string): number {
+  if (!value) {
+    return 0;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+}
+
 export default function HomeDashboard(props: HomeDashboardProps) {
-  const { loading = false, locale = 'ko' } = props;
+  const {
+    loading = false,
+    locale = 'ko',
+    pendingSource,
+    pendingPoints,
+    pendingLeaderboardScore
+  } = props;
   const dashboard = buildDashboardState();
+  const pendingPointsValue =
+    pendingSource === 'recommendation'
+      ? parsePositiveInteger(pendingPoints)
+      : 0;
+  const pendingLeaderboardValue =
+    pendingSource === 'recommendation'
+      ? parsePositiveInteger(pendingLeaderboardScore)
+      : 0;
+  const totalPoints = dashboard.points + pendingPointsValue;
+  const totalLevel = calculateLevelProgress(totalPoints + 135);
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
     loading: false
@@ -196,6 +224,19 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           )}
         </section>
 
+        {pendingSource === 'recommendation' &&
+        (pendingPointsValue > 0 || pendingLeaderboardValue > 0) ? (
+          <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
+            <div style={badgeStyle}>{t(locale, 'home.sync.title')}</div>
+            <p style={{ margin: 0, color: '#b7f8db', lineHeight: 1.6 }}>
+              {t(locale, 'home.sync.description')} +{pendingPointsValue}pt
+              {pendingLeaderboardValue > 0
+                ? ` · leaderboard +${pendingLeaderboardValue}`
+                : ''}
+            </p>
+          </section>
+        ) : null}
+
         <section
           data-testid="home-summary-grid"
           style={{
@@ -223,7 +264,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           <article style={panelStyle}>
             <div style={badgeStyle}>{t(locale, 'home.summary.points')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              {dashboard.points} pt
+              {totalPoints} pt
             </h2>
             <p style={{ margin: 0 }}>{t(locale, 'home.summary.points')}</p>
           </article>
@@ -231,10 +272,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           <article style={panelStyle}>
             <div style={badgeStyle}>{t(locale, 'home.summary.level')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              Lv. {dashboard.level.level}
+              Lv. {totalLevel.level}
             </h2>
             <p style={{ margin: 0 }}>
-              다음 레벨까지 {dashboard.level.pointsToNextLevel}pt
+              다음 레벨까지 {totalLevel.pointsToNextLevel}pt
             </p>
           </article>
         </section>

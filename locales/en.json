@@ -26,6 +26,8 @@
   "home.recommendation.start": "Start Recommended Study",
   "home.recommendation.empty": "No recommended words yet.",
   "home.recommendation.error": "Failed to load the weekly recommendation.",
+  "home.sync.title": "Study Synced",
+  "home.sync.description": "The recommended study result has been applied to your home summary.",
   "home.quick_start": "Quick Start",
   "home.quick_start.description": "Jump straight into today's queue with review and new study mixed together.",
   "learn.title": "Flashcard Study",

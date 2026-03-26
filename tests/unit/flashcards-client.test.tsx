@@ -66,5 +66,10 @@ describe('flashcards ui', () => {
         .getByRole('link', { name: '리더보드 반영 보기' })
         .getAttribute('href')
     ).toBe('/leaderboard?source=recommendation&score=0&userId=demo-user');
+    expect(
+      screen
+        .getByRole('link', { name: '홈 요약 반영 보기' })
+        .getAttribute('href')
+    ).toBe('/?source=recommendation&points=10&leaderboard=0');
   });
 });

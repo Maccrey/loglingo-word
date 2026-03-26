@@ -114,6 +114,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     props.focusWordIds && props.focusWordIds.length > 0
       ? `/leaderboard?source=recommendation&score=${leaderboardDelta}&userId=demo-user`
       : null;
+  const homeHref =
+    props.focusWordIds && props.focusWordIds.length > 0
+      ? `/?source=recommendation&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}`
+      : null;
 
   return (
     <main style={surfaceStyle}>
@@ -192,6 +196,11 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 <Link href="/" style={{ color: '#f7d487' }}>
                   홈으로 돌아가기
                 </Link>
+                {homeHref ? (
+                  <Link href={homeHref} style={{ color: '#b7f8db' }}>
+                    홈 요약 반영 보기
+                  </Link>
+                ) : null}
                 {shareHref ? (
                   <Link href={shareHref} style={{ color: '#8ce7ff' }}>
                     추천 학습 결과 공유
