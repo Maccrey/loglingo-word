@@ -10,3 +10,4 @@ export * from './quiz';
 export * from './settings';
 export * from './social';
 export * from './sentence';
+export * from './point';
