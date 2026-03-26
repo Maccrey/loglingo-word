@@ -53,7 +53,8 @@ export async function buildLeaderboardPageState(
 ) {
   const weekId = getLeaderboardWeek('2026-03-26T00:00:00.000Z').weekId;
   const scoreDelta = parseScore(input?.score);
-  const currentUserId = input?.userId?.trim() || 'demo-user';
+  const actualCurrentUserId = 'demo-user';
+  const focusedUserId = input?.userId?.trim() || actualCurrentUserId;
   let entries = await repository.listByWeekId(weekId);
 
   if (entries.length === 0) {
@@ -65,7 +66,8 @@ export async function buildLeaderboardPageState(
 
   return {
     entries,
-    currentUserId,
+    currentUserId: actualCurrentUserId,
+    focusedUserId,
     pendingScoreDelta:
       input?.source === 'recommendation' ? scoreDelta : undefined
   };

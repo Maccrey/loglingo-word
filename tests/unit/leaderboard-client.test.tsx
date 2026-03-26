@@ -33,6 +33,27 @@ describe('leaderboard ui', () => {
     expect(currentUserCard?.textContent).toContain('나');
   });
 
+  it('focuses a selected user without renaming them as me', async () => {
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2'
+    });
+    const { container } = render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+      />
+    );
+
+    const focusedUserCard = container.querySelector(
+      '[data-focused-user="true"]'
+    );
+
+    expect(focusedUserCard?.textContent).toContain('user-2');
+    expect(focusedUserCard?.textContent).not.toContain('나');
+    expect(screen.getByText('선택한 사용자')).toBeTruthy();
+  });
+
   it('shows a fallback when the leaderboard is empty', () => {
     render(<LeaderboardClient entries={[]} />);
 

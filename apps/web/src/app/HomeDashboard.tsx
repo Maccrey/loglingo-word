@@ -451,8 +451,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                   {optimisticLeaderboardPreview.weekId}
                 </span>
                 {optimisticLeaderboardPreview.topEntries.map((entry) => (
-                  <div
+                  <Link
                     key={`${optimisticLeaderboardPreview.weekId}-${entry.userId}`}
+                    href={`/leaderboard?userId=${encodeURIComponent(entry.userId)}`}
+                    aria-label={`리더보드에서 ${entry.isCurrentUser ? '나' : entry.userId} 보기`}
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '40px 1fr auto',
@@ -463,13 +465,15 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                       background: entry.isCurrentUser
                         ? 'var(--accent-pink)'
                         : 'var(--bg-paper)',
-                      border: '1px solid var(--border-pencil)'
+                      border: '1px solid var(--border-pencil)',
+                      color: 'var(--text-ink)',
+                      textDecoration: 'none'
                     }}
                   >
                     <strong>#{entry.rank}</strong>
                     <span>{entry.isCurrentUser ? '나' : entry.userId}</span>
                     <strong>{entry.score} pt</strong>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ) : null}

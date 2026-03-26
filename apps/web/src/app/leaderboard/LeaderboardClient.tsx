@@ -10,6 +10,7 @@ import { t, type AppLocale } from '../i18n';
 type LeaderboardClientProps = {
   entries?: LeaderboardEntryRecord[];
   currentUserId?: string;
+  focusedUserId?: string;
   pendingScoreDelta?: number;
 };
 
@@ -55,11 +56,13 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const {
     entries = [],
     currentUserId = 'demo-user',
+    focusedUserId = currentUserId,
     pendingScoreDelta
   } = props;
   const currentWeek = getLeaderboardWeek('2026-03-25T12:00:00.000Z');
-  const myEntry =
-    entries.find((entry) => entry.userId === currentUserId) ?? null;
+  const focusedEntry =
+    entries.find((entry) => entry.userId === focusedUserId) ?? null;
+  const isViewingOwnEntry = focusedUserId === currentUserId;
 
   return (
     <main style={surfaceStyle}>
@@ -111,12 +114,14 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
               <div style={badgeStyle}>{t(locale, 'leaderboard.ranking')}</div>
               <div style={{ display: 'grid', gap: 10 }}>
                 {entries.map((entry) => {
-                  const isMe = entry.userId === currentUserId;
+                  const isCurrentUser = entry.userId === currentUserId;
+                  const isFocused = entry.userId === focusedUserId;
 
                   return (
                     <article
                       key={`${entry.weekId}-${entry.userId}`}
-                      data-current-user={isMe ? 'true' : 'false'}
+                      data-current-user={isCurrentUser ? 'true' : 'false'}
+                      data-focused-user={isFocused ? 'true' : 'false'}
                       style={{
                         borderRadius: 20,
                         padding: '16px 18px',
@@ -125,12 +130,18 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                         gap: 12,
                         alignItems: 'center',
                         color: 'var(--text-ink)',
-                        background: isMe ? 'var(--accent-pink)' : 'transparent',
-                        border: '1px solid var(--border-pencil)'
+                        background: isCurrentUser
+                          ? 'var(--accent-pink)'
+                          : isFocused
+                            ? 'var(--accent-blue)'
+                            : 'transparent',
+                        border: isFocused
+                          ? '2px solid var(--border-pencil)'
+                          : '1px solid var(--border-pencil)'
                       }}
                     >
                       <strong>#{entry.rank}</strong>
-                      <span>{isMe ? '나' : entry.userId}</span>
+                      <span>{isCurrentUser ? '나' : entry.userId}</span>
                       <strong>{entry.score} pt</strong>
                     </article>
                   );
@@ -138,13 +149,18 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
               </div>
             </section>
 
-            {myEntry ? (
+            {focusedEntry ? (
               <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
                 <div style={badgeStyle}>
-                  {t(locale, 'leaderboard.my_position')}
+                  {isViewingOwnEntry
+                    ? t(locale, 'leaderboard.my_position')
+                    : t(locale, 'leaderboard.focused_position')}
                 </div>
                 <p style={{ margin: 0 }}>
-                  현재 순위 #{myEntry.rank} · {myEntry.score}pt
+                  {isViewingOwnEntry
+                    ? '현재 순위'
+                    : `${focusedEntry.userId} 순위`}{' '}
+                  #{focusedEntry.rank} · {focusedEntry.score}pt
                 </p>
               </section>
             ) : null}

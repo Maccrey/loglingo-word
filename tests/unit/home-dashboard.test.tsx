@@ -46,6 +46,11 @@ describe('home dashboard', () => {
     expect(screen.getAllByText('주간 리더보드 점수').length).toBeGreaterThan(0);
     expect(screen.getByText('이번 주 순위 #2')).toBeTruthy();
     expect(screen.getByText('2026-W13')).toBeTruthy();
+    expect(
+      screen
+        .getByRole('link', { name: '리더보드에서 user-2 보기' })
+        .getAttribute('href')
+    ).toBe('/leaderboard?userId=user-2');
   });
 
   it('renders a quick start link to the study flow', () => {

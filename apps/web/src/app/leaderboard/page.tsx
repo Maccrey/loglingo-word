@@ -19,6 +19,7 @@ export default async function LeaderboardPage(props: LeaderboardPageProps) {
     <LeaderboardClient
       entries={state.entries}
       currentUserId={state.currentUserId}
+      focusedUserId={state.focusedUserId}
       {...(state.pendingScoreDelta !== undefined
         ? { pendingScoreDelta: state.pendingScoreDelta }
         : {})}

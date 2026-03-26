@@ -90,6 +90,7 @@
   "leaderboard.heading": "Weekly Leaderboard",
   "leaderboard.ranking": "Ranking",
   "leaderboard.my_position": "My Position",
+  "leaderboard.focused_position": "Selected User",
   "leaderboard.empty": "There is no leaderboard data yet.",
   "settings.title": "Settings",
   "settings.heading": "Settings",
