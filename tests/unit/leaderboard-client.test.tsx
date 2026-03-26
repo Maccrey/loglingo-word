@@ -3,7 +3,7 @@
 import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { InMemoryLeaderboardRepository } from '../../services/leaderboard/src';
 
 import LeaderboardClient from '../../apps/web/src/app/leaderboard/LeaderboardClient';
@@ -149,6 +149,43 @@ describe('leaderboard ui', () => {
     );
 
     expect(window.location.search).not.toContain('userId=');
+  });
+
+  it('copies the current focused leaderboard view link', async () => {
+    const user = userEvent.setup();
+    const state = await buildLeaderboardPageState({
+      userId: 'user-2',
+      view: 'nearby'
+    });
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const expectedUrl = `${window.location.origin}/leaderboard?userId=user-2&view=nearby`;
+
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText
+      }
+    });
+
+    window.history.replaceState(
+      null,
+      '',
+      '/leaderboard?userId=user-2&view=nearby'
+    );
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+        initialViewMode={state.initialViewMode}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: '현재 뷰 링크 복사' }));
+
+    expect(writeText).toHaveBeenCalledWith(expectedUrl);
+    expect(screen.getByText('현재 리더보드 링크를 복사했습니다.')).toBeTruthy();
   });
 
   it('shows a fallback when the leaderboard is empty', () => {

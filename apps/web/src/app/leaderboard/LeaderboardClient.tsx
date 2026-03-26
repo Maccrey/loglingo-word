@@ -16,6 +16,8 @@ type LeaderboardClientProps = {
   pendingScoreDelta?: number;
 };
 
+type ShareStatus = 'idle' | 'copied' | 'error';
+
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
@@ -85,6 +87,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const isViewingOwnEntry = activeFocusedUserId === currentUserId;
   const focusedWindow = getFocusedWindow(entries, activeFocusedUserId);
   const [viewMode, setViewMode] = useState<'all' | 'nearby'>(initialViewMode);
+  const [shareStatus, setShareStatus] = useState<ShareStatus>('idle');
 
   function moveFocus(nextUserId: string) {
     if (nextUserId === activeFocusedUserId) {
@@ -108,6 +111,15 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     });
   }
 
+  async function copyCurrentViewLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareStatus('copied');
+    } catch {
+      setShareStatus('error');
+    }
+  }
+
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -126,6 +138,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
     const nextSearch = searchParams.toString();
     const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`;
     window.history.replaceState(null, '', nextUrl);
+    setShareStatus('idle');
   }, [activeFocusedUserId, currentUserId, viewMode]);
 
   return (
@@ -230,7 +243,38 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                       {t(locale, 'leaderboard.back_previous')}
                     </button>
                   ) : null}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void copyCurrentViewLink();
+                    }}
+                    style={{
+                      borderRadius: 999,
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 14px',
+                      background: 'transparent',
+                      color: 'var(--text-ink)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {t(locale, 'leaderboard.share_view')}
+                  </button>
                 </div>
+                {shareStatus !== 'idle' ? (
+                  <p
+                    style={{
+                      margin: 0,
+                      color:
+                        shareStatus === 'copied'
+                          ? '#2d7a4d'
+                          : 'var(--accent-red)'
+                    }}
+                  >
+                    {shareStatus === 'copied'
+                      ? t(locale, 'leaderboard.share_success')
+                      : t(locale, 'leaderboard.share_error')}
+                  </p>
+                ) : null}
               </section>
             ) : null}
 
