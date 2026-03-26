@@ -77,6 +77,12 @@ describe('home dashboard', () => {
   });
 
   it('applies pending recommendation totals to the home summary', () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({})
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+
     render(
       <HomeDashboard
         pendingSource="recommendation"
@@ -90,5 +96,11 @@ describe('home dashboard', () => {
       screen.getByText(/추천 학습 결과가 홈 요약에 반영됐습니다\./)
     ).toBeTruthy();
     expect(screen.getByText('55 pt')).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/dashboard/sync',
+      expect.objectContaining({
+        method: 'POST'
+      })
+    );
   });
 });

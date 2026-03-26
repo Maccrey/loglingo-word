@@ -1,5 +1,6 @@
 export const coreServiceReady = true;
 export * from './curriculum';
+export * from './dashboard';
 export * from './gamification';
 export * from './learning';
 export * from './memory';

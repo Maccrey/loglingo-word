@@ -13,6 +13,8 @@ import {
   type UserProfileDocumentStore,
   type UserProfileRecord
 } from '@wordflow/core/profile';
+import { type DashboardStatsDocumentStore } from '@wordflow/core/dashboard';
+import { type UserDashboardStats } from '@wordflow/shared/types';
 
 function getFirebaseAdminConfig() {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -63,6 +65,26 @@ export function createFirestoreUserProfileStore(): UserProfileDocumentStore {
     },
     async set(collection, id, data) {
       await firestore.collection(collection).doc(id).set(data);
+    }
+  };
+}
+
+export function createFirestoreDashboardStatsStore(): DashboardStatsDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async get(userId) {
+      const snapshot = await firestore
+        .collection('dashboard_stats')
+        .doc(userId)
+        .get();
+      return snapshot.exists ? (snapshot.data() as UserDashboardStats) : null;
+    },
+    async set(stats) {
+      await firestore
+        .collection('dashboard_stats')
+        .doc(stats.userId)
+        .set(stats);
     }
   };
 }

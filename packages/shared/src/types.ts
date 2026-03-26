@@ -60,6 +60,13 @@ export const learningResultPostSchema = z.object({
   createdAt: z.string().datetime()
 });
 
+export const userDashboardStatsSchema = z.object({
+  userId: z.string().min(1),
+  totalPoints: z.number().int().min(0),
+  leaderboardScore: z.number().int().min(0),
+  updatedAt: z.string().datetime()
+});
+
 export type User = z.infer<typeof userSchema>;
 export type VocabProgress = z.infer<typeof vocabProgressSchema>;
 export type LeaderboardEntry = z.infer<typeof leaderboardEntrySchema>;
@@ -67,3 +74,4 @@ export type AIRecommendation = z.infer<typeof aiRecommendationSchema>;
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
 export type UserSettings = z.infer<typeof userSettingsSchema>;
 export type LearningResultPost = z.infer<typeof learningResultPostSchema>;
+export type UserDashboardStats = z.infer<typeof userDashboardStatsSchema>;

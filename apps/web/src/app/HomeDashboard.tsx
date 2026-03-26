@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import {
@@ -26,6 +26,11 @@ type RecommendationState = {
   weekId?: string;
   loading: boolean;
   error?: string;
+};
+
+type SyncState = {
+  loading: boolean;
+  synced: boolean;
 };
 
 const surfaceStyle: Record<string, string | number> = {
@@ -141,6 +146,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     words: [],
     loading: false
   });
+  const [syncState, setSyncState] = useState<SyncState>({
+    loading: false,
+    synced: false
+  });
 
   async function requestRecommendation() {
     setRecommendation((current) => ({
@@ -195,6 +204,60 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     }
   }
 
+  useEffect(() => {
+    if (
+      pendingSource !== 'recommendation' ||
+      syncState.synced ||
+      syncState.loading ||
+      (pendingPointsValue === 0 && pendingLeaderboardValue === 0)
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function syncPendingDashboard() {
+      setSyncState({
+        loading: true,
+        synced: false
+      });
+
+      try {
+        await fetch('/api/dashboard/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: 'demo-user',
+            pointsDelta: pendingPointsValue,
+            leaderboardDelta: pendingLeaderboardValue,
+            updatedAt: '2026-03-26T00:00:00.000Z'
+          })
+        });
+      } finally {
+        if (!cancelled) {
+          setSyncState({
+            loading: false,
+            synced: true
+          });
+        }
+      }
+    }
+
+    void syncPendingDashboard();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    pendingLeaderboardValue,
+    pendingPointsValue,
+    pendingSource,
+    syncState.loading,
+    syncState.synced
+  ]);
+
   return (
     <main style={surfaceStyle}>
       <div style={shellStyle}>
@@ -232,6 +295,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               {t(locale, 'home.sync.description')} +{pendingPointsValue}pt
               {pendingLeaderboardValue > 0
                 ? ` · leaderboard +${pendingLeaderboardValue}`
+                : ''}
+              {syncState.loading
+                ? ` · ${t(locale, 'home.sync.pending').toLowerCase()}...`
                 : ''}
             </p>
           </section>

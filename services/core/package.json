@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./curriculum": "./src/curriculum.ts",
+    "./dashboard": "./src/dashboard.ts",
     "./gamification": "./src/gamification.ts",
     "./learning": "./src/learning.ts",
     "./memory": "./src/memory.ts",
