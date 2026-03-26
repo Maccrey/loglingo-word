@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 import {
@@ -8,11 +10,19 @@ import {
   updateLearningStreak
 } from '@wordflow/core/gamification';
 import { buildReviewSelection } from '@wordflow/core/memory';
-import { resolveLocale, t, type AppLocale } from './i18n';
+import { t, type AppLocale } from './i18n';
 
 type HomeDashboardProps = {
   loading?: boolean;
   locale?: AppLocale;
+};
+
+type RecommendationState = {
+  words: string[];
+  requestedAt?: string;
+  weekId?: string;
+  loading: boolean;
+  error?: string;
 };
 
 const surfaceStyle: Record<string, string | number> = {
@@ -99,6 +109,63 @@ function buildDashboardState() {
 export default function HomeDashboard(props: HomeDashboardProps) {
   const { loading = false, locale = 'ko' } = props;
   const dashboard = buildDashboardState();
+  const [recommendation, setRecommendation] = useState<RecommendationState>({
+    words: [],
+    loading: false
+  });
+
+  async function requestRecommendation() {
+    setRecommendation((current) => ({
+      ...current,
+      loading: true
+    }));
+
+    try {
+      const response = await fetch('/api/recommendations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: 'demo-user',
+          nativeLanguage: locale,
+          targetLanguage: locale === 'ko' ? 'en' : 'ko',
+          now: '2026-03-26T00:00:00.000Z',
+          fallbackWords: ['passport', 'subway', 'reservation']
+        })
+      });
+      const result = (await response.json()) as {
+        message?: string;
+        recommendation?: {
+          words: string[];
+          requestedAt: string;
+          weekId: string;
+        };
+      };
+
+      if (!response.ok || !result.recommendation) {
+        throw new Error(
+          result.message ?? t(locale, 'home.recommendation.error')
+        );
+      }
+
+      setRecommendation({
+        words: result.recommendation.words,
+        requestedAt: result.recommendation.requestedAt,
+        weekId: result.recommendation.weekId,
+        loading: false
+      });
+    } catch (error) {
+      setRecommendation({
+        words: [],
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : t(locale, 'home.recommendation.error')
+      });
+    }
+  }
 
   return (
     <main style={surfaceStyle}>
@@ -201,6 +268,67 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               ? t(locale, 'home.goal.complete')
               : t(locale, 'home.goal.in_progress')}
           </p>
+        </section>
+
+        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
+          <div style={badgeStyle}>{t(locale, 'home.recommendation.title')}</div>
+          <h2 style={{ margin: 0 }}>
+            {t(locale, 'home.recommendation.heading')}
+          </h2>
+          <p style={{ margin: 0, lineHeight: 1.6 }}>
+            {t(locale, 'home.recommendation.description')}
+          </p>
+          <button
+            type="button"
+            onClick={requestRecommendation}
+            disabled={recommendation.loading}
+            style={{
+              width: 'fit-content',
+              borderRadius: 999,
+              border: '1px solid rgba(255, 214, 153, 0.4)',
+              padding: '10px 16px',
+              background: recommendation.loading ? '#7d6b55' : '#ffd699',
+              color: '#173246',
+              fontWeight: 700,
+              cursor: recommendation.loading ? 'progress' : 'pointer'
+            }}
+          >
+            {recommendation.loading
+              ? t(locale, 'home.recommendation.loading')
+              : t(locale, 'home.recommendation.action')}
+          </button>
+          {recommendation.error ? (
+            <p role="alert" style={{ margin: 0, color: '#ffb4b4' }}>
+              {recommendation.error}
+            </p>
+          ) : null}
+          {recommendation.words.length > 0 ? (
+            <div style={{ display: 'grid', gap: 10 }}>
+              <p style={{ margin: 0, color: '#b7f8db' }}>
+                {t(locale, 'home.recommendation.result')}{' '}
+                {recommendation.weekId}
+              </p>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {recommendation.words.map((word) => (
+                  <span
+                    key={word}
+                    style={{
+                      borderRadius: 999,
+                      padding: '8px 12px',
+                      background: 'rgba(183, 248, 219, 0.12)',
+                      border: '1px solid rgba(183, 248, 219, 0.3)'
+                    }}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p style={{ margin: 0, color: 'rgba(250, 247, 241, 0.72)' }}>
+              {t(locale, 'home.recommendation.empty')}
+            </p>
+          )}
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>

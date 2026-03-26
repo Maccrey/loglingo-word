@@ -1,13 +1,18 @@
 // @vitest-environment jsdom
 
 import React from 'react';
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import HomeDashboard from '../../apps/web/src/app/HomeDashboard';
 
 afterEach(() => {
   cleanup();
+});
+
+beforeEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('home dashboard', () => {
@@ -39,5 +44,32 @@ describe('home dashboard', () => {
       0
     );
     expect(screen.getByRole('link', { name: 'Quick Start' })).toBeTruthy();
+  });
+
+  it('requests and renders weekly recommendations', async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({
+          recommendation: {
+            words: ['airport', 'hotel', 'ticket'],
+            requestedAt: '2026-03-26T00:00:00.000Z',
+            weekId: '2026-W13'
+          }
+        })
+      }))
+    );
+
+    render(<HomeDashboard />);
+
+    await user.click(screen.getByRole('button', { name: '추천 받기' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('airport')).toBeTruthy();
+    });
+    expect(screen.getByText('hotel')).toBeTruthy();
+    expect(screen.getByText('ticket')).toBeTruthy();
   });
 });
