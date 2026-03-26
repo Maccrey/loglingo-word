@@ -103,4 +103,19 @@ describe('home dashboard', () => {
       })
     );
   });
+
+  it('uses persisted dashboard stats as the base summary points', () => {
+    render(
+      <HomeDashboard
+        initialStats={{
+          userId: 'demo-user',
+          totalPoints: 120,
+          leaderboardScore: 4,
+          updatedAt: '2026-03-26T00:00:00.000Z'
+        }}
+      />
+    );
+
+    expect(screen.getByText('120 pt')).toBeTruthy();
+  });
 });

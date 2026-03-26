@@ -10,6 +10,7 @@ import {
   updateLearningStreak
 } from '@wordflow/core/gamification';
 import { buildReviewSelection } from '@wordflow/core/memory';
+import { type UserDashboardStats } from '@wordflow/shared/types';
 import { t, type AppLocale } from './i18n';
 
 type HomeDashboardProps = {
@@ -18,6 +19,7 @@ type HomeDashboardProps = {
   pendingSource?: string;
   pendingPoints?: string;
   pendingLeaderboardScore?: string;
+  initialStats?: UserDashboardStats | null;
 };
 
 type RecommendationState = {
@@ -129,7 +131,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     locale = 'ko',
     pendingSource,
     pendingPoints,
-    pendingLeaderboardScore
+    pendingLeaderboardScore,
+    initialStats = null
   } = props;
   const dashboard = buildDashboardState();
   const pendingPointsValue =
@@ -140,7 +143,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     pendingSource === 'recommendation'
       ? parsePositiveInteger(pendingLeaderboardScore)
       : 0;
-  const totalPoints = dashboard.points + pendingPointsValue;
+  const basePoints = initialStats?.totalPoints ?? dashboard.points;
+  const totalPoints = basePoints + pendingPointsValue;
   const totalLevel = calculateLevelProgress(totalPoints + 135);
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
