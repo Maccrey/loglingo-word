@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 
+import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
+import { calculateLeaderboardScore } from '@wordflow/leaderboard';
 
 import {
   createFlashcardSession,
@@ -95,9 +97,16 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   const reviewedCount = session.logs.length;
   const totalCount = session.cards.length;
   const completed = currentCard === null;
+  const recommendationOutcome = calculateRecommendedStudyOutcome(
+    `recommended:${(props.focusWordIds ?? []).join(',')}`,
+    reviewedCount
+  );
+  const leaderboardDelta = calculateLeaderboardScore({
+    correctStreak: reviewedCount
+  }).score;
   const shareHref =
     props.focusWordIds && props.focusWordIds.length > 0
-      ? `/feed?source=recommendation&completed=${reviewedCount}&points=${reviewedCount * 4}&words=${encodeURIComponent(
+      ? `/feed?source=recommendation&completed=${reviewedCount}&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}&words=${encodeURIComponent(
           props.focusWordIds.join(',')
         )}`
       : null;

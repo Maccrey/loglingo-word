@@ -4,6 +4,7 @@ import {
   applyShareQuestReward,
   calculateDailyGoal,
   calculateLevelProgress,
+  calculateRecommendedStudyOutcome,
   calculateRewardPoints,
   getRewardPoints,
   updateLearningStreak
@@ -64,6 +65,14 @@ describe('reward point rules', () => {
     expect(firstShare.points).toBe(8);
     expect(secondShare.points).toBe(0);
     expect(secondShare.skipped).toHaveLength(1);
+  });
+
+  it('calculates recommended study outcome rewards from completed cards', () => {
+    const result = calculateRecommendedStudyOutcome('recommended:passport', 3);
+
+    expect(result.completedCards).toBe(3);
+    expect(result.reward.points).toBe(25);
+    expect(result.reward.applied).toHaveLength(2);
   });
 });
 

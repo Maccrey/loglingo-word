@@ -58,6 +58,8 @@ describe('flashcards ui', () => {
       screen
         .getByRole('link', { name: '추천 학습 결과 공유' })
         .getAttribute('href')
-    ).toBe('/feed?source=recommendation&completed=1&points=4&words=passport');
+    ).toBe(
+      '/feed?source=recommendation&completed=1&points=10&leaderboard=0&words=passport'
+    );
   });
 });

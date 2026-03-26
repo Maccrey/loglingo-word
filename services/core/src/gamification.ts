@@ -48,6 +48,11 @@ export type ShareQuestRewardResult = RewardCalculation & {
   awardId: string;
 };
 
+export type RecommendedStudyOutcome = {
+  completedCards: number;
+  reward: RewardCalculation;
+};
+
 const rewardTable: Record<RewardEventType, number> = {
   lesson_complete: 10,
   correct_streak: 5,
@@ -125,6 +130,35 @@ export function applyShareQuestReward(
   return {
     ...result,
     awardId
+  };
+}
+
+export function calculateRecommendedStudyOutcome(
+  sessionId: string,
+  completedCards: number,
+  ledger: RewardLedger = { awardedIds: [], totalPoints: 0 }
+): RecommendedStudyOutcome {
+  const safeCompletedCards = Math.max(0, Math.floor(completedCards));
+  const events: RewardEvent[] = [];
+
+  if (safeCompletedCards > 0) {
+    events.push({
+      type: 'lesson_complete',
+      awardId: `lesson:${sessionId}`
+    });
+  }
+
+  if (safeCompletedCards >= 3) {
+    events.push({
+      type: 'correct_streak',
+      awardId: `streak:${sessionId}`,
+      value: safeCompletedCards
+    });
+  }
+
+  return {
+    completedCards: safeCompletedCards,
+    reward: calculateRewardPoints(events, ledger)
   };
 }
 

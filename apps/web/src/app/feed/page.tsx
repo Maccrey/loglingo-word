@@ -14,6 +14,7 @@ type FeedPageProps = {
     source?: string;
     completed?: string;
     points?: string;
+    leaderboard?: string;
     words?: string;
   }>;
 };
@@ -42,6 +43,7 @@ export function createSharedFeedPost(input: {
   source?: string;
   completed?: string;
   points?: string;
+  leaderboard?: string;
   words?: string;
 }): LearningResultPost | null {
   if (input.source !== 'recommendation') {
@@ -50,13 +52,17 @@ export function createSharedFeedPost(input: {
 
   const completed = parsePositiveNumber(input.completed);
   const points = parsePositiveNumber(input.points);
+  const leaderboard = parsePositiveNumber(input.leaderboard);
   const words = parseWordList(input.words);
 
   if (completed === 0 || words.length === 0) {
     return null;
   }
 
-  const body = `추천 단어 ${completed}개를 학습하고 ${points}포인트를 획득했어요. ${words.join(', ')} 복습을 마쳤습니다.`;
+  const body =
+    leaderboard > 0
+      ? `추천 단어 ${completed}개를 학습하고 ${points}포인트를 획득했어요. 리더보드 점수 ${leaderboard}점도 반영됐습니다. ${words.join(', ')} 복습을 마쳤습니다.`
+      : `추천 단어 ${completed}개를 학습하고 ${points}포인트를 획득했어요. ${words.join(', ')} 복습을 마쳤습니다.`;
 
   return createLearningResultPost({
     id: 'shared-recommendation-post',
