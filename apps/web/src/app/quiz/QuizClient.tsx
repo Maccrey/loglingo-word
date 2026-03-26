@@ -85,7 +85,10 @@ export default function QuizClient() {
               {t(locale, 'quiz.description')}
             </p>
           </div>
-          <Link href="/learn" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/learn"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'learn.title')}
           </Link>
         </section>

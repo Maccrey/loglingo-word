@@ -83,7 +83,10 @@ export default function SentenceClient() {
           >
             {t(locale, 'sentence.description')}
           </p>
-          <Link href="/quiz" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/quiz"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'quiz.title')}
           </Link>
         </section>

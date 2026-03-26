@@ -40,11 +40,15 @@ describe('leaderboard ui', () => {
   });
 
   it('applies the incoming recommendation score to the leaderboard state', async () => {
-    const state = await buildLeaderboardPageState({
-      source: 'recommendation',
-      score: '2',
-      userId: 'demo-user'
-    });
+    const repository = new InMemoryLeaderboardRepository();
+    const state = await buildLeaderboardPageState(
+      {
+        source: 'recommendation',
+        score: '2',
+        userId: 'demo-user'
+      },
+      repository
+    );
 
     render(
       <LeaderboardClient
@@ -57,7 +61,7 @@ describe('leaderboard ui', () => {
     expect(
       screen.getByText('이번 추천 학습으로 리더보드 점수 2점이 반영됐습니다.')
     ).toBeTruthy();
-    expect(screen.getByText('8 pt')).toBeTruthy();
+    expect(screen.getByText('6 pt')).toBeTruthy();
   });
 
   it('uses persisted leaderboard entries as the initial state', async () => {

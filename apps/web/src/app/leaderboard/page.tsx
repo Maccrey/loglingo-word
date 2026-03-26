@@ -73,18 +73,6 @@ export async function buildLeaderboardPageState(
     );
   }
 
-  if (input?.source === 'recommendation' && scoreDelta > 0) {
-    entries = await repository.saveByWeekId(
-      weekId,
-      upsertLeaderboardScore({
-        entries,
-        weekId,
-        userId: currentUserId,
-        scoreDelta
-      }).entries
-    );
-  }
-
   return {
     entries,
     currentUserId,

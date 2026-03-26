@@ -121,7 +121,10 @@ export default function FeedClient(props: FeedClientProps) {
           >
             {t(locale, 'feed.description')}
           </p>
-          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>

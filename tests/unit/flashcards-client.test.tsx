@@ -3,12 +3,16 @@
 import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import FlashcardsClient from '../../apps/web/src/app/learn/FlashcardsClient';
 
 afterEach(() => {
   cleanup();
+});
+
+beforeEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('flashcards ui', () => {
@@ -48,6 +52,11 @@ describe('flashcards ui', () => {
 
   it('shows a share link after completing a focused recommendation session', async () => {
     const user = userEvent.setup();
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({})
+    }));
+    vi.stubGlobal('fetch', fetchMock);
 
     render(<FlashcardsClient focusWordIds={['passport']} />);
 
@@ -71,5 +80,38 @@ describe('flashcards ui', () => {
         .getByRole('link', { name: '홈 요약 반영 보기' })
         .getAttribute('href')
     ).toBe('/?source=recommendation&points=10&leaderboard=0');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('syncs leaderboard score when a focused recommendation session awards leaderboard points', async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({})
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <FlashcardsClient focusWordIds={['passport', 'reservation', 'subway']} />
+    );
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/leaderboard/sync',
+      expect.objectContaining({
+        method: 'POST'
+      })
+    );
+    expect(
+      screen
+        .getByRole('link', { name: '리더보드 반영 보기' })
+        .getAttribute('href')
+    ).toBe('/leaderboard?source=recommendation&score=1&userId=demo-user');
   });
 });

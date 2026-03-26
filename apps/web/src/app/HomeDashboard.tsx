@@ -400,8 +400,12 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               borderRadius: 999,
               border: '1px solid var(--btn-primary-border)',
               padding: '10px 16px',
-              background: recommendation.loading ? 'var(--btn-disabled-bg)' : 'var(--btn-primary-bg)',
-              color: recommendation.loading ? 'var(--btn-disabled-color)' : '#fff',
+              background: recommendation.loading
+                ? 'var(--btn-disabled-bg)'
+                : 'var(--btn-primary-bg)',
+              color: recommendation.loading
+                ? 'var(--btn-disabled-color)'
+                : '#fff',
               fontWeight: 700,
               cursor: recommendation.loading ? 'progress' : 'pointer',
               boxShadow: 'var(--shadow-card)'
@@ -442,7 +446,11 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                 href={`/learn?focus=${encodeURIComponent(
                   recommendation.words.join(',')
                 )}`}
-                style={{ color: 'var(--text-ink)', fontWeight: 700, textDecoration: 'underline' }}
+                style={{
+                  color: 'var(--text-ink)',
+                  fontWeight: 700,
+                  textDecoration: 'underline'
+                }}
               >
                 {t(locale, 'home.recommendation.start')}
               </Link>
@@ -463,35 +471,75 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             <Link
               href="/learn"
               aria-label={t(locale, 'common.action.quick_start')}
-              style={{ background: 'var(--accent-yellow)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
+              style={{
+                background: 'var(--accent-yellow)',
+                border: '1px solid var(--border-pencil)',
+                padding: '8px 16px',
+                borderRadius: 12,
+                color: 'var(--text-ink)',
+                fontWeight: 600,
+                boxShadow: 'var(--shadow-card)'
+              }}
             >
               {t(locale, 'common.action.quick_start')}
             </Link>
             <Link
               href="/quiz"
               aria-label={t(locale, 'quiz.title')}
-              style={{ background: 'var(--accent-green)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
+              style={{
+                background: 'var(--accent-green)',
+                border: '1px solid var(--border-pencil)',
+                padding: '8px 16px',
+                borderRadius: 12,
+                color: 'var(--text-ink)',
+                fontWeight: 600,
+                boxShadow: 'var(--shadow-card)'
+              }}
             >
               {t(locale, 'quiz.title')}
             </Link>
             <Link
               href="/sentence"
               aria-label={t(locale, 'sentence.title')}
-              style={{ background: 'var(--accent-blue)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
+              style={{
+                background: 'var(--accent-blue)',
+                border: '1px solid var(--border-pencil)',
+                padding: '8px 16px',
+                borderRadius: 12,
+                color: 'var(--text-ink)',
+                fontWeight: 600,
+                boxShadow: 'var(--shadow-card)'
+              }}
             >
               {t(locale, 'sentence.title')}
             </Link>
             <Link
               href="/chat"
               aria-label={t(locale, 'chat.title')}
-              style={{ background: 'var(--accent-pink)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
+              style={{
+                background: 'var(--accent-pink)',
+                border: '1px solid var(--border-pencil)',
+                padding: '8px 16px',
+                borderRadius: 12,
+                color: 'var(--text-ink)',
+                fontWeight: 600,
+                boxShadow: 'var(--shadow-card)'
+              }}
             >
               {t(locale, 'chat.title')}
             </Link>
             <Link
               href="/feed"
               aria-label={t(locale, 'feed.title')}
-              style={{ background: 'var(--accent-orange)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}
+              style={{
+                background: 'var(--accent-orange)',
+                border: '1px solid var(--border-pencil)',
+                padding: '8px 16px',
+                borderRadius: 12,
+                color: 'var(--text-ink)',
+                fontWeight: 600,
+                boxShadow: 'var(--shadow-card)'
+              }}
             >
               {t(locale, 'feed.title')}
             </Link>

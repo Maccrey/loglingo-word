@@ -142,7 +142,10 @@ export default function ChatClient(props: ChatClientProps) {
           >
             {t(locale, 'chat.description')}
           </p>
-          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>
@@ -224,7 +227,9 @@ export default function ChatClient(props: ChatClientProps) {
                 padding: '12px 24px',
                 fontSize: 16,
                 fontWeight: 700,
-                background: loading ? 'var(--btn-disabled-bg)' : 'var(--btn-primary-bg)',
+                background: loading
+                  ? 'var(--btn-disabled-bg)'
+                  : 'var(--btn-primary-bg)',
                 color: loading ? 'var(--btn-disabled-color)' : '#fff',
                 cursor: loading ? 'wait' : 'pointer',
                 boxShadow: 'var(--shadow-card)'

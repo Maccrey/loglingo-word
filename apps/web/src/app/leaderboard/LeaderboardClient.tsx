@@ -79,7 +79,10 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
             {currentWeek.weekId} · {currentWeek.weekStart} ~{' '}
             {currentWeek.weekEnd}
           </p>
-          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>

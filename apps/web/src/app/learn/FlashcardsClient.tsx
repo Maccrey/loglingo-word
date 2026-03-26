@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
@@ -34,7 +34,7 @@ const panelStyle: Record<string, string | number> = {
   padding: 32,
   background: 'var(--bg-card)',
   border: '1px solid var(--border-pencil)',
-  boxShadow: 'var(--shadow-card)',
+  boxShadow: 'var(--shadow-card)'
 };
 
 const badgeStyle: Record<string, string | number> = {
@@ -92,6 +92,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       props.focusWordIds ? { focusWordIds: props.focusWordIds } : undefined
     )
   );
+  const [leaderboardSyncState, setLeaderboardSyncState] = useState({
+    loading: false,
+    synced: false
+  });
 
   const currentCard = getCurrentCard(session);
   const reviewedCount = session.logs.length;
@@ -118,6 +122,61 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     props.focusWordIds && props.focusWordIds.length > 0
       ? `/?source=recommendation&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}`
       : null;
+
+  useEffect(() => {
+    if (
+      !completed ||
+      !props.focusWordIds ||
+      props.focusWordIds.length === 0 ||
+      leaderboardSyncState.loading ||
+      leaderboardSyncState.synced ||
+      leaderboardDelta === 0
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function syncLeaderboard() {
+      setLeaderboardSyncState({
+        loading: true,
+        synced: false
+      });
+
+      try {
+        await fetch('/api/leaderboard/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: 'demo-user',
+            scoreDelta: leaderboardDelta,
+            now: '2026-03-26T00:00:00.000Z'
+          })
+        });
+      } finally {
+        if (!cancelled) {
+          setLeaderboardSyncState({
+            loading: false,
+            synced: true
+          });
+        }
+      }
+    }
+
+    void syncLeaderboard();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    completed,
+    leaderboardDelta,
+    leaderboardSyncState.loading,
+    leaderboardSyncState.synced,
+    props.focusWordIds
+  ]);
 
   return (
     <main style={surfaceStyle}>
@@ -161,9 +220,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               <strong style={{ fontSize: 32 }}>
                 {reviewedCount}/{totalCount}
               </strong>
-              <span style={{ color: 'var(--text-faded)' }}>
-                완료한 카드 수
-              </span>
+              <span style={{ color: 'var(--text-faded)' }}>완료한 카드 수</span>
               <span style={{ color: 'var(--text-faded)' }}>
                 오답 큐 {session.wrongWordQueue.length}개
               </span>
@@ -193,21 +250,65 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 마지막 난이도 선택: {session.lastRating ?? '없음'}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link href="/" style={{ background: 'var(--accent-yellow)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
+                <Link
+                  href="/"
+                  style={{
+                    background: 'var(--accent-yellow)',
+                    border: '1px solid var(--border-pencil)',
+                    padding: '8px 16px',
+                    borderRadius: 12,
+                    color: 'var(--text-ink)',
+                    fontWeight: 600,
+                    boxShadow: 'var(--shadow-card)'
+                  }}
+                >
                   홈으로 돌아가기
                 </Link>
                 {homeHref ? (
-                  <Link href={homeHref} style={{ background: 'var(--accent-green)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
+                  <Link
+                    href={homeHref}
+                    style={{
+                      background: 'var(--accent-green)',
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 16px',
+                      borderRadius: 12,
+                      color: 'var(--text-ink)',
+                      fontWeight: 600,
+                      boxShadow: 'var(--shadow-card)'
+                    }}
+                  >
                     홈 요약 반영 보기
                   </Link>
                 ) : null}
                 {shareHref ? (
-                  <Link href={shareHref} style={{ background: 'var(--accent-blue)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
+                  <Link
+                    href={shareHref}
+                    style={{
+                      background: 'var(--accent-blue)',
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 16px',
+                      borderRadius: 12,
+                      color: 'var(--text-ink)',
+                      fontWeight: 600,
+                      boxShadow: 'var(--shadow-card)'
+                    }}
+                  >
                     추천 학습 결과 공유
                   </Link>
                 ) : null}
                 {leaderboardHref ? (
-                  <Link href={leaderboardHref} style={{ background: 'var(--accent-pink)', border: '1px solid var(--border-pencil)', padding: '8px 16px', borderRadius: 12, color: 'var(--text-ink)', fontWeight: 600, boxShadow: 'var(--shadow-card)' }}>
+                  <Link
+                    href={leaderboardHref}
+                    style={{
+                      background: 'var(--accent-pink)',
+                      border: '1px solid var(--border-pencil)',
+                      padding: '8px 16px',
+                      borderRadius: 12,
+                      color: 'var(--text-ink)',
+                      fontWeight: 600,
+                      boxShadow: 'var(--shadow-card)'
+                    }}
+                  >
                     리더보드 반영 보기
                   </Link>
                 ) : null}

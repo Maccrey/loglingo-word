@@ -122,7 +122,10 @@ export default function SettingsClient(props: SettingsClientProps) {
           <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
             {t(locale, 'settings.heading')}
           </h1>
-          <Link href="/" style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}>
+          <Link
+            href="/"
+            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
+          >
             {t(locale, 'common.action.back_home')}
           </Link>
         </section>

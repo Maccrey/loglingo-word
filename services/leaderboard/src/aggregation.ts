@@ -18,6 +18,12 @@ export type LeaderboardUpdateResult = {
   myRank: number;
 };
 
+export type LeaderboardSyncInput = {
+  weekId: string;
+  userId: string;
+  scoreDelta: number;
+};
+
 export type LeaderboardDocumentStore = {
   getByWeekId: (weekId: string) => Promise<LeaderboardEntryRecord[]>;
   setByWeekId: (
@@ -158,4 +164,33 @@ export class FirestoreLeaderboardRepository implements LeaderboardRepository {
 
     return normalizedEntries;
   }
+}
+
+export async function syncLeaderboardScore(
+  input: LeaderboardSyncInput,
+  repository: LeaderboardRepository
+): Promise<LeaderboardUpdateResult> {
+  const weekId = input.weekId.trim();
+  const userId = input.userId.trim();
+  const scoreDelta = Math.max(0, Math.floor(input.scoreDelta));
+
+  if (!weekId) {
+    throw new Error('Leaderboard weekId is required.');
+  }
+
+  if (!userId) {
+    throw new Error('Leaderboard userId is required.');
+  }
+
+  const currentEntries = await repository.listByWeekId(weekId);
+  const nextState = upsertLeaderboardScore({
+    entries: currentEntries,
+    weekId,
+    userId,
+    scoreDelta
+  });
+
+  await repository.saveByWeekId(weekId, nextState.entries);
+
+  return nextState;
 }
