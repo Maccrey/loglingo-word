@@ -2,9 +2,13 @@
 
 ## 0. 디자인 시각 자료 및 테마
 
-- **컨셉**: 아날로그 종이, 잉크, 형광펜을 모티브로 한 편안하고 따뜻한 언어 학습 환경
-- **전역 CSS 변수 (`globals.css`) 기반**:
-  - 배경: `--bg-paper` (#fdfbf7), `--bg-card` (#ffffff)
+- **컨셉**: 아날로그 스프링 노트, 잉크, 형광펜을 모티브로 한 편안하고 깔끔한 언어 학습 환경
+- **주요 레이아웃 특징**:
+  - **스프링 제본 (Spiral Binder)**: 뷰포트 좌측 가장자리에 SVG로 펀칭 구멍과 금속 링을 그려넣어 실제 스프링 노트를 펼친 디자인 구현 
+  - **가이드라인 (Rule Lines)**: 배경 레이어에 32px 간격의 가로선 패턴을 적용하여 단정하게 정돈된 필기장 느낌 연출
+  - **손글씨 폰트 (Handwritten Fonts)**: 영문 `Kalam`, 한글 `Gowun Dodum(고운돋움)` 폰트를 전역 적용하여 아날로그 감성 강화
+- **전역 CSS 인프라 (`globals.css`)**:
+  - 배경: `--bg-paper` (#fdfbf7), `--bg-notebook-lines` (노트 가로줄 패턴), `--bg-card` (#ffffff)
   - 텍스트/선: `--text-ink` (#2c2a25), `--text-faded` (#7a756d), `--border-pencil` (#e8e3d8)
   - 그림자: `--shadow-paper`, `--shadow-card` (종이가 겹친 듯한 얕고 부드러운 그림자)
   - 강조 색상 (파스텔톤 형광펜 느낌): `--accent-yellow`, `--accent-green`, `--accent-blue`, `--accent-pink`, `--accent-orange`
