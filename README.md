@@ -120,6 +120,24 @@ CAT_EXTRA_KITTEN_REWARD_DAYS=365
 
 향후 Gemini Nano Banana 등으로 캐릭터 상태 화면을 생성할 수 있도록 프롬프트를 파일로 관리한다.
 
+상세 기준 문서는 [Nano-Banana.md](/Users/maccrey/Development/Loglingo_word/Nano-Banana.md)로 관리한다.
+
+### 우선 생성 대상
+
+- 성장 단계 6종 기본 건강 상태 이미지
+- `kitten-base.png`
+- `junior-healthy.png`
+- `adult-healthy.png`
+- `middle-age-healthy.png`
+- `senior-healthy.png`
+- `veteran-healthy.png`
+- 장기 보상 확장 이미지
+- `legacy-healthy.png`
+- 돌봄 액션 피드백 이미지
+- `action-feed.png`
+- `action-play.png`
+- `action-wash.png`
+
 ### 프롬프트 디렉토리
 
 - `assets/prompts/nano-banana/cats/kitten-base.txt`
@@ -134,7 +152,10 @@ CAT_EXTRA_KITTEN_REWARD_DAYS=365
 - `assets/prompts/nano-banana/cats/middle-age-healthy.txt`
 - `assets/prompts/nano-banana/cats/senior-healthy.txt`
 - `assets/prompts/nano-banana/cats/veteran-healthy.txt`
-- `assets/prompts/nano-banana/cats/adult-legacy.txt`
+- `assets/prompts/nano-banana/cats/legacy-healthy.txt`
+- `assets/prompts/nano-banana/care/action-feed.txt`
+- `assets/prompts/nano-banana/care/action-play.txt`
+- `assets/prompts/nano-banana/care/action-wash.txt`
 
 ### 프롬프트 작성 규칙
 
@@ -142,6 +163,16 @@ CAT_EXTRA_KITTEN_REWARD_DAYS=365
 - 동일 캐릭터 일관성을 위해 털색, 눈색, 얼굴 비율, 꼬리 특징을 고정한다.
 - "mobile game pet care screen" 같은 사용 목적 문구를 포함한다.
 - 과한 사실주의보다 친근한 2D 게임풍을 우선한다.
+- 프론트엔드 stage 값은 camelCase일 수 있으나 파일명은 kebab-case를 사용한다.
+- 예: `middleAge` -> `middle-age`
+- `kitten + healthy`는 예외적으로 `kitten-base.png`를 사용한다.
+
+### 로직 반영 기준
+
+- 현재 상태 이미지는 `{stage}-{status}.png` 규칙을 우선 사용한다.
+- `healthy` 상태는 `kitten`만 `kitten-base.png`, 나머지는 `{stage}-healthy.png`를 사용한다.
+- 파일이 없으면 `veteran -> senior -> middle-age -> adult -> junior -> kitten` 순으로 fallback 한다.
+- 액션 연출은 먹이, 놀이, 씻기기 직후 1~2초 동안 각각 `action-feed.png`, `action-play.png`, `action-wash.png`를 우선 표시한다.
 
 ### 샘플 프롬프트
 
@@ -175,6 +206,7 @@ No text, no watermark.
 - `PRD.md`: 제품 기획
 - `UI.md`: 화면 구조와 UX 규칙
 - `Tasklist.md`: 최소 함수 단위 기준 구현 태스크
+- `Nano-Banana.md`: Nano Banana 이미지 자산 규격과 프롬프트
 
 ## 추후 파이어베이스 연동 로드맵 (Phase 8)
 

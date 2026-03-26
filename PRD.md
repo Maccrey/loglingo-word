@@ -122,6 +122,17 @@ AI 기반 글로벌 언어 학습 플랫폼에 "학습으로 돌보는 고양이
 - AI 대화는 OpenAI 기반으로 유지
 - 향후 캐릭터 일러스트/상태 화면은 Gemini Nano Banana 등 이미지 생성 모델로 제작 가능하도록 프롬프트 자산 구조를 미리 정의한다.
 - 프롬프트는 버전 관리 가능한 텍스트 파일로 보관한다.
+- 기준 문서는 `Nano-Banana.md`로 관리한다.
+- 우선 생성 대상 성장 단계는 `kitten`, `junior`, `adult`, `middleAge`, `senior`, `veteran` 6종이다.
+- 장기 보상 전용으로 `legacy` 이미지를 별도 생성한다.
+- 돌봄 액션 피드백용 `feed`, `play`, `wash` 전용 이미지도 생성한다.
+- 파일명 규칙은 프론트엔드 stage/status 매핑과 직접 연결되어야 한다.
+- 예: `middleAge` 단계는 이미지 파일명에서 `middle-age`를 사용한다.
+- `kitten + healthy` 조합은 예외적으로 `kitten-base.png`를 사용한다.
+- 로직은 상태 이미지와 액션 이미지를 분리해서 선택해야 한다.
+- 상태 이미지: `{stage}-{status}.png`
+- 액션 이미지: `action-feed.png`, `action-play.png`, `action-wash.png`
+- 파일 누락 시 단계 fallback 체인을 사용하고 최종 fallback은 `kitten-base.png`로 고정한다.
 
 ### 4.8 현재 구현 기준 메모
 
