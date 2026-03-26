@@ -1,0 +1,6 @@
+Create a 2D mobile game pet care status screen.
+The same cream-colored kitten character, now visibly hungry and slightly tired, looking at an empty food bowl.
+Mood: needs care but still cute, not horror.
+Scene: notebook-themed learning room, soft paper textures, subtle icons area left empty for UI composition.
+Style: warm casual tamagotchi-like game illustration, expressive face, consistent character design.
+No text, no watermark.

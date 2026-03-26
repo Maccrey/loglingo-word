@@ -1,0 +1,6 @@
+Create a 2D mobile game pet character screen.
+A small cream-colored kitten with round face, short legs, amber eyes, and a tiny blue collar.
+Mood: healthy, curious, loved.
+Scene: cozy study desk corner with vocabulary cards and warm daylight.
+Style: polished casual game art, soft shading, clean silhouette, highly readable at mobile size, warm casual tamagotchi-like game illustration.
+No text, no watermark, no UI overlay.
