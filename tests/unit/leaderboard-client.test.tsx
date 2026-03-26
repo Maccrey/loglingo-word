@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { InMemoryLeaderboardRepository } from '../../services/leaderboard/src';
 
 import LeaderboardClient from '../../apps/web/src/app/leaderboard/LeaderboardClient';
-import { buildLeaderboardPageState } from '../../apps/web/src/app/leaderboard/page';
+import { buildLeaderboardPageState } from '../../apps/web/src/app/leaderboard/state';
 
 afterEach(() => {
   cleanup();

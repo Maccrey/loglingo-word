@@ -112,6 +112,24 @@ describe('home dashboard', () => {
         pendingSource="recommendation"
         pendingPoints="10"
         pendingLeaderboardScore="2"
+        leaderboardPreview={{
+          weekId: '2026-W13',
+          myRank: 2,
+          topEntries: [
+            {
+              userId: 'user-2',
+              rank: 1,
+              score: 3,
+              isCurrentUser: false
+            },
+            {
+              userId: 'demo-user',
+              rank: 2,
+              score: 1,
+              isCurrentUser: true
+            }
+          ]
+        }}
       />
     );
 
@@ -121,6 +139,8 @@ describe('home dashboard', () => {
     ).toBeTruthy();
     expect(screen.getByText('55 pt')).toBeTruthy();
     expect(screen.getByText('2 pt')).toBeTruthy();
+    expect(screen.getByText('이번 주 순위 #1')).toBeTruthy();
+    expect(screen.getAllByText('3 pt').length).toBeGreaterThan(0);
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/dashboard/sync',
       expect.objectContaining({

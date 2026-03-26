@@ -45,6 +45,8 @@ type SyncState = {
   synced: boolean;
 };
 
+type LeaderboardPreview = NonNullable<HomeDashboardProps['leaderboardPreview']>;
+
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
@@ -137,6 +139,60 @@ function parsePositiveInteger(value?: string): number {
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
 }
 
+function buildOptimisticLeaderboardPreview(
+  preview: LeaderboardPreview | null,
+  scoreDelta: number
+): LeaderboardPreview | null {
+  if (!preview || scoreDelta === 0) {
+    return preview;
+  }
+
+  const hasCurrentUser = preview.topEntries.some(
+    (entry) => entry.userId === 'demo-user'
+  );
+  const nextEntries = hasCurrentUser
+    ? preview.topEntries.map((entry) =>
+        entry.userId === 'demo-user'
+          ? {
+              ...entry,
+              score: entry.score + scoreDelta
+            }
+          : entry
+      )
+    : [
+        ...preview.topEntries,
+        {
+          userId: 'demo-user',
+          rank: preview.myRank ?? preview.topEntries.length + 1,
+          score: scoreDelta,
+          isCurrentUser: true
+        }
+      ];
+
+  const rankedEntries = nextEntries
+    .slice()
+    .sort((left, right) => {
+      if (left.score === right.score) {
+        return left.userId.localeCompare(right.userId);
+      }
+
+      return right.score - left.score;
+    })
+    .map((entry, index) => ({
+      ...entry,
+      rank: index + 1
+    }));
+
+  const currentUserEntry =
+    rankedEntries.find((entry) => entry.userId === 'demo-user') ?? null;
+
+  return {
+    weekId: preview.weekId,
+    myRank: currentUserEntry?.rank ?? preview.myRank,
+    topEntries: rankedEntries.slice(0, 3)
+  };
+}
+
 export default function HomeDashboard(props: HomeDashboardProps) {
   const {
     loading = false,
@@ -161,6 +217,13 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   const totalPoints = basePoints + pendingPointsValue;
   const totalLeaderboardScore = baseLeaderboardScore + pendingLeaderboardValue;
   const totalLevel = calculateLevelProgress(totalPoints + 135);
+  const optimisticLeaderboardPreview =
+    pendingSource === 'recommendation'
+      ? buildOptimisticLeaderboardPreview(
+          leaderboardPreview,
+          pendingLeaderboardValue
+        )
+      : leaderboardPreview;
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
     loading: false
@@ -372,11 +435,11 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               {totalLeaderboardScore} pt
             </h2>
             <p style={{ margin: 0 }}>
-              {leaderboardPreview?.myRank
-                ? `${t(locale, 'home.summary.leaderboard_rank')} #${leaderboardPreview.myRank}`
+              {optimisticLeaderboardPreview?.myRank
+                ? `${t(locale, 'home.summary.leaderboard_rank')} #${optimisticLeaderboardPreview.myRank}`
                 : t(locale, 'home.summary.leaderboard_empty')}
             </p>
-            {leaderboardPreview?.topEntries.length ? (
+            {optimisticLeaderboardPreview?.topEntries.length ? (
               <div
                 style={{
                   display: 'grid',
@@ -385,11 +448,11 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                 }}
               >
                 <span style={{ color: 'var(--text-faded)', fontSize: 13 }}>
-                  {leaderboardPreview.weekId}
+                  {optimisticLeaderboardPreview.weekId}
                 </span>
-                {leaderboardPreview.topEntries.map((entry) => (
+                {optimisticLeaderboardPreview.topEntries.map((entry) => (
                   <div
-                    key={`${leaderboardPreview.weekId}-${entry.userId}`}
+                    key={`${optimisticLeaderboardPreview.weekId}-${entry.userId}`}
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '40px 1fr auto',
