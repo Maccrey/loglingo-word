@@ -17,7 +17,7 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -222,7 +222,7 @@ export default function SettingsClient(props: SettingsClientProps) {
                 style={{
                   borderRadius: 20,
                   padding: '16px 18px',
-                  background: 'var(--bg-paper)',
+                  background: 'var(--bg-card)',
                   border: '1px solid var(--border-pencil)',
                   display: 'grid',
                   gap: 8

@@ -17,7 +17,7 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -342,7 +342,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                   display: 'grid',
                   gap: 18,
                   alignContent: 'space-between',
-                  background: 'var(--bg-paper)',
+                  background: 'transparent',
                   border: '1px solid var(--border-pencil)',
                   boxShadow: 'var(--shadow-card)'
                 }}

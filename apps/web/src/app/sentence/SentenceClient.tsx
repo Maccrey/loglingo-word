@@ -15,7 +15,7 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -128,7 +128,7 @@ export default function SentenceClient() {
               gap: 10,
               flexWrap: 'wrap',
               alignItems: 'center',
-              background: 'var(--bg-paper)',
+              background: 'transparent',
               border: '1px dashed var(--border-pencil)'
             }}
           >
@@ -185,7 +185,7 @@ export default function SentenceClient() {
                 padding: '12px 24px',
                 fontSize: 16,
                 fontWeight: 600,
-                background: 'var(--bg-paper)',
+                background: 'transparent',
                 color: 'var(--text-ink)',
                 cursor: 'pointer',
                 boxShadow: 'var(--shadow-card)'

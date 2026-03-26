@@ -16,7 +16,7 @@ type LeaderboardClientProps = {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -127,7 +127,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                         color: 'var(--text-ink)',
                         background: isMe
                           ? 'var(--accent-pink)'
-                          : 'var(--bg-paper)',
+                          : 'transparent',
                         border: '1px solid var(--border-pencil)'
                       }}
                     >

@@ -12,7 +12,7 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -209,7 +209,7 @@ export default function ChatClient(props: ChatClientProps) {
                   borderRadius: 16,
                   border: '1px solid var(--border-pencil)',
                   padding: '14px 16px',
-                  background: 'var(--bg-paper)',
+                  background: 'transparent',
                   color: 'var(--text-ink)',
                   resize: 'vertical',
                   boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'

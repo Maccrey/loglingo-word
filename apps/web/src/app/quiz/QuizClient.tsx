@@ -15,7 +15,7 @@ import {
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -118,7 +118,7 @@ export default function QuizClient() {
                     textAlign: 'left',
                     background: selected
                       ? 'var(--accent-yellow)'
-                      : 'var(--bg-paper)',
+                      : 'transparent',
                     color: 'var(--text-ink)',
                     cursor: 'pointer'
                   }}
@@ -175,7 +175,7 @@ export default function QuizClient() {
                 borderRadius: 16,
                 border: '1px solid var(--border-pencil)',
                 padding: '14px 16px',
-                background: 'var(--bg-paper)',
+                background: 'transparent',
                 color: 'var(--text-ink)',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
               }}

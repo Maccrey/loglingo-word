@@ -15,7 +15,7 @@ import { t, type AppLocale } from '../i18n';
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
   padding: '32px 20px 56px',
-  background: 'var(--bg-paper)',
+  background: 'transparent',
   color: 'var(--text-ink)'
 };
 
@@ -185,7 +185,7 @@ export default function FeedClient(props: FeedClientProps) {
                     padding: '12px 16px',
                     background: post.likedByUser
                       ? 'var(--accent-pink)'
-                      : 'var(--bg-paper)',
+                      : 'transparent',
                     color: 'var(--text-ink)',
                     cursor: 'pointer'
                   }}
