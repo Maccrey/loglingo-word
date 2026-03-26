@@ -9,6 +9,8 @@ import {
 } from '@wordflow/core/learning';
 import { type VocabProgress } from '@wordflow/shared/types';
 
+import { curriculumSeed } from '@wordflow/core/curriculum';
+
 export type FlashcardSessionState = {
   cards: StudyCard[];
   currentIndex: number;
@@ -19,7 +21,23 @@ export type FlashcardSessionState = {
   lastRating?: StudyRating;
 };
 
-export function createDemoFlashcardSession(): FlashcardSessionState {
+function buildFocusedCards(wordIds: string[]): StudyCard[] {
+  const wordMap = new Map(
+    curriculumSeed.flatMap((unit) => unit.words).map((word) => [word.id, word])
+  );
+
+  return wordIds
+    .map((wordId) => wordMap.get(wordId))
+    .filter((word): word is NonNullable<typeof word> => Boolean(word))
+    .map((word) => ({
+      word,
+      reason: 'new' as const
+    }));
+}
+
+export function createFlashcardSession(input?: {
+  focusWordIds?: string[];
+}): FlashcardSessionState {
   const progressList: VocabProgress[] = [
     {
       wordId: 'subway',
@@ -30,12 +48,19 @@ export function createDemoFlashcardSession(): FlashcardSessionState {
     }
   ];
 
-  const cards = buildStudyQueue({
-    now: '2026-03-25T12:00:00.000Z',
-    progress: progressList,
-    wrongWordIds: ['hello'],
-    limit: 4
-  });
+  const focusedCards =
+    input?.focusWordIds && input.focusWordIds.length > 0
+      ? buildFocusedCards(input.focusWordIds)
+      : [];
+  const cards =
+    focusedCards.length > 0
+      ? focusedCards
+      : buildStudyQueue({
+          now: '2026-03-25T12:00:00.000Z',
+          progress: progressList,
+          wrongWordIds: ['hello'],
+          limit: 4
+        });
 
   return {
     cards,
@@ -47,6 +72,10 @@ export function createDemoFlashcardSession(): FlashcardSessionState {
     logs: [],
     wrongWordQueue: []
   };
+}
+
+export function createDemoFlashcardSession(): FlashcardSessionState {
+  return createFlashcardSession();
 }
 
 export function getCurrentCard(state: FlashcardSessionState): StudyCard | null {

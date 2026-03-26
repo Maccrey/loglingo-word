@@ -37,4 +37,12 @@ describe('flashcards ui', () => {
     expect(screen.getByText('subway')).toBeTruthy();
     expect(screen.getByText('카드 2 / 4')).toBeTruthy();
   });
+
+  it('renders a focused recommendation session when word ids are provided', () => {
+    render(<FlashcardsClient focusWordIds={['passport', 'reservation']} />);
+
+    expect(screen.getByText('passport')).toBeTruthy();
+    expect(screen.getByText('카드 1 / 2')).toBeTruthy();
+    expect(screen.getByText('추천 단어 2개')).toBeTruthy();
+  });
 });

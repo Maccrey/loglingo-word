@@ -23,6 +23,7 @@
   "home.recommendation.action": "추천 받기",
   "home.recommendation.loading": "추천 생성 중...",
   "home.recommendation.result": "추천 결과",
+  "home.recommendation.start": "추천 학습 시작",
   "home.recommendation.empty": "아직 추천된 단어가 없습니다.",
   "home.recommendation.error": "주간 추천을 불러오지 못했습니다.",
   "home.quick_start": "바로 학습 시작",

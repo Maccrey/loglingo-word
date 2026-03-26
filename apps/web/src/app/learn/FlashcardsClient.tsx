@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { type StudyRating } from '@wordflow/core/learning';
 
 import {
-  createDemoFlashcardSession,
+  createFlashcardSession,
   flipCurrentCard,
   getCurrentCard,
   rateCurrentCard
@@ -80,8 +80,16 @@ function reasonLabel(reason: string): string {
   }
 }
 
-export default function FlashcardsClient() {
-  const [session, setSession] = useState(createDemoFlashcardSession);
+type FlashcardsClientProps = {
+  focusWordIds?: string[];
+};
+
+export default function FlashcardsClient(props: FlashcardsClientProps) {
+  const [session, setSession] = useState(() =>
+    createFlashcardSession(
+      props.focusWordIds ? { focusWordIds: props.focusWordIds } : undefined
+    )
+  );
 
   const currentCard = getCurrentCard(session);
   const reviewedCount = session.logs.length;
@@ -136,6 +144,11 @@ export default function FlashcardsClient() {
               <span style={{ color: 'rgba(247, 212, 135, 0.86)' }}>
                 오답 큐 {session.wrongWordQueue.length}개
               </span>
+              {props.focusWordIds && props.focusWordIds.length > 0 ? (
+                <span style={{ color: 'rgba(140, 231, 255, 0.9)' }}>
+                  추천 단어 {props.focusWordIds.length}개
+                </span>
+              ) : null}
             </div>
           </div>
         </section>

@@ -54,7 +54,7 @@ describe('home dashboard', () => {
         ok: true,
         json: async () => ({
           recommendation: {
-            words: ['airport', 'hotel', 'ticket'],
+            words: ['passport', 'subway', 'reservation'],
             requestedAt: '2026-03-26T00:00:00.000Z',
             weekId: '2026-W13'
           }
@@ -67,9 +67,12 @@ describe('home dashboard', () => {
     await user.click(screen.getByRole('button', { name: '추천 받기' }));
 
     await waitFor(() => {
-      expect(screen.getByText('airport')).toBeTruthy();
+      expect(screen.getByText('passport')).toBeTruthy();
     });
-    expect(screen.getByText('hotel')).toBeTruthy();
-    expect(screen.getByText('ticket')).toBeTruthy();
+    expect(screen.getByText('subway')).toBeTruthy();
+    expect(screen.getByText('reservation')).toBeTruthy();
+    expect(
+      screen.getByRole('link', { name: '추천 학습 시작' }).getAttribute('href')
+    ).toBe('/learn?focus=passport%2Csubway%2Creservation');
   });
 });

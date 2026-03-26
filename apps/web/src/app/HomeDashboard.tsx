@@ -323,6 +323,14 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                   </span>
                 ))}
               </div>
+              <Link
+                href={`/learn?focus=${encodeURIComponent(
+                  recommendation.words.join(',')
+                )}`}
+                style={{ color: '#ffd699', fontWeight: 700 }}
+              >
+                {t(locale, 'home.recommendation.start')}
+              </Link>
             </div>
           ) : (
             <p style={{ margin: 0, color: 'rgba(250, 247, 241, 0.72)' }}>

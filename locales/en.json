@@ -23,6 +23,7 @@
   "home.recommendation.action": "Get Recommendations",
   "home.recommendation.loading": "Generating recommendations...",
   "home.recommendation.result": "Recommendation Result",
+  "home.recommendation.start": "Start Recommended Study",
   "home.recommendation.empty": "No recommended words yet.",
   "home.recommendation.error": "Failed to load the weekly recommendation.",
   "home.quick_start": "Quick Start",
