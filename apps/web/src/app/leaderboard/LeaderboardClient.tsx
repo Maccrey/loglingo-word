@@ -125,9 +125,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                         gap: 12,
                         alignItems: 'center',
                         color: 'var(--text-ink)',
-                        background: isMe
-                          ? 'var(--accent-pink)'
-                          : 'transparent',
+                        background: isMe ? 'var(--accent-pink)' : 'transparent',
                         border: '1px solid var(--border-pencil)'
                       }}
                     >

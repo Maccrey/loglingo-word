@@ -3,7 +3,12 @@
 :root {
   /* Paper Aesthetic Theme Tokens */
   --bg-paper: #fdfbf7;
-  --bg-notebook-lines: repeating-linear-gradient(transparent, transparent 31px, var(--border-pencil) 31px, var(--border-pencil) 32px);
+  --bg-notebook-lines: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    var(--border-pencil) 31px,
+    var(--border-pencil) 32px
+  );
   --bg-card: #ffffff;
   --text-ink: #2c2a25;
   --text-faded: #7a756d;
@@ -41,15 +46,20 @@ body {
 
 /* Notebook Binder (Left edge spiral) */
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   width: 60px;
-  background-color: rgba(220, 215, 205, 0.15); /* Slight shadow to differentiate the edge */
-  border-right: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 4px 0 12px rgba(0,0,0,0.02);
+  background-color: rgba(
+    220,
+    215,
+    205,
+    0.15
+  ); /* Slight shadow to differentiate the edge */
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.02);
   z-index: 9999;
   pointer-events: none; /* Let clicks pass through */
 

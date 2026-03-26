@@ -146,7 +146,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
       ? parsePositiveInteger(pendingLeaderboardScore)
       : 0;
   const basePoints = initialStats?.totalPoints ?? dashboard.points;
+  const baseLeaderboardScore = initialStats?.leaderboardScore ?? 0;
   const totalPoints = basePoints + pendingPointsValue;
+  const totalLeaderboardScore = baseLeaderboardScore + pendingLeaderboardValue;
   const totalLevel = calculateLevelProgress(totalPoints + 135);
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
@@ -300,7 +302,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             <p style={{ margin: 0, color: 'var(--text-ink)', lineHeight: 1.6 }}>
               {t(locale, 'home.sync.description')} +{pendingPointsValue}pt
               {pendingLeaderboardValue > 0
-                ? ` · leaderboard +${pendingLeaderboardValue}`
+                ? ` · ${t(locale, 'home.sync.leaderboard')} +${pendingLeaderboardValue}`
                 : ''}
               {syncState.loading
                 ? ` · ${t(locale, 'home.sync.pending').toLowerCase()}...`
@@ -348,6 +350,27 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             </h2>
             <p style={{ margin: 0 }}>
               다음 레벨까지 {totalLevel.pointsToNextLevel}pt
+            </p>
+          </article>
+
+          <article style={panelStyle}>
+            <div style={badgeStyle}>
+              {t(locale, 'home.summary.leaderboard')}
+            </div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              {totalLeaderboardScore} pt
+            </h2>
+            <p style={{ margin: 0 }}>
+              <Link
+                href="/leaderboard"
+                style={{
+                  color: 'var(--text-ink)',
+                  textDecoration: 'underline',
+                  fontWeight: 600
+                }}
+              >
+                {t(locale, 'home.summary.leaderboard')}
+              </Link>
             </p>
           </article>
         </section>

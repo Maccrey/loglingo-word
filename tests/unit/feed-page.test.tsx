@@ -4,9 +4,8 @@ import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import FeedPage, {
-  createSharedFeedPost
-} from '../../apps/web/src/app/feed/page';
+import FeedPage from '../../apps/web/src/app/feed/page';
+import { createSharedFeedPost } from '../../apps/web/src/app/feed/shared-post';
 
 afterEach(() => {
   cleanup();

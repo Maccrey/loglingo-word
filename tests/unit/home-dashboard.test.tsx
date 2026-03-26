@@ -22,6 +22,7 @@ describe('home dashboard', () => {
     expect(screen.getAllByText('오늘 할 학습').length).toBeGreaterThan(0);
     expect(screen.getAllByText('연속 학습 streak').length).toBeGreaterThan(0);
     expect(screen.getAllByText('누적 포인트').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('주간 리더보드 점수').length).toBeGreaterThan(0);
   });
 
   it('renders a quick start link to the study flow', () => {
@@ -96,6 +97,7 @@ describe('home dashboard', () => {
       screen.getByText(/추천 학습 결과가 홈 요약에 반영됐습니다\./)
     ).toBeTruthy();
     expect(screen.getByText('55 pt')).toBeTruthy();
+    expect(screen.getByText('2 pt')).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/dashboard/sync',
       expect.objectContaining({
@@ -117,5 +119,6 @@ describe('home dashboard', () => {
     );
 
     expect(screen.getByText('120 pt')).toBeTruthy();
+    expect(screen.getByText('4 pt')).toBeTruthy();
   });
 });
