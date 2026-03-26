@@ -187,7 +187,7 @@ describe('leaderboard ui', () => {
 
     expect(writeText).toHaveBeenCalledWith(expectedUrl);
     expect(
-      screen.getByText('user-2의 현재 순위는 #2, 점수는 4pt입니다.')
+      screen.getByText('2026-W13 주변 순위 기준 user-2의 현재 순위는 #2, 점수는 4pt입니다.')
     ).toBeTruthy();
     expect(screen.getByText('현재 리더보드 링크를 복사했습니다.')).toBeTruthy();
   });
@@ -224,7 +224,7 @@ describe('leaderboard ui', () => {
 
     expect(share).toHaveBeenCalledWith({
       title: '주간 리더보드',
-      text: 'user-2의 현재 순위는 #2, 점수는 4pt입니다.',
+      text: '2026-W13 주변 순위 기준 user-2의 현재 순위는 #2, 점수는 4pt입니다.',
       url: `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
     });
     expect(
@@ -268,7 +268,7 @@ describe('leaderboard ui', () => {
     expect(externalShareUrl.origin).toBe('https://twitter.com');
     expect(externalShareUrl.pathname).toBe('/intent/tweet');
     expect(externalShareUrl.searchParams.get('text')).toBe(
-      'user-2의 현재 순위는 #2, 점수는 4pt입니다.'
+      '2026-W13 주변 순위 기준 user-2의 현재 순위는 #2, 점수는 4pt입니다.'
     );
     expect(externalShareUrl.searchParams.get('url')).toBe(
       `${window.location.origin}/leaderboard?userId=user-2&view=nearby`
@@ -307,6 +307,25 @@ describe('leaderboard ui', () => {
       screen.getByText('이번 추천 학습으로 리더보드 점수 2점이 반영됐습니다.')
     ).toBeTruthy();
     expect(screen.getAllByText('6 pt').length).toBeGreaterThan(0);
+  });
+
+  it('shows a contextual preview message for the full ranking view', async () => {
+    const state = await buildLeaderboardPageState({
+      userId: 'demo-user'
+    });
+
+    render(
+      <LeaderboardClient
+        entries={state.entries}
+        currentUserId={state.currentUserId}
+        focusedUserId={state.focusedUserId}
+        initialViewMode={state.initialViewMode}
+      />
+    );
+
+    expect(
+      screen.getByText('2026-W13 전체 랭킹 기준 나의 현재 순위는 #1, 점수는 6pt입니다.')
+    ).toBeTruthy();
   });
 
   it('uses persisted leaderboard entries as the initial state', async () => {

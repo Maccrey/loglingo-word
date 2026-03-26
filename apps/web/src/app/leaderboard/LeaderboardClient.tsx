@@ -73,7 +73,9 @@ function getFocusedWindow(
 function getSharePreviewText(
   entry: LeaderboardEntryRecord | null,
   currentUserId: string,
-  locale: AppLocale
+  locale: AppLocale,
+  weekId: string,
+  viewMode: LeaderboardViewMode
 ) {
   if (!entry) {
     return t(locale, 'leaderboard.share_message');
@@ -81,8 +83,14 @@ function getSharePreviewText(
 
   const displayName =
     entry.userId === currentUserId ? t(locale, 'leaderboard.me') : entry.userId;
+  const viewLabel =
+    viewMode === 'nearby'
+      ? t(locale, 'leaderboard.share_context_nearby')
+      : t(locale, 'leaderboard.share_context_all');
 
   return t(locale, 'leaderboard.share_preview')
+    .replace('{week}', weekId)
+    .replace('{view}', viewLabel)
     .replace('{user}', displayName)
     .replace('{rank}', String(entry.rank))
     .replace('{score}', String(entry.score));
@@ -109,7 +117,9 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const sharePreviewText = getSharePreviewText(
     focusedEntry,
     currentUserId,
-    locale
+    locale,
+    currentWeek.weekId,
+    viewMode
   );
 
   function getCurrentViewUrl() {
