@@ -51,6 +51,21 @@ const badgeStyle: Record<string, string | number> = {
   fontWeight: 600
 };
 
+function getFocusedWindow(
+  entries: LeaderboardEntryRecord[],
+  focusedUserId: string
+): LeaderboardEntryRecord[] {
+  const focusedIndex = entries.findIndex(
+    (entry) => entry.userId === focusedUserId
+  );
+
+  if (focusedIndex < 0) {
+    return [];
+  }
+
+  return entries.slice(Math.max(0, focusedIndex - 1), focusedIndex + 2);
+}
+
 export default function LeaderboardClient(props: LeaderboardClientProps) {
   const locale: AppLocale = 'ko';
   const {
@@ -63,6 +78,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
   const focusedEntry =
     entries.find((entry) => entry.userId === focusedUserId) ?? null;
   const isViewingOwnEntry = focusedUserId === currentUserId;
+  const focusedWindow = getFocusedWindow(entries, focusedUserId);
 
   return (
     <main style={surfaceStyle}>
@@ -162,6 +178,44 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
                     : `${focusedEntry.userId} 순위`}{' '}
                   #{focusedEntry.rank} · {focusedEntry.score}pt
                 </p>
+              </section>
+            ) : null}
+
+            {focusedWindow.length > 0 ? (
+              <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
+                <div style={badgeStyle}>{t(locale, 'leaderboard.nearby')}</div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {focusedWindow.map((entry) => {
+                    const isCurrentUser = entry.userId === currentUserId;
+                    const isFocused = entry.userId === focusedUserId;
+
+                    return (
+                      <article
+                        key={`nearby-${entry.weekId}-${entry.userId}`}
+                        data-nearby-user={isFocused ? 'true' : 'false'}
+                        style={{
+                          borderRadius: 16,
+                          padding: '14px 16px',
+                          display: 'grid',
+                          gridTemplateColumns: '56px 1fr auto',
+                          gap: 10,
+                          alignItems: 'center',
+                          color: 'var(--text-ink)',
+                          background: isFocused
+                            ? 'var(--accent-blue)'
+                            : isCurrentUser
+                              ? 'var(--accent-pink)'
+                              : 'transparent',
+                          border: '1px solid var(--border-pencil)'
+                        }}
+                      >
+                        <strong>#{entry.rank}</strong>
+                        <span>{isCurrentUser ? '나' : entry.userId}</span>
+                        <strong>{entry.score} pt</strong>
+                      </article>
+                    );
+                  })}
+                </div>
               </section>
             ) : null}
           </>

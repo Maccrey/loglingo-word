@@ -19,8 +19,8 @@ describe('leaderboard ui', () => {
     render(<LeaderboardClient entries={state.entries} />);
 
     expect(screen.getAllByText('주간 리더보드').length).toBeGreaterThan(0);
-    expect(screen.getByText('#1')).toBeTruthy();
-    expect(screen.getByText('나')).toBeTruthy();
+    expect(screen.getAllByText('#1').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('나').length).toBeGreaterThan(0);
   });
 
   it('highlights the current user entry', async () => {
@@ -52,6 +52,9 @@ describe('leaderboard ui', () => {
     expect(focusedUserCard?.textContent).toContain('user-2');
     expect(focusedUserCard?.textContent).not.toContain('나');
     expect(screen.getByText('선택한 사용자')).toBeTruthy();
+    expect(screen.getByText('주변 순위')).toBeTruthy();
+    expect(screen.getAllByText('#1').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('#2').length).toBeGreaterThan(0);
   });
 
   it('shows a fallback when the leaderboard is empty', () => {
@@ -82,7 +85,7 @@ describe('leaderboard ui', () => {
     expect(
       screen.getByText('이번 추천 학습으로 리더보드 점수 2점이 반영됐습니다.')
     ).toBeTruthy();
-    expect(screen.getByText('6 pt')).toBeTruthy();
+    expect(screen.getAllByText('6 pt').length).toBeGreaterThan(0);
   });
 
   it('uses persisted leaderboard entries as the initial state', async () => {
