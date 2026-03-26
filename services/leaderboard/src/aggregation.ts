@@ -18,6 +18,22 @@ export type LeaderboardUpdateResult = {
   myRank: number;
 };
 
+export type LeaderboardDocumentStore = {
+  getByWeekId: (weekId: string) => Promise<LeaderboardEntryRecord[]>;
+  setByWeekId: (
+    weekId: string,
+    entries: LeaderboardEntryRecord[]
+  ) => Promise<void>;
+};
+
+export type LeaderboardRepository = {
+  listByWeekId: (weekId: string) => Promise<LeaderboardEntryRecord[]>;
+  saveByWeekId: (
+    weekId: string,
+    entries: LeaderboardEntryRecord[]
+  ) => Promise<LeaderboardEntryRecord[]>;
+};
+
 function sortLeaderboard(
   entries: LeaderboardEntryRecord[]
 ): LeaderboardEntryRecord[] {
@@ -92,4 +108,54 @@ export function upsertLeaderboardScore(
     updatedEntry,
     myRank: updatedEntry.rank
   };
+}
+
+export class InMemoryLeaderboardRepository implements LeaderboardRepository {
+  private readonly records = new Map<string, LeaderboardEntryRecord[]>();
+
+  async listByWeekId(weekId: string): Promise<LeaderboardEntryRecord[]> {
+    return (this.records.get(weekId) ?? []).map((entry) =>
+      normalizeEntry(entry)
+    );
+  }
+
+  async saveByWeekId(
+    weekId: string,
+    entries: LeaderboardEntryRecord[]
+  ): Promise<LeaderboardEntryRecord[]> {
+    const normalizedEntries = assignRanks(
+      entries
+        .filter((entry) => entry.weekId === weekId)
+        .map((entry) => normalizeEntry(entry))
+    );
+
+    this.records.set(weekId, normalizedEntries);
+
+    return normalizedEntries;
+  }
+}
+
+export class FirestoreLeaderboardRepository implements LeaderboardRepository {
+  constructor(private readonly store: LeaderboardDocumentStore) {}
+
+  async listByWeekId(weekId: string): Promise<LeaderboardEntryRecord[]> {
+    return (await this.store.getByWeekId(weekId)).map((entry) =>
+      normalizeEntry(entry)
+    );
+  }
+
+  async saveByWeekId(
+    weekId: string,
+    entries: LeaderboardEntryRecord[]
+  ): Promise<LeaderboardEntryRecord[]> {
+    const normalizedEntries = assignRanks(
+      entries
+        .filter((entry) => entry.weekId === weekId)
+        .map((entry) => normalizeEntry(entry))
+    );
+
+    await this.store.setByWeekId(weekId, normalizedEntries);
+
+    return normalizedEntries;
+  }
 }

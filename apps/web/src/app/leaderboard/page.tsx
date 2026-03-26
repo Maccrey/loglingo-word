@@ -7,6 +7,7 @@ import {
 } from '@wordflow/leaderboard';
 
 import LeaderboardClient from './LeaderboardClient';
+import { getLeaderboardRepository } from '../../lib/leaderboard-repository';
 
 type LeaderboardPageProps = {
   searchParams?: Promise<{
@@ -52,23 +53,36 @@ function parseScore(value?: string): number {
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
 }
 
-export function buildLeaderboardPageState(input?: {
-  source?: string;
-  score?: string;
-  userId?: string;
-}) {
+export async function buildLeaderboardPageState(
+  input?: {
+    source?: string;
+    score?: string;
+    userId?: string;
+  },
+  repository = getLeaderboardRepository()
+) {
   const weekId = getLeaderboardWeek('2026-03-26T00:00:00.000Z').weekId;
   const scoreDelta = parseScore(input?.score);
   const currentUserId = input?.userId?.trim() || 'demo-user';
-  let entries = buildDefaultEntries(weekId);
+  let entries = await repository.listByWeekId(weekId);
+
+  if (entries.length === 0) {
+    entries = await repository.saveByWeekId(
+      weekId,
+      buildDefaultEntries(weekId)
+    );
+  }
 
   if (input?.source === 'recommendation' && scoreDelta > 0) {
-    entries = upsertLeaderboardScore({
-      entries,
+    entries = await repository.saveByWeekId(
       weekId,
-      userId: currentUserId,
-      scoreDelta
-    }).entries;
+      upsertLeaderboardScore({
+        entries,
+        weekId,
+        userId: currentUserId,
+        scoreDelta
+      }).entries
+    );
   }
 
   return {
@@ -81,7 +95,7 @@ export function buildLeaderboardPageState(input?: {
 
 export default async function LeaderboardPage(props: LeaderboardPageProps) {
   const searchParams = await props.searchParams;
-  const state = buildLeaderboardPageState(searchParams);
+  const state = await buildLeaderboardPageState(searchParams);
 
   return (
     <LeaderboardClient

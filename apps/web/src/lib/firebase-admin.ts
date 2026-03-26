@@ -10,6 +10,10 @@ import {
   type AIRecommendationRecord
 } from '@wordflow/ai/recommendation';
 import {
+  type LeaderboardDocumentStore,
+  type LeaderboardEntryRecord
+} from '@wordflow/leaderboard';
+import {
   type UserProfileDocumentStore,
   type UserProfileRecord
 } from '@wordflow/core/profile';
@@ -134,6 +138,41 @@ export function createFirestoreAIRecommendationStore(): AIRecommendationDocument
         .collection('ai_recommendations')
         .doc(`${record.userId}:${record.weekId}`)
         .set(record);
+    }
+  };
+}
+
+export function createFirestoreLeaderboardStore(): LeaderboardDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async getByWeekId(weekId) {
+      const snapshot = await firestore
+        .collection('leaderboards')
+        .where('weekId', '==', weekId)
+        .get();
+
+      return snapshot.docs.map((doc) => doc.data() as LeaderboardEntryRecord);
+    },
+    async setByWeekId(weekId, entries) {
+      const existingSnapshot = await firestore
+        .collection('leaderboards')
+        .where('weekId', '==', weekId)
+        .get();
+      const batch = firestore.batch();
+
+      for (const doc of existingSnapshot.docs) {
+        batch.delete(doc.ref);
+      }
+
+      for (const entry of entries) {
+        const docRef = firestore
+          .collection('leaderboards')
+          .doc(`${weekId}:${entry.userId}`);
+        batch.set(docRef, entry);
+      }
+
+      await batch.commit();
     }
   };
 }
