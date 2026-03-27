@@ -31,7 +31,7 @@ export default function CatCard() {
   };
 
   const currentImagePath = actionOverlay 
-    ? `/images/cats/action-${actionOverlay}.png` 
+    ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
     : getCatImagePath(cat.stage, currentStatus as string);
 
   return (
@@ -131,12 +131,12 @@ function btnStyle(bg: string): React.CSSProperties {
 
 // Image resolution logic according to Nano-Banana.md
 const availableStatusImages: Record<string, string[]> = {
-  kitten: ['base', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead'],
-  junior: ['healthy', 'hungry', 'smelly', 'stressed'],
-  adult: ['healthy'],
-  'middle-age': ['healthy'],
-  senior: ['healthy'],
-  veteran: ['healthy'],
+  kitten: ['base', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
+  junior: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
+  adult: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
+  'middle-age': ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
+  senior: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
+  veteran: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
   legacy: ['healthy'],
 };
 
