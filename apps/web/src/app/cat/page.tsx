@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCat } from '../../lib/useCat';
-import { getCatImagePath } from '../../components/CatCard';
+import { getCatImagePath } from '../../lib/catImage';
 
 function getStatusSummary(status: string) {
   switch (status) {
@@ -60,7 +60,7 @@ export default function CatDetailScreen() {
   const statusSummary = getStatusSummary(currentStatus);
 
   const currentImagePath = actionOverlay 
-    ? `/images/cats/action-${actionOverlay}.png` 
+    ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
     : getCatImagePath(cat.stage, currentStatus as string);
 
   return (

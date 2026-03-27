@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCat } from '../lib/useCat';
+import { getCatImagePath } from '../lib/catImage';
 
 export default function CatCard() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
@@ -127,47 +128,4 @@ function btnStyle(bg: string): React.CSSProperties {
     boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
     transition: 'transform 0.1s',
   };
-}
-
-// Image resolution logic according to Nano-Banana.md
-const availableStatusImages: Record<string, string[]> = {
-  kitten: ['base', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  junior: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  adult: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  'middle-age': ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  senior: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  veteran: ['healthy', 'hungry', 'smelly', 'stressed', 'sick', 'critical', 'dead', 'action-feed', 'action-play', 'action-wash'],
-  legacy: ['healthy'],
-};
-
-const stageFallbackChain = ['veteran', 'senior', 'middle-age', 'adult', 'junior', 'kitten'];
-
-export function getCatImagePath(stage: string, status: string): string {
-  // 1. Normalize stage name
-  let normalizedStage = stage === 'middleAge' ? 'middle-age' : stage;
-  
-  // 2. Normalize status for healthy kitten
-  let mappedStatus = status;
-  if (normalizedStage === 'kitten' && status === 'healthy') {
-    mappedStatus = 'base';
-  }
-
-  // 3. Check if exact file exists in our registry
-  if (availableStatusImages[normalizedStage]?.includes(mappedStatus)) {
-    return `/images/cats/${normalizedStage}-${mappedStatus}.png`;
-  }
-
-  // 4. Fallback chain if status image is missing for this stage
-  const startIndex = stageFallbackChain.indexOf(normalizedStage);
-  if (startIndex !== -1) {
-    for (let i = startIndex + 1; i < stageFallbackChain.length; i++) {
-      const fallbackStage = stageFallbackChain[i] as string;
-      if (availableStatusImages[fallbackStage]?.includes(mappedStatus)) {
-        return `/images/cats/${fallbackStage}-${mappedStatus}.png`;
-      }
-    }
-  }
-
-  // 5. Final fallback
-  return '/images/cats/kitten-base.png';
 }
