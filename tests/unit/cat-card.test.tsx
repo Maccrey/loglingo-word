@@ -96,6 +96,9 @@ describe('cat card', () => {
     expect(
       screen.getByText('스트레스 경고 구간이에요. 학습 포인트가 있으면 먼저 놀아주는 편이 안전합니다.')
     ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /놀아주기/ }).getAttribute('style')
+    ).toContain('background: rgb(29, 78, 216)');
   });
 
   it('shows the stage-specific medicine overlay after treatment', () => {

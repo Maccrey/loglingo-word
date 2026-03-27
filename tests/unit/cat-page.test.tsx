@@ -204,4 +204,34 @@ describe('cat detail page', () => {
       'senior_action_medicine.png'
     );
   });
+
+  it('emphasizes the required care button for sick and critical states', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'senior',
+        status: 'critical',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 10 * 60 * 60 * 1000,
+        lastWashedAt: Date.now() - 73 * 60 * 60 * 1000,
+        lastPlayedAt: Date.now() - 20 * 60 * 60 * 1000,
+        activeDays: 220
+      },
+      points: 5000,
+      currentStatus: 'critical',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
+    render(<CatDetailScreen />);
+
+    expect(
+      screen.getByRole('button', { name: /치료하기/ }).getAttribute('style')
+    ).toContain('background: rgb(190, 18, 60)');
+  });
 });

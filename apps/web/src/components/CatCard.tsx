@@ -14,6 +14,25 @@ const careActionCosts = {
   heal: 1000
 } as const;
 
+const careActionPalette = {
+  feed: {
+    default: 'var(--accent-orange)',
+    emphasized: '#d97706'
+  },
+  play: {
+    default: 'var(--accent-blue)',
+    emphasized: '#1d4ed8'
+  },
+  wash: {
+    default: 'var(--accent-green)',
+    emphasized: '#15803d'
+  },
+  heal: {
+    default: 'var(--accent-pink)',
+    emphasized: '#be123c'
+  }
+} as const;
+
 const MOCK_ENV: Partial<EnvThresholds> = {
   CAT_HUNGRY_HOURS: 12,
   CAT_SMELLY_HOURS: 24,
@@ -43,6 +62,29 @@ function getRequiredCare(status: CatStatus) {
       return { label: '복구 정책', cost: 0 };
     default:
       return { label: '밥주기', cost: careActionCosts.feed };
+  }
+}
+
+function getRecommendedCareAction(
+  status: CatStatus,
+  isStressWarning: boolean
+): keyof typeof careActionCosts {
+  if (isStressWarning) {
+    return 'play';
+  }
+
+  switch (status) {
+    case 'hungry':
+      return 'feed';
+    case 'smelly':
+      return 'wash';
+    case 'stressed':
+      return 'play';
+    case 'sick':
+    case 'critical':
+      return 'heal';
+    default:
+      return 'feed';
   }
 }
 
@@ -85,6 +127,10 @@ export default function CatCard() {
   const thresholds = getCatThresholds(MOCK_ENV);
   const snapshot = buildCatStateSnapshot(cat, Date.now(), thresholds);
   const requiredCare = getRequiredCare(snapshot.status);
+  const recommendedCareAction = getRecommendedCareAction(
+    snapshot.status,
+    snapshot.isStressWarning
+  );
   const missingPoints = Math.max(0, requiredCare.cost - points);
 
   return (
@@ -149,11 +195,11 @@ export default function CatCard() {
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-        <button onClick={handleFeed} style={btnStyle('var(--accent-orange)')}>🐟 밥주기 (100pt)</button>
-        <button onClick={handlePlay} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
-        <button onClick={handleWash} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
+        <button onClick={handleFeed} style={btnStyle(careActionPalette.feed, recommendedCareAction === 'feed')}>🐟 밥주기 (100pt)</button>
+        <button onClick={handlePlay} style={btnStyle(careActionPalette.play, recommendedCareAction === 'play')}>🧶 놀아주기 (200pt)</button>
+        <button onClick={handleWash} style={btnStyle(careActionPalette.wash, recommendedCareAction === 'wash')}>🛁 씻기기 (150pt)</button>
         {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
-          <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
+          <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle(careActionPalette.heal, recommendedCareAction === 'heal')}>💊 치료하기 (1000pt)</button>
         )}
       </div>
 
@@ -229,16 +275,22 @@ function getStatusColor(status: string) {
   }
 }
 
-function btnStyle(bg: string): React.CSSProperties {
+function btnStyle(
+  palette: { default: string; emphasized: string },
+  emphasized = false
+): React.CSSProperties {
   return {
     padding: '10px 16px',
-    background: bg,
+    background: emphasized ? palette.emphasized : palette.default,
     color: '#fff',
-    border: 'none',
+    border: emphasized ? '2px solid rgba(255, 255, 255, 0.92)' : 'none',
     borderRadius: 12,
     fontWeight: 700,
     cursor: 'pointer',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-    transition: 'transform 0.1s',
+    boxShadow: emphasized
+      ? '0 10px 20px rgba(15, 23, 42, 0.28)'
+      : '0 2px 6px rgba(0,0,0,0.15)',
+    transform: emphasized ? 'translateY(-1px)' : 'none',
+    transition: 'transform 0.1s, box-shadow 0.1s, background 0.1s',
   };
 }

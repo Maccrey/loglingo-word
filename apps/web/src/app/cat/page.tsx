@@ -23,6 +23,25 @@ const MOCK_ENV: Partial<EnvThresholds> = {
   CAT_DEAD_DAYS: 3
 };
 
+const careActionPalette = {
+  feed: {
+    default: 'var(--accent-orange)',
+    emphasized: '#d97706'
+  },
+  play: {
+    default: 'var(--accent-blue)',
+    emphasized: '#1d4ed8'
+  },
+  wash: {
+    default: 'var(--accent-green)',
+    emphasized: '#15803d'
+  },
+  heal: {
+    default: 'var(--accent-pink)',
+    emphasized: '#be123c'
+  }
+} as const;
+
 function getStatusSummary(name: string, status: string, isStressWarning: boolean) {
   if (status === 'stressed' && isStressWarning) {
     return '스트레스 경고 구간이에요. 12시간을 넘긴 상태라 빠르게 놀아주는 편이 안전합니다.';
@@ -81,6 +100,29 @@ function buildCatSlots(cat: { id: string; name: string; stage: string }) {
   ];
 }
 
+function getRecommendedCareAction(
+  status: string,
+  isStressWarning: boolean
+): keyof typeof careActionPalette {
+  if (isStressWarning) {
+    return 'play';
+  }
+
+  switch (status) {
+    case 'hungry':
+      return 'feed';
+    case 'smelly':
+      return 'wash';
+    case 'stressed':
+      return 'play';
+    case 'sick':
+    case 'critical':
+      return 'heal';
+    default:
+      return 'feed';
+  }
+}
+
 export default function CatDetailScreen() {
   const searchParams = useSearchParams();
   const locale = resolveLocale(searchParams?.get('locale') ?? undefined);
@@ -131,6 +173,10 @@ export default function CatDetailScreen() {
   );
   const statusSummary = getStatusSummary(cat.name, snapshot.status, snapshot.isStressWarning);
   const catSlots = buildCatSlots(cat);
+  const recommendedCareAction = getRecommendedCareAction(
+    snapshot.status,
+    snapshot.isStressWarning
+  );
 
   return (
     <main style={{ padding: '32px 20px', maxWidth: 640, margin: '0 auto', color: 'var(--text-ink)' }}>
@@ -211,11 +257,11 @@ export default function CatDetailScreen() {
         ) : null}
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 16 }}>
-          <button onClick={() => handleAction(handleFeed, 'feed')} style={btnStyle('var(--accent-orange)')}>🐟 밥주기 (100pt)</button>
-          <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
-          <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
+          <button onClick={() => handleAction(handleFeed, 'feed')} style={btnStyle(careActionPalette.feed, recommendedCareAction === 'feed')}>🐟 밥주기 (100pt)</button>
+          <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle(careActionPalette.play, recommendedCareAction === 'play')}>🧶 놀아주기 (200pt)</button>
+          <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle(careActionPalette.wash, recommendedCareAction === 'wash')}>🛁 씻기기 (150pt)</button>
           {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
-            <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
+            <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle(careActionPalette.heal, recommendedCareAction === 'heal')}>💊 치료하기 (1000pt)</button>
           )}
         </div>
       </section>
@@ -297,14 +343,22 @@ function GaugeBar({ label, percent, color }: { label: string; percent: number; c
   );
 }
 
-function btnStyle(bg: string): React.CSSProperties {
+function btnStyle(
+  palette: { default: string; emphasized: string },
+  emphasized = false
+): React.CSSProperties {
   return {
     padding: '10px 16px',
-    background: bg,
+    background: emphasized ? palette.emphasized : palette.default,
     color: '#fff',
-    border: 'none',
+    border: emphasized ? '2px solid rgba(255, 255, 255, 0.92)' : 'none',
     borderRadius: 12,
     fontWeight: 700,
     cursor: 'pointer',
+    boxShadow: emphasized
+      ? '0 10px 20px rgba(15, 23, 42, 0.28)'
+      : '0 2px 6px rgba(0,0,0,0.15)',
+    transform: emphasized ? 'translateY(-1px)' : 'none',
+    transition: 'transform 0.1s, box-shadow 0.1s, background 0.1s'
   };
 }
