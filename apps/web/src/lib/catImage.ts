@@ -9,7 +9,8 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
   junior: [
     'healthy',
@@ -21,7 +22,8 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
   adult: [
     'healthy',
@@ -33,7 +35,8 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
   'middle-age': [
     'healthy',
@@ -45,7 +48,8 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
   senior: [
     'healthy',
@@ -57,7 +61,8 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
   veteran: [
     'healthy',
@@ -69,9 +74,10 @@ const availableStatusImages: Record<string, string[]> = {
     'dead',
     'action-feed',
     'action-play',
-    'action-wash'
+    'action-wash',
+    'action-medicine'
   ],
-  legacy: ['healthy']
+  legacy: ['healthy', 'action-medicine']
 };
 
 const stageFallbackChain = [
@@ -95,6 +101,10 @@ export function normalizeCatImageStatus(stage: string, status: string): string {
     return 'base';
   }
 
+  if (status === 'action-heal') {
+    return 'action-medicine';
+  }
+
   return status;
 }
 
@@ -103,7 +113,17 @@ export function getCatImagePath(stage: string, status: string): string {
   const normalizedStatus = normalizeCatImageStatus(stage, status);
 
   if (normalizedStatus.startsWith('action-')) {
-    return `/images/cats/${normalizedStatus}.png`;
+    if (
+      normalizedStatus === 'action-feed' ||
+      normalizedStatus === 'action-play' ||
+      normalizedStatus === 'action-wash'
+    ) {
+      return `/images/cats/${normalizedStatus}.png`;
+    }
+
+    if (availableStatusImages[normalizedStage]?.includes(normalizedStatus)) {
+      return `/images/cats/${normalizedStage}-${normalizedStatus}.png`;
+    }
   }
 
   if (availableStatusImages[normalizedStage]?.includes(normalizedStatus)) {

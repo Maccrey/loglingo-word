@@ -1,0 +1,9 @@
+Create a 2D mobile game pet care action illustration for a language-learning tamagotchi app.
+Character: a cream-colored adult cat with a round face, balanced proportions, amber eyes, and a tiny blue collar.
+Stage: adult
+Action: calmly taking medicine while sitting upright, with a small glass dish and water bowl beside it.
+Mood: tired but cooperative, stable, recovering.
+Scene: organized study desk area with vocabulary cards, soft lamp light, and a clean care corner.
+Style: polished casual mobile game art, soft shading, readable silhouette, warm notebook-inspired atmosphere.
+Composition: full body centered, enough empty margin for UI crop.
+No text, no watermark, no interface overlay.

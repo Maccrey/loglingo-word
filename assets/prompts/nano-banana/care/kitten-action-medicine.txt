@@ -1,0 +1,9 @@
+Create a 2D mobile game pet care action illustration for a language-learning tamagotchi app.
+Character: a cream-colored kitten with a round face, short legs, amber eyes, and a tiny blue collar.
+Stage: kitten
+Action: taking medicine safely with tiny paws gathered close, a very small pill and a shallow water bowl nearby.
+Mood: fragile, protected, recovering, still adorable.
+Scene: cozy study desk corner turned into a tiny pet care spot with soft notebook textures and warm daylight.
+Style: polished casual mobile game art, soft shading, readable silhouette, warm notebook-inspired atmosphere.
+Composition: full body centered, enough empty margin for UI crop.
+No text, no watermark, no interface overlay.

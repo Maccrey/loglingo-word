@@ -6,7 +6,13 @@ import { describe, expect, it } from 'vitest';
 const promptFiles = [
   'assets/prompts/nano-banana/care/action-feed.txt',
   'assets/prompts/nano-banana/care/action-play.txt',
-  'assets/prompts/nano-banana/care/action-wash.txt'
+  'assets/prompts/nano-banana/care/action-wash.txt',
+  'assets/prompts/nano-banana/care/kitten-action-medicine.txt',
+  'assets/prompts/nano-banana/care/junior-action-medicine.txt',
+  'assets/prompts/nano-banana/care/adult-action-medicine.txt',
+  'assets/prompts/nano-banana/care/middle-age-action-medicine.txt',
+  'assets/prompts/nano-banana/care/senior-action-medicine.txt',
+  'assets/prompts/nano-banana/care/veteran-action-medicine.txt'
 ];
 
 describe('nano banana care prompts', () => {

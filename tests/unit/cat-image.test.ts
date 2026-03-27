@@ -25,11 +25,20 @@ describe('cat image mapping', () => {
     expect(getCatImagePath('senior', 'action-play')).toBe(
       '/images/cats/action-play.png'
     );
+    expect(getCatImagePath('adult', 'action-heal')).toBe(
+      '/images/cats/adult-action-medicine.png'
+    );
+    expect(getCatImagePath('middleAge', 'action-medicine')).toBe(
+      '/images/cats/middle-age-action-medicine.png'
+    );
   });
 
   it('falls back across stages when a matching image is missing', () => {
     expect(getCatImagePath('legacy', 'action-wash')).toBe(
       '/images/cats/action-wash.png'
+    );
+    expect(getCatImagePath('legacy', 'action-medicine')).toBe(
+      '/images/cats/legacy-action-medicine.png'
     );
   });
 
