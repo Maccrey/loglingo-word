@@ -44,6 +44,22 @@ const MOCK_ENV: Partial<EnvThresholds> = {
 };
 
 const INITIAL_POINTS = 5000;
+const DEFAULT_CAT_NAME = '로그링고';
+
+function migrateStoredCatName(storedCat: Cat | null): Cat | null {
+  if (!storedCat) {
+    return null;
+  }
+
+  if (storedCat.name !== '나비') {
+    return storedCat;
+  }
+
+  return {
+    ...storedCat,
+    name: DEFAULT_CAT_NAME
+  };
+}
 
 export function useCat() {
   const [cat, setCat] = useState<Cat | null>(null);
@@ -70,17 +86,18 @@ export function useCat() {
 
   const hydrateFromStorage = useCallback(() => {
     try {
-      const storedCat = loadStoredCat();
+      const storedCat = migrateStoredCatName(loadStoredCat());
       const storedLedgers = loadStoredCatLedgers();
 
       if (storedCat) {
         setCat(storedCat);
+        saveStoredCat(storedCat);
       } else {
         const now = Date.now();
         const initialCat: Cat = {
           id: 'mock-cat-1',
           userId: 'demo-user',
-          name: '로그링고',
+          name: DEFAULT_CAT_NAME,
           stage: 'kitten',
           status: 'healthy',
           createdAt: now,

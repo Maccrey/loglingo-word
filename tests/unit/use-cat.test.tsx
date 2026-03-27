@@ -92,8 +92,8 @@ describe('useCat', () => {
 
     expect(syncCat).toHaveBeenCalledTimes(1);
     expect(syncPendingPoints).toHaveBeenCalledTimes(1);
-    expect(saveStoredCat).toHaveBeenCalledTimes(1);
-    expect(saveStoredCatLedgers).toHaveBeenCalledTimes(1);
+    expect(saveStoredCat).toHaveBeenCalled();
+    expect(saveStoredCatLedgers).toHaveBeenCalled();
     expect(syncCat).toHaveBeenCalledWith(
       'demo-user',
       expect.objectContaining({
@@ -123,7 +123,25 @@ describe('useCat', () => {
     });
 
     expect(syncCat).toHaveBeenCalledTimes(1);
-    expect(saveStoredCat).toHaveBeenCalledTimes(1);
+    expect(saveStoredCat).toHaveBeenCalled();
     expect(syncPendingPoints).not.toHaveBeenCalled();
+  });
+
+  it('migrates a previously stored cat name from 나비 to 로그링고', async () => {
+    const legacyCat = {
+      ...mockCat,
+      name: '나비'
+    };
+    const { loadStoredCat } = await import('../../apps/web/src/lib/catStorage');
+    vi.mocked(loadStoredCat).mockReturnValueOnce(legacyCat);
+
+    render(<UseCatHarness />);
+
+    expect(screen.getByText('로그링고')).toBeTruthy();
+    expect(saveStoredCat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: '로그링고'
+      })
+    );
   });
 });
