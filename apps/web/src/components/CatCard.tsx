@@ -5,6 +5,13 @@ import Link from 'next/link';
 import { useCat } from '../lib/useCat';
 import { getCatImagePath } from '../lib/catImage';
 
+const careActionCosts = {
+  feed: 100,
+  play: 200,
+  wash: 150,
+  heal: 1000
+} as const;
+
 export default function CatCard() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
@@ -34,6 +41,16 @@ export default function CatCard() {
   const currentImagePath = actionOverlay 
     ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
     : getCatImagePath(cat.stage, currentStatus as string);
+  const minimumCareCost =
+    currentStatus === 'sick' || currentStatus === 'critical'
+      ? Math.min(
+          careActionCosts.feed,
+          careActionCosts.play,
+          careActionCosts.wash,
+          careActionCosts.heal
+        )
+      : Math.min(careActionCosts.feed, careActionCosts.play, careActionCosts.wash);
+  const missingPoints = Math.max(0, minimumCareCost - points);
 
   return (
     <section 
@@ -95,6 +112,41 @@ export default function CatCard() {
           <button onClick={handleHeal} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
         )}
       </div>
+
+      {missingPoints > 0 ? (
+        <div
+          role="alert"
+          style={{
+            marginTop: 14,
+            width: '100%',
+            borderRadius: 14,
+            padding: '12px 14px',
+            background: 'var(--accent-yellow)',
+            border: '1px solid var(--border-pencil)',
+            display: 'grid',
+            gap: 8
+          }}
+        >
+          <p style={{ margin: 0, color: 'var(--text-ink)', lineHeight: 1.5 }}>
+            돌봄 포인트가 {missingPoints}pt 부족해요. 바로 학습 시작으로 포인트를 모아보세요.
+          </p>
+          <Link
+            href="/learn"
+            style={{
+              width: 'fit-content',
+              borderRadius: 999,
+              padding: '8px 14px',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-pencil)',
+              color: 'var(--text-ink)',
+              fontWeight: 700,
+              textDecoration: 'none'
+            }}
+          >
+            바로 시작
+          </Link>
+        </div>
+      ) : null}
       
       <p style={{ margin: '14px 0 0', fontSize: 13, color: 'var(--text-faded)' }}>
         성장 단계: {cat.stage.toUpperCase()} | 생존 일수: {Math.floor(cat.activeDays)}일
