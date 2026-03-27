@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { buildCatStateSnapshot, getCatThresholds, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
 import { useCat } from '../lib/useCat';
 import { getCatImagePath } from '../lib/catImage';
 
@@ -11,6 +12,38 @@ const careActionCosts = {
   wash: 150,
   heal: 1000
 } as const;
+
+const MOCK_ENV: Partial<EnvThresholds> = {
+  CAT_HUNGRY_HOURS: 12,
+  CAT_SMELLY_HOURS: 24,
+  CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
+  CAT_STRESS_WARNING_LIMIT_HOURS: 12,
+  CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
+  CAT_SICK_AFTER_SMELLY_HOURS: 72,
+  CAT_DEATH_AFTER_NO_FEED_DAYS: 7,
+  CAT_STRESSED_HOURS: 24,
+  CAT_SICK_HOURS: 48,
+  CAT_CRITICAL_HOURS: 24,
+  CAT_DEAD_DAYS: 3
+};
+
+function getRequiredCare(status: CatStatus) {
+  switch (status) {
+    case 'hungry':
+      return { label: '밥주기', cost: careActionCosts.feed };
+    case 'smelly':
+      return { label: '씻기기', cost: careActionCosts.wash };
+    case 'stressed':
+      return { label: '놀아주기', cost: careActionCosts.play };
+    case 'sick':
+    case 'critical':
+      return { label: '치료하기', cost: careActionCosts.heal };
+    case 'dead':
+      return { label: '복구 정책', cost: 0 };
+    default:
+      return { label: '밥주기', cost: careActionCosts.feed };
+  }
+}
 
 export default function CatCard() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
@@ -38,19 +71,13 @@ export default function CatCard() {
     }
   };
 
+  const thresholds = getCatThresholds(MOCK_ENV);
+  const snapshot = buildCatStateSnapshot(cat, Date.now(), thresholds);
   const currentImagePath = actionOverlay 
     ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
-    : getCatImagePath(cat.stage, currentStatus as string);
-  const minimumCareCost =
-    currentStatus === 'sick' || currentStatus === 'critical'
-      ? Math.min(
-          careActionCosts.feed,
-          careActionCosts.play,
-          careActionCosts.wash,
-          careActionCosts.heal
-        )
-      : Math.min(careActionCosts.feed, careActionCosts.play, careActionCosts.wash);
-  const missingPoints = Math.max(0, minimumCareCost - points);
+    : getCatImagePath(cat.stage, snapshot.status);
+  const requiredCare = getRequiredCare(snapshot.status);
+  const missingPoints = Math.max(0, requiredCare.cost - points);
 
   return (
     <section 
@@ -79,7 +106,7 @@ export default function CatCard() {
       <div style={{ position: 'relative', width: 240, height: 240, marginBottom: 16, alignSelf: 'center' }}>
         <img 
           src={currentImagePath} 
-          alt={`${cat.stage} cat feeling ${currentStatus}`}
+          alt={`${cat.stage} cat feeling ${snapshot.status}`}
           style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12 }}
           onError={(e) => {
             // Fallback back to kitten-base if image is missing
@@ -91,7 +118,7 @@ export default function CatCard() {
           position: 'absolute',
           bottom: 10,
           right: -10,
-          background: getStatusColor(currentStatus),
+          background: getStatusColor(snapshot.status),
           color: '#fff',
           padding: '4px 10px',
           borderRadius: 12,
@@ -99,21 +126,44 @@ export default function CatCard() {
           fontSize: 14,
           boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
         }}>
-          {currentStatus.toUpperCase()}
+          {snapshot.status.toUpperCase()}
         </div>
       </div>
+
+      <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--text-faded)', lineHeight: 1.5 }}>
+        {snapshot.isStressWarning
+          ? '지금 필요한 돌봄: 15시간 전에 놀아주기'
+          : `지금 필요한 돌봄: ${requiredCare.label}`}
+      </p>
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
         <button onClick={handleFeed} style={btnStyle('var(--accent-orange)')}>🐟 밥주기 (100pt)</button>
         <button onClick={handlePlay} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
         <button onClick={handleWash} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
-        {(currentStatus === 'sick' || currentStatus === 'critical') && (
+        {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
           <button onClick={handleHeal} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
         )}
       </div>
 
-      {missingPoints > 0 ? (
+      {snapshot.isStressWarning ? (
+        <div
+          style={{
+            marginTop: 14,
+            width: '100%',
+            borderRadius: 14,
+            padding: '12px 14px',
+            background: 'rgba(255, 213, 79, 0.18)',
+            border: '1px solid var(--accent-yellow)',
+            color: 'var(--text-ink)',
+            lineHeight: 1.5
+          }}
+        >
+          스트레스 경고 구간이에요. 학습 포인트가 있으면 먼저 놀아주는 편이 안전합니다.
+        </div>
+      ) : null}
+
+      {missingPoints > 0 && requiredCare.cost > 0 ? (
         <div
           role="alert"
           style={{
@@ -128,7 +178,7 @@ export default function CatCard() {
           }}
         >
           <p style={{ margin: 0, color: 'var(--text-ink)', lineHeight: 1.5 }}>
-            돌봄 포인트가 {missingPoints}pt 부족해요. 바로 학습 시작으로 포인트를 모아보세요.
+            {requiredCare.label}에 필요한 돌봄 포인트가 {missingPoints}pt 부족해요. 바로 학습 시작으로 포인트를 모아보세요.
           </p>
           <Link
             href="/learn"
