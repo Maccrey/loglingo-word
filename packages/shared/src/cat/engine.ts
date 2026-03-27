@@ -4,10 +4,11 @@ export interface CatStateSnapshot {
   status: CatStatus;
   stage: CatStage;
   severityStatus: 'healthy' | 'sick' | 'critical' | 'dead';
-  stressStatus: 'healthy' | 'stressed' | 'sick';
+  stressStatus: 'healthy' | 'stressed' | 'warning' | 'sick';
   isHungry: boolean;
   isSmelly: boolean;
   isStressed: boolean;
+  isStressWarning: boolean;
   shouldDie: boolean;
 }
 
@@ -15,6 +16,9 @@ export interface EnvThresholds {
   CAT_HUNGRY_HOURS: number;
   CAT_SMELLY_HOURS: number;
   CAT_STRESSED_HOURS: number;
+  CAT_STRESS_AFTER_PLAY_MISS_HOURS: number;
+  CAT_STRESS_WARNING_LIMIT_HOURS: number;
+  CAT_SICK_AFTER_NO_PLAY_HOURS: number;
   CAT_SICK_HOURS: number;
   CAT_CRITICAL_HOURS: number;
   CAT_DEAD_DAYS: number;
@@ -37,6 +41,9 @@ const DEFAULT_THRESHOLDS: EnvThresholds = {
   CAT_HUNGRY_HOURS: 12,
   CAT_SMELLY_HOURS: 24,
   CAT_STRESSED_HOURS: 24,
+  CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
+  CAT_STRESS_WARNING_LIMIT_HOURS: 12,
+  CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
   CAT_SICK_HOURS: 48,
   CAT_CRITICAL_HOURS: 24,
   CAT_DEAD_DAYS: 3,
@@ -77,7 +84,9 @@ export function isSmelly(cat: Cat, currentTime: number, thresholds: EnvThreshold
  * T2-3. 스트레스 상태 계산
  */
 export function isStressed(cat: Cat, currentTime: number, thresholds: EnvThresholds): boolean {
-  return (currentTime - cat.lastPlayedAt) >= thresholds.CAT_STRESSED_HOURS * MS_PER_HOUR;
+  return (
+    currentTime - cat.lastPlayedAt
+  ) >= thresholds.CAT_STRESS_AFTER_PLAY_MISS_HOURS * MS_PER_HOUR;
 }
 
 /**
@@ -87,13 +96,18 @@ export function getStressState(
   cat: Cat,
   currentTime: number,
   thresholds: EnvThresholds
-): 'healthy' | 'stressed' | 'sick' {
-  const stressMs = thresholds.CAT_STRESSED_HOURS * MS_PER_HOUR;
-  const sickMs = stressMs + thresholds.CAT_SICK_HOURS * MS_PER_HOUR;
+): 'healthy' | 'stressed' | 'warning' | 'sick' {
+  const stressMs = thresholds.CAT_STRESS_AFTER_PLAY_MISS_HOURS * MS_PER_HOUR;
+  const warningMs = thresholds.CAT_STRESS_WARNING_LIMIT_HOURS * MS_PER_HOUR;
+  const sickMs = thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR;
   const elapsed = currentTime - cat.lastPlayedAt;
 
   if (elapsed >= sickMs) {
     return 'sick';
+  }
+
+  if (elapsed >= warningMs) {
+    return 'warning';
   }
 
   if (elapsed >= stressMs) {
@@ -131,7 +145,7 @@ export function deriveCatHealthStatus(input: {
   severityStatus: 'healthy' | 'sick' | 'critical' | 'dead';
   isHungry: boolean;
   isSmelly: boolean;
-  stressStatus: 'healthy' | 'stressed' | 'sick';
+  stressStatus: 'healthy' | 'stressed' | 'warning' | 'sick';
 }): CatStatus {
   const { severityStatus, isHungry, isSmelly, stressStatus } = input;
 
@@ -151,7 +165,7 @@ export function deriveCatHealthStatus(input: {
     return 'sick';
   }
 
-  if (stressStatus === 'stressed') {
+  if (stressStatus === 'stressed' || stressStatus === 'warning') {
     return 'stressed';
   }
 
@@ -198,6 +212,7 @@ export function buildCatStateSnapshot(
     isHungry: hungry,
     isSmelly: smelly,
     isStressed: stressStatus !== 'healthy',
+    isStressWarning: stressStatus === 'warning',
     shouldDie: severityStatus === 'dead'
   };
 }

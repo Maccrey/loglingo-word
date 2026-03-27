@@ -34,13 +34,18 @@ describe('parseEnv', () => {
     expect(parsed.POINTS_LEARNING_BASE).toBe(500);
     expect(parsed.CAT_COST_HEAL).toBe(1000);
     expect(parsed.CAT_DEAD_DAYS).toBe(3);
+    expect(parsed.CAT_STRESS_AFTER_PLAY_MISS_HOURS).toBe(3);
+    expect(parsed.CAT_STRESS_WARNING_LIMIT_HOURS).toBe(12);
+    expect(parsed.CAT_SICK_AFTER_NO_PLAY_HOURS).toBe(15);
   });
 
   it('coerces string numbers for cat and point configurations', () => {
     const parsed = parseEnv({
       ...validEnv,
       CAT_STAGE_JUNIOR_DAYS: '40',
+      CAT_STRESS_WARNING_LIMIT_HOURS: '10'
     });
     expect(parsed.CAT_STAGE_JUNIOR_DAYS).toBe(40);
+    expect(parsed.CAT_STRESS_WARNING_LIMIT_HOURS).toBe(10);
   });
 });

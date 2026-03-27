@@ -17,6 +17,9 @@ describe('Cat Status Transition Engine', () => {
     CAT_HUNGRY_HOURS: 12,
     CAT_SMELLY_HOURS: 24,
     CAT_STRESSED_HOURS: 24,
+    CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
+    CAT_STRESS_WARNING_LIMIT_HOURS: 12,
+    CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
     CAT_SICK_HOURS: 48,
     CAT_CRITICAL_HOURS: 24,
     CAT_DEAD_DAYS: 3, // 72 hours
@@ -56,23 +59,25 @@ describe('Cat Status Transition Engine', () => {
     });
 
     it('should calculate stressed correctly', () => {
-      const stressedCat = createMockCat(0, 0, 25); // threshold is 24
+      const stressedCat = createMockCat(0, 0, 4); // threshold is 3
       expect(isStressed(stressedCat, Date.now(), mockEnv as any)).toBe(true);
     });
 
     it('should derive stress state boundaries from play neglect time', () => {
-      const stressedCat = createMockCat(0, 0, 25);
-      const sickStressCat = createMockCat(0, 0, 73);
+      const stressedCat = createMockCat(0, 0, 4);
+      const warningStressCat = createMockCat(0, 0, 13);
+      const sickStressCat = createMockCat(0, 0, 16);
 
-      expect(getStressState(createMockCat(0, 0, 5), Date.now(), mockEnv as any)).toBe('healthy');
+      expect(getStressState(createMockCat(0, 0, 2), Date.now(), mockEnv as any)).toBe('healthy');
       expect(getStressState(stressedCat, Date.now(), mockEnv as any)).toBe('stressed');
+      expect(getStressState(warningStressCat, Date.now(), mockEnv as any)).toBe('warning');
       expect(getStressState(sickStressCat, Date.now(), mockEnv as any)).toBe('sick');
     });
   });
 
   describe('T2-4 & T2-5: Comprehensive Status Calculation', () => {
     it('should return healthy if all interactions are recent', () => {
-      const cat = createMockCat(5, 5, 5);
+      const cat = createMockCat(2, 2, 2);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('healthy');
     });
 
@@ -89,7 +94,7 @@ describe('Cat Status Transition Engine', () => {
       
       // If only stressed violated
       const cat3 = createMockCat(5, 5, 25);
-      expect(calculateCatStatus(cat3, Date.now(), mockEnv)).toBe('stressed');
+      expect(calculateCatStatus(cat3, Date.now(), mockEnv)).toBe('sick');
     });
 
     it('should return sick when abandoned past sick threshold', () => {
@@ -132,7 +137,7 @@ describe('Cat Status Transition Engine', () => {
           severityStatus: 'healthy',
           isHungry: false,
           isSmelly: true,
-          stressStatus: 'stressed'
+          stressStatus: 'warning'
         })
       ).toBe('smelly');
 
@@ -141,13 +146,13 @@ describe('Cat Status Transition Engine', () => {
           severityStatus: 'healthy',
           isHungry: false,
           isSmelly: false,
-          stressStatus: 'stressed'
+          stressStatus: 'warning'
         })
       ).toBe('stressed');
     });
 
     it('should expose a consistent cat state snapshot', () => {
-      const cat = createMockCat(13, 25, 25);
+      const cat = createMockCat(13, 25, 13);
       const snapshot = buildCatStateSnapshot(cat, Date.now(), mockEnv);
 
       expect(snapshot.status).toBe('hungry');
@@ -155,6 +160,7 @@ describe('Cat Status Transition Engine', () => {
       expect(snapshot.isHungry).toBe(true);
       expect(snapshot.isSmelly).toBe(true);
       expect(snapshot.isStressed).toBe(true);
+      expect(snapshot.isStressWarning).toBe(true);
       expect(snapshot.shouldDie).toBe(false);
     });
 
