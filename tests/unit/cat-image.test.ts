@@ -26,10 +26,10 @@ describe('cat image mapping', () => {
       '/images/cats/action-play.png'
     );
     expect(getCatImagePath('adult', 'action-heal')).toBe(
-      '/images/cats/adult-action-medicine.png'
+      '/images/cats/adult_action_medicine.png'
     );
     expect(getCatImagePath('middleAge', 'action-medicine')).toBe(
-      '/images/cats/middle-age-action-medicine.png'
+      '/images/cats/middle_age_medicine.png'
     );
   });
 
@@ -38,7 +38,7 @@ describe('cat image mapping', () => {
       '/images/cats/action-wash.png'
     );
     expect(getCatImagePath('legacy', 'action-medicine')).toBe(
-      '/images/cats/legacy-action-medicine.png'
+      '/images/cats/veteran_action_medicine.png'
     );
   });
 
