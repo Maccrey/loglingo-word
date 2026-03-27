@@ -26,6 +26,27 @@ function getStatusSummary(status: string) {
   }
 }
 
+function buildCatSlots(cat: { id: string; name: string; stage: string }) {
+  return [
+    {
+      id: cat.id,
+      label: '대표 고양이',
+      name: cat.name,
+      stage: cat.stage,
+      unlocked: true,
+      requirement: null
+    },
+    {
+      id: 'locked-slot-2',
+      label: '추가 슬롯',
+      name: '잠금됨',
+      stage: null,
+      unlocked: false,
+      requirement: '1년 육성 보상으로 새끼 고양이를 해금하면 열립니다.'
+    }
+  ];
+}
+
 export default function CatDetailScreen() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
@@ -58,6 +79,7 @@ export default function CatDetailScreen() {
   const cleanPercent = Math.max(0, 100 - (hoursSinceWash / 24) * 100);
   const stressPercent = Math.max(0, 100 - (hoursSincePlay / 24) * 100);
   const statusSummary = getStatusSummary(currentStatus);
+  const catSlots = buildCatSlots(cat);
 
   const currentImagePath = actionOverlay 
     ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
@@ -112,6 +134,42 @@ export default function CatDetailScreen() {
         <h2 style={{ margin: 0, fontSize: 20, marginBottom: 12 }}>성장 기록</h2>
         <p style={{ margin: '0 0 8px' }}>현재 단계: <strong>{cat.stage.toUpperCase()}</strong></p>
         <p style={{ margin: 0 }}>건강하게 키운 일수: <strong>{Math.floor(cat.activeDays)}일</strong></p>
+      </section>
+
+      <section
+        style={{
+          marginTop: 24,
+          padding: 24,
+          background: 'var(--bg-paper)',
+          borderRadius: 20,
+          boxShadow: 'var(--shadow-card)',
+          display: 'grid',
+          gap: 14
+        }}
+      >
+        <h2 style={{ margin: 0, fontSize: 20 }}>고양이 슬롯</h2>
+        <div style={{ display: 'grid', gap: 12 }}>
+          {catSlots.map((slot) => (
+            <article
+              key={slot.id}
+              style={{
+                borderRadius: 16,
+                padding: '14px 16px',
+                background: slot.unlocked ? 'var(--bg-card)' : 'rgba(255,255,255,0.5)',
+                border: '1px solid var(--border-pencil)',
+                display: 'grid',
+                gap: 6
+              }}
+            >
+              <strong>{slot.label}</strong>
+              <span>{slot.name}</span>
+              {slot.stage ? <span>단계: {slot.stage.toUpperCase()}</span> : null}
+              {!slot.unlocked && slot.requirement ? (
+                <span style={{ color: 'var(--text-faded)' }}>{slot.requirement}</span>
+              ) : null}
+            </article>
+          ))}
+        </div>
       </section>
     </main>
   );

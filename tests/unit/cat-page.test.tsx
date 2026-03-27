@@ -34,4 +34,15 @@ describe('cat detail page', () => {
     expect(screen.getByText(/현재 단계:/)).toBeTruthy();
     expect(screen.getByText(/건강하게 키운 일수:/)).toBeTruthy();
   });
+
+  it('shows the cat slot list with a locked reward slot', () => {
+    render(<CatDetailScreen />);
+
+    expect(screen.getByText('고양이 슬롯')).toBeTruthy();
+    expect(screen.getByText('대표 고양이')).toBeTruthy();
+    expect(screen.getByText('추가 슬롯')).toBeTruthy();
+    expect(
+      screen.getByText('1년 육성 보상으로 새끼 고양이를 해금하면 열립니다.')
+    ).toBeTruthy();
+  });
 });
