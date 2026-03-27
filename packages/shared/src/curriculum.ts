@@ -11,6 +11,11 @@ export const curriculumWordSchema = z.object({
   meaning: z.string().min(1),
   example: z.string().min(1),
   partOfSpeech: z.string().min(1).optional(),
+  quiz: z
+    .object({
+      distractors: z.array(z.string().min(1)).min(1)
+    })
+    .optional(),
   writing: z
     .object({
       prompt: z.string().min(1),

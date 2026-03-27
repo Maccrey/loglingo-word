@@ -56,16 +56,7 @@ export function createFlashcardSession(input?: {
     learningLanguage,
     learningLevel
   );
-  const progressList: VocabProgress[] =
-    input?.progressList ?? [
-      {
-        wordId: 'subway',
-        correctStreak: 2,
-        storageStrength: 1.1,
-        retrievalStrength: 0.9,
-        nextReviewAt: '2026-03-25T08:00:00.000Z'
-      }
-    ];
+  const progressList: VocabProgress[] = input?.progressList ?? [];
 
   const focusedCards =
     input?.focusWordIds && input.focusWordIds.length > 0
@@ -78,7 +69,7 @@ export function createFlashcardSession(input?: {
           curriculum,
           now: '2026-03-25T12:00:00.000Z',
           progress: progressList,
-          wrongWordIds: ['hello'],
+          wrongWordIds: [],
           limit: 4
         });
 

@@ -14,6 +14,9 @@
         "meaning": "안녕하세요",
         "example": "こんにちは、はじめまして。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["고마워요", "실례합니다", "안녕히 가세요"]
+        },
         "writing": {
           "prompt": "안녕하세요",
           "answer": "こんにちは",
@@ -28,6 +31,9 @@
         "meaning": "좋은 아침",
         "example": "おはよう、よくねましたか。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["좋은 저녁", "오늘", "안녕하세요"]
+        },
         "writing": {
           "prompt": "좋은 아침",
           "answer": "おはよう",
@@ -42,6 +48,9 @@
         "meaning": "안녕하세요, 안녕히 계세요",
         "example": "こんばんは、きょうはさむいですね。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["좋은 아침", "고마워요", "내일"]
+        },
         "writing": {
           "prompt": "좋은 저녁",
           "answer": "こんばんは",
@@ -56,6 +65,9 @@
         "meaning": "고마워요",
         "example": "てつだってくれてありがとう。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["실례합니다", "안녕하세요", "아니요"]
+        },
         "writing": {
           "prompt": "고마워요",
           "answer": "ありがとう",
@@ -70,6 +82,9 @@
         "meaning": "실례합니다, 죄송합니다",
         "example": "すみません、えきはどこですか。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["고마워요", "네", "좋은 아침"]
+        },
         "writing": {
           "prompt": "실례합니다",
           "answer": "すみません",
@@ -84,6 +99,9 @@
         "meaning": "네",
         "example": "はい、わかりました。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["아니요", "고마워요", "안녕하세요"]
+        },
         "writing": {
           "prompt": "네",
           "answer": "はい",
@@ -98,6 +116,9 @@
         "meaning": "아니요",
         "example": "いいえ、まだです。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["네", "지금", "물"]
+        },
         "writing": {
           "prompt": "아니요",
           "answer": "いいえ",
@@ -112,6 +133,9 @@
         "meaning": "안녕히 가세요, 안녕히 계세요",
         "example": "またあした、さようなら。",
         "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["고마워요", "좋은 아침", "좋은 저녁"]
+        },
         "writing": {
           "prompt": "안녕히 가세요",
           "answer": "さようなら",
@@ -136,6 +160,9 @@
         "meaning": "나, 저",
         "example": "わたしはキムです。",
         "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": ["친구", "선생님", "이름"]
+        },
         "writing": {
           "prompt": "나, 저",
           "answer": "わたし",
@@ -150,6 +177,9 @@
         "meaning": "친구",
         "example": "ともだちとえいがをみます。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["가족", "학생", "사람"]
+        },
         "writing": {
           "prompt": "친구",
           "answer": "ともだち",
@@ -164,6 +194,9 @@
         "meaning": "선생님",
         "example": "せんせいはしんせつです。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["학생", "친구", "여러분"]
+        },
         "writing": {
           "prompt": "선생님",
           "answer": "せんせい",
@@ -178,6 +211,9 @@
         "meaning": "학생",
         "example": "あのひとはがくせいです。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["선생님", "가족", "사람"]
+        },
         "writing": {
           "prompt": "학생",
           "answer": "がくせい",
@@ -192,6 +228,9 @@
         "meaning": "가족",
         "example": "かぞくといっしょにすんでいます。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["친구", "이름", "나, 저"]
+        },
         "writing": {
           "prompt": "가족",
           "answer": "かぞく",
@@ -206,6 +245,9 @@
         "meaning": "이름",
         "example": "おなまえはなんですか。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["가족", "여러분", "사람"]
+        },
         "writing": {
           "prompt": "이름",
           "answer": "なまえ",
@@ -220,6 +262,9 @@
         "meaning": "사람",
         "example": "あのひとはやさしいです。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["친구", "학생", "이름"]
+        },
         "writing": {
           "prompt": "사람",
           "answer": "ひと",
@@ -234,6 +279,9 @@
         "meaning": "여러분",
         "example": "みなさん、こんにちは。",
         "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["사람", "가족", "선생님"]
+        },
         "writing": {
           "prompt": "여러분",
           "answer": "みなさん",

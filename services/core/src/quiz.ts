@@ -49,6 +49,19 @@ function buildFallbackOption(
   };
 }
 
+function shuffleOptions<T>(items: T[]): T[] {
+  const next = [...items];
+
+  for (let index = next.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const current = next[index];
+    next[index] = next[randomIndex]!;
+    next[randomIndex] = current!;
+  }
+
+  return next;
+}
+
 export function normalizeShortAnswer(value: string): string {
   return value.trim().replace(/\s+/g, '').toLowerCase();
 }
@@ -144,21 +157,38 @@ export function buildMultipleChoiceQuiz(
       text: word.meaning,
       isCorrect: false
     }));
+  const jsonDistractors = (targetWord.quiz?.distractors ?? [])
+    .filter(
+      (text, index, items) =>
+        text.toLowerCase() !== targetWord.meaning.toLowerCase() &&
+        items.findIndex((candidate) => candidate.toLowerCase() === text.toLowerCase()) ===
+          index
+    )
+    .slice(0, Math.max(0, optionCount - 1))
+    .map((text, index) => ({
+      id: `${targetWord.id}-quiz-${index}`,
+      text,
+      isCorrect: false
+    }));
+  const chosenDistractors =
+    jsonDistractors.length > 0
+      ? jsonDistractors.slice(0, Math.max(0, optionCount - 1))
+      : distractors;
 
-  const fallbackCount = Math.max(0, optionCount - 1 - distractors.length);
+  const fallbackCount = Math.max(0, optionCount - 1 - chosenDistractors.length);
   const fallbackOptions = Array.from({ length: fallbackCount }, (_, index) =>
     buildFallbackOption(targetWord, index)
   );
 
-  const options: MultipleChoiceOption[] = [
+  const options = shuffleOptions([
     {
       id: targetWord.id,
       text: targetWord.meaning,
       isCorrect: true
     },
-    ...distractors,
+    ...chosenDistractors,
     ...fallbackOptions
-  ];
+  ]);
 
   return {
     word: targetWord,
