@@ -609,3 +609,170 @@
 4. `T3-1` ~ `T3-6`
 5. `T5-1` ~ `T5-3`
 6. `T6-1` ~ `T6-3`
+
+## 16. 최근 구현 이력 추적
+
+### T9-1. 세부 페이지 공통 뒤로가기 정리
+
+- 상태: [x] 완료
+- 목적: 상세 페이지별로 제각각이던 홈 복귀 UI를 공통 컴포넌트로 통일
+- 구현:
+- `apps/web/src/components/BackButton.tsx` 공통화
+- `cat`, `chat`, `feed`, `leaderboard`, `learn`, `quiz`, `sentence`, `settings`, `onboarding` 진입선 정리
+- locale 유지 홈 이동 처리
+- 최소 단위 테스트:
+- `back-button.test.tsx`
+- 관련 화면 렌더링 테스트 보정
+- 완료 커밋:
+- `9fe1327` `뒤로가기 일관화 및 고양이 치료 이미지 반영`
+- `c6bebbc` `뒤로가기 및 고양이 이미지 테스트 보강`
+- `7e9feb7` `고양이 화면 테스트 및 locale 처리 보강`
+
+### T9-2. 고양이 치료 이미지 연결 및 상태 동기화 안정화
+
+- 상태: [x] 완료
+- 목적: 약먹는 이미지 파일명 차이와 브라우저 상태 루프 문제를 함께 정리
+- 구현:
+- `action-medicine` stage별 파일명 매핑
+- `useCat` storage hydration 재귀 이벤트 차단
+- `/cat`, 홈 `CatCard` 치료 흐름 점검
+- 최소 단위 테스트:
+- `cat-image.test.ts`
+- `cat-page.test.tsx`
+- `cat-card.test.tsx`
+- 완료 커밋:
+- `9fe1327` `뒤로가기 일관화 및 고양이 치료 이미지 반영`
+- `c6bebbc` `뒤로가기 및 고양이 이미지 테스트 보강`
+- `7e9feb7` `고양이 화면 테스트 및 locale 처리 보강`
+
+### T9-3. 학습 언어 및 국제 표준 레벨 설정 확장
+
+- 상태: [x] 완료
+- 목적: 영어와 일본어를 국제 표준 레벨 기준으로 선택하고 해당 단어 세트를 학습에 반영
+- 구현:
+- 설정 저장소 `settingsStorage` 추가
+- 학습 언어 `en`, `ja` 지원
+- 영어 `CEFR`, 일본어 `JLPT` 레벨 선택 지원
+- `learn`, `quiz`, `sentence` 세션 생성 시 저장된 언어/레벨 반영
+- 최소 단위 테스트:
+- `settings.test.ts`
+- `settings-client.test.tsx`
+- `curriculum.test.ts`
+- `flashcards-client.test.tsx`
+- `quiz-client.test.tsx`
+- `sentence-client.test.tsx`
+- 완료 커밋:
+- 진행 중, 이번 작업 묶음에 포함 예정
+
+### T9-4. 홈 대시보드 설정 진입 버튼 추가
+
+- 상태: [x] 완료
+- 목적: 설정 화면 진입선을 홈에서 바로 제공
+- 구현:
+- 홈 빠른 액션에 `/settings` 버튼 추가
+- 영어 locale일 때 `/settings?locale=en` 유지
+- 최소 단위 테스트:
+- `home-dashboard.test.tsx`
+- 완료 커밋:
+- 진행 중, 이번 작업 묶음에 포함 예정
+
+### T9-5. 환경 변수 파일 git 추적 제외 확장
+
+- 상태: [x] 완료
+- 목적: `.env.*` 변형 파일까지 git 추적에서 제외
+- 구현:
+- `.gitignore`에 `.env.*` 추가
+- 최소 단위 테스트:
+- `git status` 기준 추적 제외 확인
+- 완료 커밋:
+- 진행 중, 이번 작업 묶음에 포함 예정
+
+### T9-6. 일본어 JLPT N5 실제 데이터 및 쓰기 모드 연결
+
+- 상태: [x] 완료
+- 목적: 일본어 N5 단어를 실제 JSON 데이터로 관리하고 쓰기 모드 확장 기반까지 연결
+- 구현:
+- `packages/shared/src/data/jlpt-n5.json` 추가
+- `reading`, `partOfSpeech`, `writing` 메타데이터 확장
+- 커리큘럼 시드가 JSON 데이터를 실제로 읽도록 연결
+- 플래시카드 뒷면에 쓰기 모드 입력 UI 추가
+- 현재 레벨 90% 암기 시 다음 레벨 자동 승급 연결
+- 최소 단위 테스트:
+- `curriculum.test.ts`
+- `flashcards-client.test.tsx`
+- `learning-progress-storage.test.ts`
+- 완료 커밋:
+- 진행 중, 이번 작업 묶음에 포함 예정
+
+## 17. Firebase Auth 및 Hosting 준비
+
+### T10-1. Firebase 클라이언트 SDK 도입
+
+- 상태: [ ] 미완료
+- 목적: 브라우저에서 Firebase Auth와 Hosting 환경을 직접 사용할 기반 마련
+- 구현:
+- `apps/web`에 `firebase` 클라이언트 SDK 추가
+- 브라우저용 Firebase 초기화 모듈 분리
+- `.env.local` 예시 키 정리
+- 최소 단위 테스트:
+- 클라이언트 초기화 성공 테스트
+- 환경 변수 누락 실패 테스트
+
+### T10-2. 구글 로그인 실제 연동
+
+- 상태: [ ] 미완료
+- 목적: 현재 노출된 구글 로그인 버튼을 실제 인증 플로우와 연결
+- 구현:
+- `GoogleAuthProvider`
+- 팝업 또는 리다이렉트 로그인
+- 로그인 성공 시 사용자 프로필 상태 저장
+- 최소 단위 테스트:
+- 로그인 성공 핸들링 테스트
+- 취소 또는 실패 메시지 테스트
+
+### T10-3. 인증 상태 UI 연결
+
+- 상태: [ ] 미완료
+- 목적: 로그인 전/후에 설정 및 홈 화면이 같은 사용자 상태를 보여주도록 정리
+- 구현:
+- 공통 auth 상태 저장소
+- 로그아웃 버튼
+- 로그인 사용자 표시
+- 최소 단위 테스트:
+- 로그인 상태 렌더링 테스트
+- 로그아웃 상태 전환 테스트
+
+### T10-4. Firebase 프로젝트 연결
+
+- 상태: [ ] 미완료
+- 목적: 로컬 개발과 Firebase 리소스가 같은 프로젝트를 바라보도록 설정
+- 구현:
+- Firebase project id 연결
+- Auth/Firestore/Hosting 환경 변수 정리
+- 배포 대상 프로젝트 문서화
+- 최소 단위 테스트:
+- 환경 설정 체크리스트 점검
+- 프로젝트 식별자 누락 방지 점검
+
+### T10-5. Firebase Hosting 배포 준비
+
+- 상태: [ ] 미완료
+- 목적: `apps/web`를 Hosting 배포 가능한 상태로 정리
+- 구현:
+- `firebase.json` hosting 설정 검토
+- 빌드/배포 명령 정리
+- Node 버전 및 배포 전 점검 문서화
+- 최소 단위 테스트:
+- `next build` 성공
+- Hosting 배포 dry-run 또는 체크리스트 점검
+
+### T10-6. 배포 전 최종 검증
+
+- 상태: [ ] 미완료
+- 목적: Auth와 Hosting 배포 전 회귀를 줄이기 위한 최종 검증 루틴 확보
+- 구현:
+- lint, typecheck, 핵심 UI 테스트 묶음 실행
+- 설정, 학습, 고양이, 홈 주요 플로우 수동 점검 목록 작성
+- 최소 단위 테스트:
+- 핵심 테스트 묶음 통과
+- 수동 검증 항목 완료 체크

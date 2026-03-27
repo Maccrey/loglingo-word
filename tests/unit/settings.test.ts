@@ -17,6 +17,7 @@ describe('settings domain', () => {
       userId: 'user-1',
       appLanguage: 'ko',
       learningLanguage: 'en',
+      learningLevel: 'cefr_a1',
       notificationsEnabled: true,
       premiumEnabled: false,
       updatedAt: '2026-03-25T00:00:00.000Z'
@@ -42,6 +43,7 @@ describe('settings domain', () => {
     expect(updated.appLanguage).toBe('en');
     expect(updated.notificationsEnabled).toBe(false);
     expect(updated.learningLanguage).toBe('en');
+    expect(updated.learningLevel).toBe('cefr_a1');
     expect(updated.premiumEnabled).toBe(false);
     expect(updated.updatedAt).toBe('2026-03-26T00:00:00.000Z');
   });

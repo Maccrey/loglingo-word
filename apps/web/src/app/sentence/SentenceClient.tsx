@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
+import { readStoredSettingsSnapshot } from '../../lib/settingsStorage';
 
 import {
   createDemoSentenceSession,
@@ -66,7 +67,13 @@ type SentenceClientProps = {
 };
 
 export default function SentenceClient(props: SentenceClientProps) {
-  const [session, setSession] = useState(createDemoSentenceSession);
+  const storedSettings = readStoredSettingsSnapshot();
+  const [session, setSession] = useState(() =>
+    createDemoSentenceSession({
+      learningLanguage: storedSettings.learningLanguage,
+      learningLevel: storedSettings.learningLevel
+    })
+  );
   const locale = props.locale ?? 'ko';
 
   return (

@@ -2,8 +2,23 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { updateSettings } from '@wordflow/core/settings';
+import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
+import {
+  getLearningLevelLabel,
+  getNextLearningLevel
+} from '@wordflow/shared/learning-preferences';
 import { BackButton } from '../../components/BackButton';
 import { type AppLocale } from '../i18n';
+import {
+  readStoredSettingsSnapshot,
+  saveStoredSettings
+} from '../../lib/settingsStorage';
+import {
+  calculateMasteredWordRatio,
+  readStoredLearningProgressSnapshot,
+  saveStoredLearningProgress
+} from '../../lib/learningProgressStorage';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
@@ -73,6 +88,15 @@ const ratingButtonPalette: Record<
   }
 };
 
+const writingPanelStyle: Record<string, string | number> = {
+  borderRadius: 20,
+  padding: 20,
+  border: '1px dashed var(--border-pencil)',
+  background: 'rgba(255, 255, 255, 0.58)',
+  display: 'grid',
+  gap: 12
+};
+
 function reasonLabel(reason: string): string {
   switch (reason) {
     case 'retry':
@@ -84,6 +108,10 @@ function reasonLabel(reason: string): string {
   }
 }
 
+function normalizeWritingAnswer(value: string): string {
+  return value.trim().toLowerCase();
+}
+
 type FlashcardsClientProps = {
   locale?: AppLocale;
   focusWordIds?: string[];
@@ -91,11 +119,29 @@ type FlashcardsClientProps = {
 
 export default function FlashcardsClient(props: FlashcardsClientProps) {
   const locale = props.locale ?? 'ko';
+  const [storedSettings] = useState(() => readStoredSettingsSnapshot());
   const [session, setSession] = useState(() =>
     createFlashcardSession(
-      props.focusWordIds ? { focusWordIds: props.focusWordIds } : undefined
+      props.focusWordIds
+        ? { focusWordIds: props.focusWordIds }
+        : {
+            learningLanguage: storedSettings.learningLanguage,
+            learningLevel: storedSettings.learningLevel,
+            progressList: readStoredLearningProgressSnapshot()
+          }
     )
   );
+  const [autoAdvanceMessage, setAutoAdvanceMessage] = useState<string | null>(
+    null
+  );
+  const [writingInput, setWritingInput] = useState('');
+  const [writingFeedback, setWritingFeedback] = useState<{
+    status: 'idle' | 'success' | 'error';
+    message: string;
+  }>({
+    status: 'idle',
+    message: ''
+  });
   const [leaderboardSyncState, setLeaderboardSyncState] = useState({
     loading: false,
     synced: false
@@ -126,6 +172,82 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     props.focusWordIds && props.focusWordIds.length > 0
       ? `/?source=recommendation&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}`
       : null;
+  const writingExercise = currentCard?.word.writing;
+
+  useEffect(() => {
+    setWritingInput('');
+    setWritingFeedback({
+      status: 'idle',
+      message: ''
+    });
+  }, [session.currentIndex, session.flipped]);
+
+  useEffect(() => {
+    if (props.focusWordIds && props.focusWordIds.length > 0) {
+      return;
+    }
+
+    saveStoredLearningProgress(Object.values(session.progressMap));
+  }, [props.focusWordIds, session.progressMap]);
+
+  useEffect(() => {
+    if (!completed || (props.focusWordIds && props.focusWordIds.length > 0)) {
+      return;
+    }
+
+    const currentLevelWords = getCurriculumByStandardLevel(
+      storedSettings.learningLanguage,
+      storedSettings.learningLevel
+    ).flatMap((unit) => unit.words.map((word) => word.id));
+    const masteredRatio = calculateMasteredWordRatio(
+      currentLevelWords,
+      Object.values(session.progressMap)
+    );
+
+    if (masteredRatio < 0.9) {
+      setAutoAdvanceMessage(null);
+      return;
+    }
+
+    const nextLevel = getNextLearningLevel(
+      storedSettings.learningLanguage,
+      storedSettings.learningLevel
+    );
+
+    if (!nextLevel) {
+      setAutoAdvanceMessage(
+        locale === 'en'
+          ? 'You have already reached the highest level for this language.'
+          : '현재 학습 언어의 최고 레벨까지 완료했습니다.'
+      );
+      return;
+    }
+
+    const nextSettings = updateSettings(
+      storedSettings,
+      { learningLevel: nextLevel },
+      '2026-03-27T00:00:00.000Z'
+    );
+
+    saveStoredSettings(nextSettings);
+    setAutoAdvanceMessage(
+      locale === 'en'
+        ? `More than 90% of this level is mastered. Your next level is ${getLearningLevelLabel(
+            nextSettings.learningLanguage,
+            nextLevel
+          )}.`
+        : `현재 레벨 단어의 90% 이상을 암기해서 다음 레벨 ${getLearningLevelLabel(
+            nextSettings.learningLanguage,
+            nextLevel
+          )}(으)로 자동 승급되었습니다.`
+    );
+  }, [
+    completed,
+    locale,
+    props.focusWordIds,
+    session.progressMap,
+    storedSettings
+  ]);
 
   useEffect(() => {
     if (
@@ -181,6 +303,48 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     leaderboardSyncState.synced,
     props.focusWordIds
   ]);
+
+  function submitWritingAnswer() {
+    if (!writingExercise) {
+      return;
+    }
+
+    const acceptedAnswers = [
+      writingExercise.answer,
+      ...(writingExercise.accepted ?? [])
+    ].map(normalizeWritingAnswer);
+    const normalizedInput = normalizeWritingAnswer(writingInput);
+
+    if (!normalizedInput) {
+      setWritingFeedback({
+        status: 'error',
+        message:
+          locale === 'en'
+            ? 'Enter the word before checking your writing.'
+            : '쓰기 답안을 입력한 뒤 확인하세요.'
+      });
+      return;
+    }
+
+    if (acceptedAnswers.includes(normalizedInput)) {
+      setWritingFeedback({
+        status: 'success',
+        message:
+          locale === 'en'
+            ? 'Correct. Your writing answer matches the saved form.'
+            : '정답입니다. 저장된 쓰기 정답과 일치합니다.'
+      });
+      return;
+    }
+
+    setWritingFeedback({
+      status: 'error',
+      message:
+        locale === 'en'
+          ? `Not quite. Correct answer: ${writingExercise.answer}`
+          : `아직 아닙니다. 정답: ${writingExercise.answer}`
+    });
+  }
 
   return (
     <main style={surfaceStyle}>
@@ -254,6 +418,11 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                 마지막 난이도 선택: {session.lastRating ?? '없음'}
               </p>
+              {autoAdvanceMessage ? (
+                <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>
+                  {autoAdvanceMessage}
+                </p>
+              ) : null}
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <BackButton locale={locale} />
                 {homeHref ? (
@@ -407,6 +576,82 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 >
                   {session.flipped ? '앞면으로 보기' : '카드 뒤집기'}
                 </button>
+
+                {session.flipped && writingExercise ? (
+                  <section style={writingPanelStyle}>
+                    <div style={{ display: 'grid', gap: 4 }}>
+                      <strong style={{ fontSize: 18 }}>
+                        {locale === 'en' ? 'Writing Mode' : '쓰기 모드'}
+                      </strong>
+                      <span style={{ color: 'var(--text-faded)' }}>
+                        {locale === 'en'
+                          ? `Write the target word for: ${writingExercise.prompt}`
+                          : `${writingExercise.prompt}에 해당하는 일본어를 직접 써보세요.`}
+                      </span>
+                      {currentCard.word.reading ? (
+                        <span style={{ color: 'var(--text-faded)' }}>
+                          {locale === 'en'
+                            ? `Reading: ${currentCard.word.reading}`
+                            : `읽기 힌트: ${currentCard.word.reading}`}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                      <input
+                        aria-label={locale === 'en' ? 'Writing answer' : '쓰기 정답'}
+                        value={writingInput}
+                        onChange={(event) => setWritingInput(event.target.value)}
+                        placeholder={
+                          locale === 'en'
+                            ? 'Type the word in Japanese'
+                            : '일본어로 입력하세요'
+                        }
+                        style={{
+                          flex: '1 1 240px',
+                          minHeight: 48,
+                          borderRadius: 14,
+                          border: '1px solid var(--border-pencil)',
+                          padding: '12px 16px',
+                          fontSize: 16,
+                          background: '#fff',
+                          color: 'var(--text-ink)'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={submitWritingAnswer}
+                        style={{
+                          border: '1px solid var(--btn-primary-border)',
+                          borderRadius: 999,
+                          padding: '12px 18px',
+                          fontSize: 15,
+                          fontWeight: 700,
+                          background: 'var(--btn-primary-bg)',
+                          color: '#fff',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {locale === 'en' ? 'Check Writing' : '쓰기 확인'}
+                      </button>
+                    </div>
+
+                    {writingFeedback.status !== 'idle' ? (
+                      <p
+                        role="status"
+                        style={{
+                          margin: 0,
+                          color:
+                            writingFeedback.status === 'success'
+                              ? '#2d7a4d'
+                              : '#d32f2f'
+                        }}
+                      >
+                        {writingFeedback.message}
+                      </p>
+                    ) : null}
+                  </section>
+                ) : null}
 
                 <div
                   style={{

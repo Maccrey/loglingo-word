@@ -10,6 +10,7 @@ import SettingsClient from '../../apps/web/src/app/settings/SettingsClient';
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  window.localStorage.clear();
 });
 
 describe('settings ui', () => {
@@ -18,9 +19,40 @@ describe('settings ui', () => {
 
     expect(screen.getByRole('combobox', { name: '앱 언어' })).toBeTruthy();
     expect(screen.getByRole('combobox', { name: '학습 언어' })).toBeTruthy();
+    expect(screen.getByRole('combobox', { name: '학습 레벨' })).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Google로 로그인' })
+    ).toBeTruthy();
     expect(screen.getByRole('button', { name: '알림' }).textContent).toContain(
       '켜짐'
     );
+  });
+
+  it('shows the firebase auth preparation message when the google login button is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '구글 로그인은 Firebase Auth 연결 태스크 완료 후 활성화됩니다.'
+    );
+  });
+
+  it('updates the learning level options when the learning language changes', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '학습 언어' }),
+      'ja'
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('JLPT N5');
   });
 
   it('toggles the notification setting', async () => {

@@ -1,0 +1,734 @@
+[
+  {
+    "id": "japanese-greetings",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 1,
+    "title": "일본어 기초 인사",
+    "words": [
+      {
+        "id": "konnichiwa",
+        "term": "こんにちは",
+        "reading": "こんにちは",
+        "meaning": "안녕하세요",
+        "example": "こんにちは、はじめまして。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "안녕하세요",
+          "answer": "こんにちは",
+          "accepted": ["こんにちは"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "ohayou",
+        "term": "おはよう",
+        "reading": "おはよう",
+        "meaning": "좋은 아침",
+        "example": "おはよう、よくねましたか。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "좋은 아침",
+          "answer": "おはよう",
+          "accepted": ["おはよう"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "konbanwa",
+        "term": "こんばんは",
+        "reading": "こんばんは",
+        "meaning": "안녕하세요, 안녕히 계세요",
+        "example": "こんばんは、きょうはさむいですね。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "좋은 저녁",
+          "answer": "こんばんは",
+          "accepted": ["こんばんは"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "arigatou",
+        "term": "ありがとう",
+        "reading": "ありがとう",
+        "meaning": "고마워요",
+        "example": "てつだってくれてありがとう。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "고마워요",
+          "answer": "ありがとう",
+          "accepted": ["ありがとう"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "sumimasen",
+        "term": "すみません",
+        "reading": "すみません",
+        "meaning": "실례합니다, 죄송합니다",
+        "example": "すみません、えきはどこですか。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "실례합니다",
+          "answer": "すみません",
+          "accepted": ["すみません"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "hai",
+        "term": "はい",
+        "reading": "はい",
+        "meaning": "네",
+        "example": "はい、わかりました。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "네",
+          "answer": "はい",
+          "accepted": ["はい"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "iie",
+        "term": "いいえ",
+        "reading": "いいえ",
+        "meaning": "아니요",
+        "example": "いいえ、まだです。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "아니요",
+          "answer": "いいえ",
+          "accepted": ["いいえ"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "sayounara",
+        "term": "さようなら",
+        "reading": "さようなら",
+        "meaning": "안녕히 가세요, 안녕히 계세요",
+        "example": "またあした、さようなら。",
+        "partOfSpeech": "interjection",
+        "writing": {
+          "prompt": "안녕히 가세요",
+          "answer": "さようなら",
+          "accepted": ["さようなら"],
+          "script": "kana"
+        }
+      }
+    ]
+  },
+  {
+    "id": "japanese-people",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 2,
+    "title": "사람과 관계",
+    "words": [
+      {
+        "id": "watashi",
+        "term": "わたし",
+        "reading": "わたし",
+        "meaning": "나, 저",
+        "example": "わたしはキムです。",
+        "partOfSpeech": "pronoun",
+        "writing": {
+          "prompt": "나, 저",
+          "answer": "わたし",
+          "accepted": ["わたし"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "tomodachi",
+        "term": "友だち",
+        "reading": "ともだち",
+        "meaning": "친구",
+        "example": "ともだちとえいがをみます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "친구",
+          "answer": "ともだち",
+          "accepted": ["ともだち", "友だち"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "sensei",
+        "term": "先生",
+        "reading": "せんせい",
+        "meaning": "선생님",
+        "example": "せんせいはしんせつです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "선생님",
+          "answer": "せんせい",
+          "accepted": ["せんせい", "先生"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "gakusei",
+        "term": "学生",
+        "reading": "がくせい",
+        "meaning": "학생",
+        "example": "あのひとはがくせいです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "학생",
+          "answer": "がくせい",
+          "accepted": ["がくせい", "学生"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kazoku",
+        "term": "家族",
+        "reading": "かぞく",
+        "meaning": "가족",
+        "example": "かぞくといっしょにすんでいます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "가족",
+          "answer": "かぞく",
+          "accepted": ["かぞく", "家族"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "namae",
+        "term": "名前",
+        "reading": "なまえ",
+        "meaning": "이름",
+        "example": "おなまえはなんですか。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "이름",
+          "answer": "なまえ",
+          "accepted": ["なまえ", "名前"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "hito",
+        "term": "人",
+        "reading": "ひと",
+        "meaning": "사람",
+        "example": "あのひとはやさしいです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "사람",
+          "answer": "ひと",
+          "accepted": ["ひと", "人"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "minasan",
+        "term": "みなさん",
+        "reading": "みなさん",
+        "meaning": "여러분",
+        "example": "みなさん、こんにちは。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "여러분",
+          "answer": "みなさん",
+          "accepted": ["みなさん"],
+          "script": "kana"
+        }
+      }
+    ]
+  },
+  {
+    "id": "japanese-time",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 3,
+    "title": "시간과 일상",
+    "words": [
+      {
+        "id": "kyou",
+        "term": "今日",
+        "reading": "きょう",
+        "meaning": "오늘",
+        "example": "きょうはべんきょうします。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "오늘",
+          "answer": "きょう",
+          "accepted": ["きょう", "今日"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ashita",
+        "term": "明日",
+        "reading": "あした",
+        "meaning": "내일",
+        "example": "あしたはやすみです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "내일",
+          "answer": "あした",
+          "accepted": ["あした", "明日"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kinou",
+        "term": "昨日",
+        "reading": "きのう",
+        "meaning": "어제",
+        "example": "きのうほんをよみました。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "어제",
+          "answer": "きのう",
+          "accepted": ["きのう", "昨日"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "asa",
+        "term": "朝",
+        "reading": "あさ",
+        "meaning": "아침",
+        "example": "あさごはんをたべます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "아침",
+          "answer": "あさ",
+          "accepted": ["あさ", "朝"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "yoru",
+        "term": "夜",
+        "reading": "よる",
+        "meaning": "밤",
+        "example": "よるにともだちとあいます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "밤",
+          "answer": "よる",
+          "accepted": ["よる", "夜"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ima",
+        "term": "今",
+        "reading": "いま",
+        "meaning": "지금",
+        "example": "いましゅくだいをしています。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "지금",
+          "answer": "いま",
+          "accepted": ["いま", "今"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "jikan",
+        "term": "時間",
+        "reading": "じかん",
+        "meaning": "시간",
+        "example": "じかんがありますか。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "시간",
+          "answer": "じかん",
+          "accepted": ["じかん", "時間"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "mainichi",
+        "term": "毎日",
+        "reading": "まいにち",
+        "meaning": "매일",
+        "example": "まいにちにほんごをれんしゅうします。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "매일",
+          "answer": "まいにち",
+          "accepted": ["まいにち", "毎日"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "japanese-places",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 4,
+    "title": "장소와 이동",
+    "words": [
+      {
+        "id": "gakkou",
+        "term": "学校",
+        "reading": "がっこう",
+        "meaning": "학교",
+        "example": "がっこうへいきます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "학교",
+          "answer": "がっこう",
+          "accepted": ["がっこう", "学校"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "eki",
+        "term": "駅",
+        "reading": "えき",
+        "meaning": "역",
+        "example": "えきでともだちをまちます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "역",
+          "answer": "えき",
+          "accepted": ["えき", "駅"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "uchi",
+        "term": "うち",
+        "reading": "うち",
+        "meaning": "집",
+        "example": "きょうはうちにいます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "집",
+          "answer": "うち",
+          "accepted": ["うち"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "mise",
+        "term": "店",
+        "reading": "みせ",
+        "meaning": "가게",
+        "example": "あのみせでパンをかいます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "가게",
+          "answer": "みせ",
+          "accepted": ["みせ", "店"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "densha",
+        "term": "電車",
+        "reading": "でんしゃ",
+        "meaning": "전철",
+        "example": "でんしゃでかえります。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "전철",
+          "answer": "でんしゃ",
+          "accepted": ["でんしゃ", "電車"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "michi",
+        "term": "道",
+        "reading": "みち",
+        "meaning": "길",
+        "example": "このみちはひろいです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "길",
+          "answer": "みち",
+          "accepted": ["みち", "道"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "migi",
+        "term": "右",
+        "reading": "みぎ",
+        "meaning": "오른쪽",
+        "example": "つぎのみちはみぎです。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "오른쪽",
+          "answer": "みぎ",
+          "accepted": ["みぎ", "右"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "hidari",
+        "term": "左",
+        "reading": "ひだり",
+        "meaning": "왼쪽",
+        "example": "ポストはひだりにあります。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "왼쪽",
+          "answer": "ひだり",
+          "accepted": ["ひだり", "左"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "japanese-food",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 5,
+    "title": "음식과 생활",
+    "words": [
+      {
+        "id": "mizu",
+        "term": "水",
+        "reading": "みず",
+        "meaning": "물",
+        "example": "みずをいっぱいのみます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "물",
+          "answer": "みず",
+          "accepted": ["みず", "水"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "gohan",
+        "term": "ごはん",
+        "reading": "ごはん",
+        "meaning": "밥, 식사",
+        "example": "ごはんをたべましょう。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "밥, 식사",
+          "answer": "ごはん",
+          "accepted": ["ごはん"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "pan",
+        "term": "パン",
+        "reading": "パン",
+        "meaning": "빵",
+        "example": "あさはパンをたべます。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "빵",
+          "answer": "パン",
+          "accepted": ["パン"],
+          "script": "kana"
+        }
+      },
+      {
+        "id": "ocha",
+        "term": "お茶",
+        "reading": "おちゃ",
+        "meaning": "차",
+        "example": "おちゃをのみませんか。",
+        "partOfSpeech": "noun",
+        "writing": {
+          "prompt": "차",
+          "answer": "おちゃ",
+          "accepted": ["おちゃ", "お茶"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "taberu",
+        "term": "食べる",
+        "reading": "たべる",
+        "meaning": "먹다",
+        "example": "りんごをたべます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "먹다",
+          "answer": "たべる",
+          "accepted": ["たべる", "食べる"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "nomu",
+        "term": "飲む",
+        "reading": "のむ",
+        "meaning": "마시다",
+        "example": "みずをのみます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "마시다",
+          "answer": "のむ",
+          "accepted": ["のむ", "飲む"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kau",
+        "term": "買う",
+        "reading": "かう",
+        "meaning": "사다",
+        "example": "スーパーでくだものをかいます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "사다",
+          "answer": "かう",
+          "accepted": ["かう", "買う"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "yasumu",
+        "term": "休む",
+        "reading": "やすむ",
+        "meaning": "쉬다",
+        "example": "にちようびにやすみます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "쉬다",
+          "answer": "やすむ",
+          "accepted": ["やすむ", "休む"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "japanese-actions",
+    "language": "ja",
+    "standardLevel": "jlpt_n5",
+    "level": 1,
+    "order": 6,
+    "title": "기초 동사",
+    "words": [
+      {
+        "id": "iku",
+        "term": "行く",
+        "reading": "いく",
+        "meaning": "가다",
+        "example": "ともだちとえいがをみにいきます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "가다",
+          "answer": "いく",
+          "accepted": ["いく", "行く"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kuru",
+        "term": "来る",
+        "reading": "くる",
+        "meaning": "오다",
+        "example": "あしたうちにきます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "오다",
+          "answer": "くる",
+          "accepted": ["くる", "来る"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "miru",
+        "term": "見る",
+        "reading": "みる",
+        "meaning": "보다",
+        "example": "テレビをみます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "보다",
+          "answer": "みる",
+          "accepted": ["みる", "見る"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kiku",
+        "term": "聞く",
+        "reading": "きく",
+        "meaning": "듣다, 묻다",
+        "example": "せんせいのはなしをききます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "듣다",
+          "answer": "きく",
+          "accepted": ["きく", "聞く"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "hanasu",
+        "term": "話す",
+        "reading": "はなす",
+        "meaning": "말하다",
+        "example": "にほんごではなしたいです。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "말하다",
+          "answer": "はなす",
+          "accepted": ["はなす", "話す"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "yomu",
+        "term": "読む",
+        "reading": "よむ",
+        "meaning": "읽다",
+        "example": "ほんをよむのがすきです。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "읽다",
+          "answer": "よむ",
+          "accepted": ["よむ", "読む"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kaku",
+        "term": "書く",
+        "reading": "かく",
+        "meaning": "쓰다",
+        "example": "ノートになまえをかきます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "쓰다",
+          "answer": "かく",
+          "accepted": ["かく", "書く"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "neru",
+        "term": "寝る",
+        "reading": "ねる",
+        "meaning": "자다",
+        "example": "まいばんじゅういちじにねます。",
+        "partOfSpeech": "verb",
+        "writing": {
+          "prompt": "자다",
+          "answer": "ねる",
+          "accepted": ["ねる", "寝る"],
+          "script": "mixed"
+        }
+      }
+    ]
+  }
+]

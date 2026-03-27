@@ -92,6 +92,9 @@ describe('home dashboard', () => {
 
     const quickStart = screen.getByRole('link', { name: '바로 시작' });
     expect(quickStart.getAttribute('href')).toBe('/learn');
+    expect(screen.getByRole('link', { name: '설정' }).getAttribute('href')).toBe(
+      '/settings'
+    );
     expect(screen.getByText('지금 필요한 돌봄')).toBeTruthy();
     expect(screen.getByText('오늘 15분 학습이면 충분해요')).toBeTruthy();
   });
@@ -123,6 +126,9 @@ describe('home dashboard', () => {
       0
     );
     expect(screen.getByRole('link', { name: 'Quick Start' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Settings' }).getAttribute('href')).toBe(
+      '/settings?locale=en'
+    );
   });
 
   it('requests and renders weekly recommendations', async () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   getPaymentProducts,
@@ -9,10 +9,19 @@ import {
   type UserEntitlement
 } from '@wordflow/payment/catalog';
 import { createDefaultSettings, updateSettings } from '@wordflow/core/settings';
+import {
+  getDefaultLearningLevel,
+  learningLevelOptionsByLanguage,
+  type SupportedLearningLanguage
+} from '@wordflow/shared/learning-preferences';
 
 import { resolveAppErrorMessage } from '../errors';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
+import {
+  loadStoredSettings,
+  saveStoredSettings
+} from '../../lib/settingsStorage';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -51,6 +60,25 @@ const badgeStyle: Record<string, string | number> = {
   fontWeight: 600
 };
 
+const fieldLabelStyle: Record<string, string | number> = {
+  fontSize: 17,
+  fontWeight: 700,
+  color: 'var(--text-ink)'
+};
+
+const fieldControlStyle: Record<string, string | number> = {
+  minHeight: 52,
+  borderRadius: 14,
+  border: '1px solid var(--border-pencil)',
+  background: 'rgba(255, 255, 255, 0.88)',
+  color: 'var(--text-ink)',
+  padding: '12px 16px',
+  fontSize: 17,
+  fontWeight: 600,
+  lineHeight: 1.4,
+  boxShadow: 'var(--shadow-card)'
+};
+
 type SettingsClientProps = {
   locale?: AppLocale;
 };
@@ -65,12 +93,32 @@ export default function SettingsClient(props: SettingsClientProps) {
       updatedAt: '2026-03-25T00:00:00.000Z'
     })
   );
+  const [hydrated, setHydrated] = useState(false);
   const [purchasedProductIds, setPurchasedProductIds] = useState<
     PaymentProductId[]
   >([]);
+  const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const entitlements: UserEntitlement =
     resolveEntitlementsForProducts(purchasedProductIds);
+  const learningLevelOptions =
+    learningLevelOptionsByLanguage[settings.learningLanguage];
+
+  useEffect(() => {
+    const storedSettings = loadStoredSettings();
+    if (storedSettings) {
+      setSettings(storedSettings);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    saveStoredSettings(settings);
+  }, [hydrated, settings]);
 
   async function startCheckout(productId: PaymentProductId) {
     const response = await fetch('/api/payments/checkout', {
@@ -114,6 +162,10 @@ export default function SettingsClient(props: SettingsClientProps) {
     );
   }
 
+  function startGoogleLogin() {
+    setAuthMessage(t(locale, 'settings.google_login_pending'));
+  }
+
   return (
     <main style={surfaceStyle}>
       <div style={shellStyle}>
@@ -127,9 +179,10 @@ export default function SettingsClient(props: SettingsClientProps) {
 
         <section style={{ ...panelStyle, display: 'grid', gap: 16 }}>
           <label style={{ display: 'grid', gap: 8 }}>
-            <span>{t(locale, 'settings.language')}</span>
+            <span style={fieldLabelStyle}>{t(locale, 'settings.language')}</span>
             <select
               aria-label={t(locale, 'settings.language')}
+              style={fieldControlStyle}
               value={settings.appLanguage}
               onChange={(event) =>
                 setSettings((current) =>
@@ -147,15 +200,24 @@ export default function SettingsClient(props: SettingsClientProps) {
           </label>
 
           <label style={{ display: 'grid', gap: 8 }}>
-            <span>{t(locale, 'settings.learning_language')}</span>
+            <span style={fieldLabelStyle}>
+              {t(locale, 'settings.learning_language')}
+            </span>
             <select
               aria-label={t(locale, 'settings.learning_language')}
+              style={fieldControlStyle}
               value={settings.learningLanguage}
               onChange={(event) =>
                 setSettings((current) =>
                   updateSettings(
                     current,
-                    { learningLanguage: event.target.value },
+                    {
+                      learningLanguage:
+                        event.target.value as SupportedLearningLanguage,
+                      learningLevel: getDefaultLearningLevel(
+                        event.target.value as SupportedLearningLanguage
+                      )
+                    },
                     '2026-03-26T00:00:00.000Z'
                   )
                 )
@@ -163,6 +225,34 @@ export default function SettingsClient(props: SettingsClientProps) {
             >
               <option value="en">English</option>
               <option value="ja">Japanese</option>
+            </select>
+          </label>
+
+          <label style={{ display: 'grid', gap: 8 }}>
+            <span style={fieldLabelStyle}>
+              {t(locale, 'settings.learning_level')}
+            </span>
+            <select
+              aria-label={t(locale, 'settings.learning_level')}
+              style={fieldControlStyle}
+              value={settings.learningLevel}
+              onChange={(event) =>
+                setSettings((current) =>
+                  updateSettings(
+                    current,
+                    {
+                      learningLevel: event.target.value as typeof current.learningLevel
+                    },
+                    '2026-03-26T00:00:00.000Z'
+                  )
+                )
+              }
+            >
+              {learningLevelOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
 
@@ -205,6 +295,40 @@ export default function SettingsClient(props: SettingsClientProps) {
                 ? t(locale, 'settings.subscription_active')
                 : t(locale, 'settings.subscription_free')}
             </p>
+          </div>
+        </section>
+
+        <section style={{ ...panelStyle, display: 'grid', gap: 16 }}>
+          <div style={badgeStyle}>{t(locale, 'settings.account')}</div>
+          <div style={{ display: 'grid', gap: 8 }}>
+            <span>{t(locale, 'settings.google_login_label')}</span>
+            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
+              {t(locale, 'settings.google_login_description')}
+            </p>
+            <button
+              type="button"
+              aria-label={t(locale, 'settings.google_login')}
+              onClick={startGoogleLogin}
+              style={{
+                width: 'fit-content',
+                border: '1px solid var(--border-pencil)',
+                borderRadius: 999,
+                padding: '12px 24px',
+                fontSize: 16,
+                fontWeight: 700,
+                background: '#fff',
+                color: 'var(--text-ink)',
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-card)'
+              }}
+            >
+              {t(locale, 'settings.google_login')}
+            </button>
+            {authMessage ? (
+              <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>
+                {authMessage}
+              </p>
+            ) : null}
           </div>
         </section>
 

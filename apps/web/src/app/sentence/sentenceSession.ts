@@ -4,6 +4,12 @@ import {
   type SentenceComparisonResult,
   type SentenceToken
 } from '@wordflow/core/sentence';
+import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
+import {
+  getDefaultLearningLevel,
+  type SupportedLearningLanguage,
+  type SupportedLearningLevel
+} from '@wordflow/shared/learning-preferences';
 
 export type SentenceFeedback = {
   status: 'idle' | 'success' | 'error';
@@ -18,9 +24,21 @@ export type SentenceSessionState = {
   feedback: SentenceFeedback;
 };
 
-export function createDemoSentenceSession(): SentenceSessionState {
+export function createDemoSentenceSession(input?: {
+  learningLanguage?: SupportedLearningLanguage;
+  learningLevel?: SupportedLearningLevel;
+}): SentenceSessionState {
+  const learningLanguage = input?.learningLanguage ?? 'en';
+  const learningLevel =
+    input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
+  const curriculum = getCurriculumByStandardLevel(
+    learningLanguage,
+    learningLevel
+  );
+  const targetWord = curriculum[0]?.words[0];
   const exercise = buildSentenceExercise({
-    wordId: 'passport'
+    wordId: targetWord?.id ?? 'hello',
+    curriculum
   });
 
   return {

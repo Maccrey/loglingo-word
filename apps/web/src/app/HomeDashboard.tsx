@@ -221,6 +221,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     leaderboardPreview = null
   } = props;
   const dashboard = buildDashboardState();
+  const settingsHref = locale === 'en' ? '/settings?locale=en' : '/settings';
   const { cat } = useCat();
   const thresholds = getCatThresholds(CAT_ENV);
   const pendingPointsValue =
@@ -370,6 +371,21 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           }}
         >
           {t(locale, 'feed.title')}
+        </Link>
+        <Link
+          href={settingsHref}
+          aria-label={t(locale, 'settings.title')}
+          style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-pencil)',
+            padding: '8px 16px',
+            borderRadius: 12,
+            color: 'var(--text-ink)',
+            fontWeight: 600,
+            boxShadow: 'var(--shadow-card)'
+          }}
+        >
+          {t(locale, 'settings.title')}
         </Link>
       </div>
     </section>

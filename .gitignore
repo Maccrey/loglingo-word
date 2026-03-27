@@ -4,6 +4,7 @@ coverage
 dist
 .turbo
 .env
+.env.*
 .env.local
 pnpm-lock.yaml
 *.tsbuildinfo

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
+import { readStoredSettingsSnapshot } from '../../lib/settingsStorage';
 
 import {
   createDemoQuizSession,
@@ -66,7 +67,13 @@ type QuizClientProps = {
 };
 
 export default function QuizClient(props: QuizClientProps) {
-  const [session, setSession] = useState(createDemoQuizSession);
+  const storedSettings = readStoredSettingsSnapshot();
+  const [session, setSession] = useState(() =>
+    createDemoQuizSession({
+      learningLanguage: storedSettings.learningLanguage,
+      learningLevel: storedSettings.learningLevel
+    })
+  );
   const locale = props.locale ?? 'ko';
 
   return (

@@ -9,6 +9,7 @@ import QuizClient from '../../apps/web/src/app/quiz/QuizClient';
 
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
 });
 
 describe('quiz ui', () => {
@@ -17,7 +18,7 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
-    await user.click(screen.getByRole('button', { name: '여권' }));
+    await user.click(screen.getByRole('button', { name: '안녕하세요' }));
     await user.click(screen.getByRole('button', { name: '객관식 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain(
@@ -30,7 +31,7 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
-    await user.type(screen.getByLabelText('주관식 정답'), 'passport');
+    await user.type(screen.getByLabelText('주관식 정답'), 'hello');
     await user.click(screen.getByRole('button', { name: '주관식 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain(

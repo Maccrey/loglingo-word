@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import {
+  supportedLearningLanguages,
+  supportedLearningLevels
+} from './learning-preferences';
 
 export const userSchema = z.object({
   id: z.string().min(1),
@@ -40,7 +44,8 @@ export const chatMessageSchema = z.object({
 export const userSettingsSchema = z.object({
   userId: z.string().min(1),
   appLanguage: z.enum(['ko', 'en']),
-  learningLanguage: z.string().min(2),
+  learningLanguage: z.enum(supportedLearningLanguages),
+  learningLevel: z.enum(supportedLearningLevels),
   notificationsEnabled: z.boolean(),
   premiumEnabled: z.boolean(),
   updatedAt: z.string().datetime()

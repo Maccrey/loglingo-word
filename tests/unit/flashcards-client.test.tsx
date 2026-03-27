@@ -9,6 +9,7 @@ import FlashcardsClient from '../../apps/web/src/app/learn/FlashcardsClient';
 
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
 });
 
 beforeEach(() => {
@@ -38,7 +39,7 @@ describe('flashcards ui', () => {
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
     await user.click(screen.getByRole('button', { name: 'Easy' }));
 
-    expect(screen.getByText('subway')).toBeTruthy();
+    expect(screen.getByText('thanks')).toBeTruthy();
     expect(screen.getByText('카드 2 / 4')).toBeTruthy();
   });
 
@@ -113,5 +114,124 @@ describe('flashcards ui', () => {
         .getByRole('link', { name: '리더보드 반영 보기' })
         .getAttribute('href')
     ).toBe('/leaderboard?source=recommendation&score=1&userId=demo-user');
+  });
+
+  it('uses stored learning settings to load Japanese starter words', () => {
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'ja',
+        learningLevel: 'jlpt_n5',
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+
+    render(<FlashcardsClient />);
+
+    expect(screen.getByText('こんにちは')).toBeTruthy();
+    expect(screen.getByText('카드 1 / 4')).toBeTruthy();
+  });
+
+  it('renders writing mode for japanese cards and validates the answer', async () => {
+    const user = userEvent.setup();
+
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'ja',
+        learningLevel: 'jlpt_n5',
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+
+    render(<FlashcardsClient />);
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    expect(screen.getByText('쓰기 모드')).toBeTruthy();
+    expect(screen.getByText(/읽기 힌트: こんにちは/)).toBeTruthy();
+
+    await user.type(screen.getByRole('textbox', { name: '쓰기 정답' }), 'こんにちは');
+    await user.click(screen.getByRole('button', { name: '쓰기 확인' }));
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '정답입니다. 저장된 쓰기 정답과 일치합니다.'
+    );
+  });
+
+  it('automatically advances to the next level when 90% of the current level is mastered', async () => {
+    const user = userEvent.setup();
+
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'en',
+        learningLevel: 'cefr_a1',
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+    window.localStorage.setItem(
+      'mock_learning_progress',
+      JSON.stringify([
+        {
+          wordId: 'hello',
+          correctStreak: 1,
+          storageStrength: 0.7,
+          retrievalStrength: 0.6,
+          nextReviewAt: '2026-03-24T00:00:00.000Z'
+        },
+        {
+          wordId: 'thanks',
+          correctStreak: 1,
+          storageStrength: 0.7,
+          retrievalStrength: 0.6,
+          nextReviewAt: '2026-03-24T00:00:00.000Z'
+        },
+        {
+          wordId: 'breakfast',
+          correctStreak: 1,
+          storageStrength: 0.7,
+          retrievalStrength: 0.6,
+          nextReviewAt: '2026-03-24T00:00:00.000Z'
+        },
+        {
+          wordId: 'subway',
+          correctStreak: 2,
+          storageStrength: 1.1,
+          retrievalStrength: 0.9,
+          nextReviewAt: '2026-03-24T00:00:00.000Z'
+        }
+      ])
+    );
+
+    render(<FlashcardsClient />);
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '다음 레벨 CEFR A2'
+    );
+    expect(
+      JSON.parse(window.localStorage.getItem('mock_user_settings') ?? '{}')
+        .learningLevel
+    ).toBe('cefr_a2');
   });
 });

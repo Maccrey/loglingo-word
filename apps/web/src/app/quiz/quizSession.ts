@@ -4,6 +4,12 @@ import {
   type MultipleChoiceQuiz,
   type ShortAnswerGrade
 } from '@wordflow/core/quiz';
+import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
+import {
+  getDefaultLearningLevel,
+  type SupportedLearningLanguage,
+  type SupportedLearningLevel
+} from '@wordflow/shared/learning-preferences';
 
 export type QuizFeedback = {
   status: 'idle' | 'success' | 'error';
@@ -19,10 +25,23 @@ export type QuizSessionState = {
   feedback: QuizFeedback;
 };
 
-export function createDemoQuizSession(): QuizSessionState {
+export function createDemoQuizSession(input?: {
+  learningLanguage?: SupportedLearningLanguage;
+  learningLevel?: SupportedLearningLevel;
+}): QuizSessionState {
+  const learningLanguage = input?.learningLanguage ?? 'en';
+  const learningLevel =
+    input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
+  const curriculum = getCurriculumByStandardLevel(
+    learningLanguage,
+    learningLevel
+  );
+  const targetWord = curriculum[0]?.words[0];
+
   return {
     multipleChoiceQuiz: buildMultipleChoiceQuiz({
-      wordId: 'passport'
+      wordId: targetWord?.id ?? 'hello',
+      curriculum
     }),
     shortAnswer: '',
     loading: false,

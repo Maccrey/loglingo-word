@@ -9,6 +9,7 @@ import SentenceClient from '../../apps/web/src/app/sentence/SentenceClient';
 
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
 });
 
 describe('sentence builder ui', () => {
@@ -17,10 +18,10 @@ describe('sentence builder ui', () => {
 
     render(<SentenceClient />);
 
-    await user.click(screen.getByRole('button', { name: 'Please' }));
+    await user.click(screen.getByRole('button', { name: 'Hello' }));
 
     const assembledSection = screen.getByText('조합 영역').closest('section');
-    expect(assembledSection?.textContent).toContain('Please');
+    expect(assembledSection?.textContent).toContain('Hello');
   });
 
   it('shows a success result after submitting the correct sentence', async () => {
@@ -28,7 +29,7 @@ describe('sentence builder ui', () => {
 
     render(<SentenceClient />);
 
-    for (const token of ['Please', 'show', 'me', 'your', 'passport']) {
+    for (const token of ['Hello', 'nice', 'to', 'meet', 'you']) {
       await user.click(screen.getByRole('button', { name: token }));
     }
 
@@ -44,8 +45,8 @@ describe('sentence builder ui', () => {
 
     render(<SentenceClient />);
 
-    await user.click(screen.getByRole('button', { name: 'Please' }));
-    await user.click(screen.getByRole('button', { name: 'passport' }));
+    await user.click(screen.getByRole('button', { name: 'Hello' }));
+    await user.click(screen.getByRole('button', { name: 'you' }));
     await user.click(screen.getByRole('button', { name: '문장 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain(

@@ -10,6 +10,14 @@ import {
 import { type VocabProgress } from '@wordflow/shared/types';
 
 import { curriculumSeed } from '@wordflow/core/curriculum';
+import {
+  getCurriculumByStandardLevel
+} from '@wordflow/core/curriculum';
+import {
+  getDefaultLearningLevel,
+  type SupportedLearningLanguage,
+  type SupportedLearningLevel
+} from '@wordflow/shared/learning-preferences';
 
 export type FlashcardSessionState = {
   cards: StudyCard[];
@@ -37,16 +45,27 @@ function buildFocusedCards(wordIds: string[]): StudyCard[] {
 
 export function createFlashcardSession(input?: {
   focusWordIds?: string[];
+  learningLanguage?: SupportedLearningLanguage;
+  learningLevel?: SupportedLearningLevel;
+  progressList?: VocabProgress[];
 }): FlashcardSessionState {
-  const progressList: VocabProgress[] = [
-    {
-      wordId: 'subway',
-      correctStreak: 2,
-      storageStrength: 1.1,
-      retrievalStrength: 0.9,
-      nextReviewAt: '2026-03-25T08:00:00.000Z'
-    }
-  ];
+  const learningLanguage = input?.learningLanguage ?? 'en';
+  const learningLevel =
+    input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
+  const curriculum = getCurriculumByStandardLevel(
+    learningLanguage,
+    learningLevel
+  );
+  const progressList: VocabProgress[] =
+    input?.progressList ?? [
+      {
+        wordId: 'subway',
+        correctStreak: 2,
+        storageStrength: 1.1,
+        retrievalStrength: 0.9,
+        nextReviewAt: '2026-03-25T08:00:00.000Z'
+      }
+    ];
 
   const focusedCards =
     input?.focusWordIds && input.focusWordIds.length > 0
@@ -56,6 +75,7 @@ export function createFlashcardSession(input?: {
     focusedCards.length > 0
       ? focusedCards
       : buildStudyQueue({
+          curriculum,
           now: '2026-03-25T12:00:00.000Z',
           progress: progressList,
           wrongWordIds: ['hello'],
