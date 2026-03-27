@@ -116,6 +116,7 @@
   "settings.language": "앱 언어",
   "settings.learning_language": "학습 언어",
   "settings.learning_level": "학습 레벨",
+  "settings.session_question_count": "한 번에 학습할 문제 수",
   "settings.account": "계정",
   "settings.google_login_label": "소셜 로그인",
   "settings.google_login_description": "Firebase Auth 연결 전까지는 구글 로그인 버튼과 상태 안내를 먼저 제공합니다.",

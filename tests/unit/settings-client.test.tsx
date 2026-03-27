@@ -21,6 +21,9 @@ describe('settings ui', () => {
     expect(screen.getByRole('combobox', { name: '학습 언어' })).toBeTruthy();
     expect(screen.getByRole('combobox', { name: '학습 레벨' })).toBeTruthy();
     expect(
+      screen.getByRole('combobox', { name: '한 번에 학습할 문제 수' })
+    ).toBeTruthy();
+    expect(
       screen.getByRole('button', { name: 'Google로 로그인' })
     ).toBeTruthy();
     expect(screen.getByRole('button', { name: '알림' }).textContent).toContain(
@@ -53,6 +56,25 @@ describe('settings ui', () => {
     expect(
       screen.getByRole('combobox', { name: '학습 레벨' }).textContent
     ).toContain('JLPT N5');
+  });
+
+  it('updates the per-session question count', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '한 번에 학습할 문제 수' }),
+      '10'
+    );
+
+    expect(
+      (
+        screen.getByRole('combobox', {
+          name: '한 번에 학습할 문제 수'
+        }) as HTMLSelectElement
+      ).value
+    ).toBe('10');
   });
 
   it('toggles the notification setting', async () => {

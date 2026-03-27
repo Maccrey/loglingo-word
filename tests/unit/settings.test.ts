@@ -18,6 +18,7 @@ describe('settings domain', () => {
       appLanguage: 'ko',
       learningLanguage: 'en',
       learningLevel: 'cefr_a1',
+      sessionQuestionCount: 5,
       notificationsEnabled: true,
       premiumEnabled: false,
       updatedAt: '2026-03-25T00:00:00.000Z'
@@ -35,7 +36,8 @@ describe('settings domain', () => {
       initial,
       {
         appLanguage: 'en',
-        notificationsEnabled: false
+        notificationsEnabled: false,
+        sessionQuestionCount: 10
       },
       '2026-03-26T00:00:00.000Z'
     );
@@ -44,6 +46,7 @@ describe('settings domain', () => {
     expect(updated.notificationsEnabled).toBe(false);
     expect(updated.learningLanguage).toBe('en');
     expect(updated.learningLevel).toBe('cefr_a1');
+    expect(updated.sessionQuestionCount).toBe(10);
     expect(updated.premiumEnabled).toBe(false);
     expect(updated.updatedAt).toBe('2026-03-26T00:00:00.000Z');
   });

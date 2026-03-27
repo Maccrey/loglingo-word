@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
 import { readStoredSettingsSnapshot } from '../../lib/settingsStorage';
 
 import {
+  advanceQuizQuestion,
   createDemoQuizSession,
+  enableQuizAdvance,
   selectQuizOption,
   submitMultipleChoiceAnswer,
   submitShortAnswer,
@@ -71,10 +73,54 @@ export default function QuizClient(props: QuizClientProps) {
   const [session, setSession] = useState(() =>
     createDemoQuizSession({
       learningLanguage: storedSettings.learningLanguage,
-      learningLevel: storedSettings.learningLevel
+      learningLevel: storedSettings.learningLevel,
+      questionCount: storedSettings.sessionQuestionCount
     })
   );
   const locale = props.locale ?? 'ko';
+  const progressLabel = `${Math.min(
+    session.currentQuestionIndex + 1,
+    session.questionWordIds.length
+  )} / ${session.questionWordIds.length}`;
+  const submitButtonLabel = session.advanceReady
+    ? '다음'
+    : session.feedback.status === 'success'
+      ? '정답'
+      : null;
+
+  useEffect(() => {
+    if (session.completed) {
+      return;
+    }
+
+    if (session.feedback.status === 'success' && !session.advanceReady) {
+      const timer = window.setTimeout(() => {
+        setSession((current) => enableQuizAdvance(current));
+      }, 1500);
+
+      return () => window.clearTimeout(timer);
+    }
+
+    if (session.feedback.status === 'error' && session.wrongAttempts >= 2) {
+      const timer = window.setTimeout(() => {
+        setSession((current) =>
+          advanceQuizQuestion(current, {
+            learningLanguage: storedSettings.learningLanguage,
+            learningLevel: storedSettings.learningLevel
+          })
+        );
+      }, 1500);
+
+      return () => window.clearTimeout(timer);
+    }
+  }, [
+    session.advanceReady,
+    session.completed,
+    session.feedback.status,
+    session.wrongAttempts,
+    storedSettings.learningLanguage,
+    storedSettings.learningLevel
+  ]);
 
   return (
     <main style={surfaceStyle}>
@@ -100,16 +146,23 @@ export default function QuizClient(props: QuizClientProps) {
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>
+          <span style={{ color: 'var(--text-faded)' }}>진행 {progressLabel}</span>
           <span style={badgeStyle}>{t(locale, 'quiz.multiple_choice')}</span>
-          <h2 style={{ margin: 0 }}>{session.multipleChoiceQuiz.prompt}</h2>
+          <h2 style={{ margin: 0 }}>
+            {session.completed
+              ? '퀴즈를 모두 완료했습니다.'
+              : session.multipleChoiceQuiz.prompt}
+          </h2>
           <div style={{ display: 'grid', gap: 10 }}>
-            {session.multipleChoiceQuiz.options.map((option) => {
+            {!session.completed &&
+              session.multipleChoiceQuiz.options.map((option) => {
               const selected = session.selectedOptionId === option.id;
 
               return (
                 <button
                   key={option.id}
                   type="button"
+                  disabled={session.advanceReady}
                   onClick={() =>
                     setSession((current) =>
                       selectQuizOption(current, option.id)
@@ -126,7 +179,8 @@ export default function QuizClient(props: QuizClientProps) {
                       ? 'var(--accent-yellow)'
                       : 'transparent',
                     color: 'var(--text-ink)',
-                    cursor: 'pointer'
+                    cursor: session.advanceReady ? 'default' : 'pointer',
+                    opacity: session.advanceReady ? 0.75 : 1
                   }}
                 >
                   {option.text}
@@ -137,12 +191,23 @@ export default function QuizClient(props: QuizClientProps) {
           <button
             type="button"
             onClick={() => {
+              if (session.advanceReady) {
+                setSession((current) =>
+                  advanceQuizQuestion(current, {
+                    learningLanguage: storedSettings.learningLanguage,
+                    learningLevel: storedSettings.learningLevel
+                  })
+                );
+                return;
+              }
+
               setSession((current) => ({ ...current, loading: true }));
               setSession((current) => ({
                 ...submitMultipleChoiceAnswer(current),
                 loading: false
               }));
             }}
+            disabled={session.completed}
             style={{
               border: '1px solid var(--btn-primary-border)',
               borderRadius: 999,
@@ -155,9 +220,10 @@ export default function QuizClient(props: QuizClientProps) {
               boxShadow: 'var(--shadow-card)'
             }}
           >
-            {session.loading
-              ? t(locale, 'common.status.loading')
-              : t(locale, 'quiz.submit_multiple')}
+            {submitButtonLabel ??
+              (session.loading
+                ? t(locale, 'common.status.loading')
+                : t(locale, 'quiz.submit_multiple'))}
           </button>
         </section>
 
@@ -166,10 +232,11 @@ export default function QuizClient(props: QuizClientProps) {
           <h2 style={{ margin: 0 }}>{t(locale, 'quiz.short_answer')}</h2>
           <label style={{ display: 'grid', gap: 8 }}>
             <span style={{ color: 'var(--text-faded)' }}>
-              뜻: {session.multipleChoiceQuiz.word.meaning}
+              뜻: {session.completed ? '-' : session.multipleChoiceQuiz.word.meaning}
             </span>
             <input
               aria-label="주관식 정답"
+              disabled={session.completed || session.advanceReady}
               value={session.shortAnswer}
               onChange={(event) =>
                 setSession((current) =>
@@ -190,12 +257,23 @@ export default function QuizClient(props: QuizClientProps) {
           <button
             type="button"
             onClick={() => {
+              if (session.advanceReady) {
+                setSession((current) =>
+                  advanceQuizQuestion(current, {
+                    learningLanguage: storedSettings.learningLanguage,
+                    learningLevel: storedSettings.learningLevel
+                  })
+                );
+                return;
+              }
+
               setSession((current) => ({ ...current, loading: true }));
               setSession((current) => ({
                 ...submitShortAnswer(current),
                 loading: false
               }));
             }}
+            disabled={session.completed}
             style={{
               border: '1px solid var(--btn-primary-border)',
               borderRadius: 999,
@@ -208,9 +286,10 @@ export default function QuizClient(props: QuizClientProps) {
               boxShadow: 'var(--shadow-card)'
             }}
           >
-            {session.loading
-              ? t(locale, 'common.status.loading')
-              : t(locale, 'quiz.submit_short')}
+            {submitButtonLabel ??
+              (session.loading
+                ? t(locale, 'common.status.loading')
+                : t(locale, 'quiz.submit_short'))}
           </button>
 
           {session.shortAnswerGrade ? (

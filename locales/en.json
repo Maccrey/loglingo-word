@@ -116,6 +116,7 @@
   "settings.language": "App Language",
   "settings.learning_language": "Learning Language",
   "settings.learning_level": "Learning Level",
+  "settings.session_question_count": "Questions Per Session",
   "settings.account": "Account",
   "settings.google_login_label": "Social Login",
   "settings.google_login_description": "The Google sign-in button is visible now, and the Firebase Auth connection will be wired next.",

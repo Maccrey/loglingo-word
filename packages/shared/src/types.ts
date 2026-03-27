@@ -46,6 +46,7 @@ export const userSettingsSchema = z.object({
   appLanguage: z.enum(['ko', 'en']),
   learningLanguage: z.enum(supportedLearningLanguages),
   learningLevel: z.enum(supportedLearningLevels),
+  sessionQuestionCount: z.number().int().min(1).max(50),
   notificationsEnabled: z.boolean(),
   premiumEnabled: z.boolean(),
   updatedAt: z.string().datetime()

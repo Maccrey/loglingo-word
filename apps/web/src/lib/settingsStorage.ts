@@ -22,6 +22,7 @@ export function createFallbackSettings(): UserSettings {
   return createDefaultSettings({
     userId: 'demo-user',
     learningLanguage: 'en',
+    sessionQuestionCount: 5,
     updatedAt: '2026-03-26T00:00:00.000Z'
   });
 }
@@ -42,6 +43,7 @@ function migrateStoredSettings(raw: unknown): UserSettings {
   const candidate = raw as Partial<UserSettings> & {
     learningLanguage?: string;
     learningLevel?: string;
+    sessionQuestionCount?: number;
   };
   const learningLanguage = candidate.learningLanguage === 'ja' ? 'ja' : 'en';
   const learningLevel =
@@ -57,6 +59,9 @@ function migrateStoredSettings(raw: unknown): UserSettings {
       ...(candidate.appLanguage === 'en' ? { appLanguage: 'en' } : {}),
       ...(candidate.notificationsEnabled !== undefined
         ? { notificationsEnabled: candidate.notificationsEnabled }
+        : {}),
+      ...(candidate.sessionQuestionCount !== undefined
+        ? { sessionQuestionCount: candidate.sessionQuestionCount }
         : {}),
       ...(candidate.premiumEnabled !== undefined
         ? { premiumEnabled: candidate.premiumEnabled }

@@ -10,6 +10,7 @@ export type CreateDefaultSettingsInput = {
   userId: string;
   learningLanguage: SupportedLearningLanguage;
   learningLevel?: SupportedLearningLevel;
+  sessionQuestionCount?: number;
   updatedAt: string;
 };
 
@@ -19,6 +20,7 @@ export type SettingsUpdate = Partial<
     | 'appLanguage'
     | 'learningLanguage'
     | 'learningLevel'
+    | 'sessionQuestionCount'
     | 'notificationsEnabled'
     | 'premiumEnabled'
   >
@@ -38,6 +40,14 @@ function resolveLearningLevel(
   return getDefaultLearningLevel(learningLanguage);
 }
 
+function resolveSessionQuestionCount(value?: number): number {
+  if (!value || !Number.isFinite(value)) {
+    return 5;
+  }
+
+  return Math.min(50, Math.max(1, Math.floor(value)));
+}
+
 export function createDefaultSettings(
   input: CreateDefaultSettingsInput
 ): UserSettings {
@@ -48,6 +58,9 @@ export function createDefaultSettings(
     learningLevel: resolveLearningLevel(
       input.learningLanguage,
       input.learningLevel
+    ),
+    sessionQuestionCount: resolveSessionQuestionCount(
+      input.sessionQuestionCount
     ),
     notificationsEnabled: true,
     premiumEnabled: false,
@@ -67,6 +80,9 @@ export function updateSettings(
     ...patch,
     learningLanguage,
     learningLevel: resolveLearningLevel(learningLanguage, patch.learningLevel),
+    sessionQuestionCount: resolveSessionQuestionCount(
+      patch.sessionQuestionCount ?? settings.sessionQuestionCount
+    ),
     updatedAt
   });
 }

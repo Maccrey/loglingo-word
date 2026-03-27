@@ -48,6 +48,7 @@ export function createFlashcardSession(input?: {
   learningLanguage?: SupportedLearningLanguage;
   learningLevel?: SupportedLearningLevel;
   progressList?: VocabProgress[];
+  limit?: number;
 }): FlashcardSessionState {
   const learningLanguage = input?.learningLanguage ?? 'en';
   const learningLevel =
@@ -70,7 +71,7 @@ export function createFlashcardSession(input?: {
           now: '2026-03-25T12:00:00.000Z',
           progress: progressList,
           wrongWordIds: [],
-          limit: 4
+          limit: input?.limit ?? 5
         });
 
   return {

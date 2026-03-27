@@ -79,6 +79,8 @@ const fieldControlStyle: Record<string, string | number> = {
   boxShadow: 'var(--shadow-card)'
 };
 
+const sessionQuestionCountOptions = [3, 5, 10, 20];
+
 type SettingsClientProps = {
   locale?: AppLocale;
 };
@@ -90,6 +92,7 @@ export default function SettingsClient(props: SettingsClientProps) {
     createDefaultSettings({
       userId: 'demo-user',
       learningLanguage: 'en',
+      sessionQuestionCount: 5,
       updatedAt: '2026-03-25T00:00:00.000Z'
     })
   );
@@ -251,6 +254,34 @@ export default function SettingsClient(props: SettingsClientProps) {
               {learningLevelOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label style={{ display: 'grid', gap: 8 }}>
+            <span style={fieldLabelStyle}>
+              {t(locale, 'settings.session_question_count')}
+            </span>
+            <select
+              aria-label={t(locale, 'settings.session_question_count')}
+              style={fieldControlStyle}
+              value={settings.sessionQuestionCount}
+              onChange={(event) =>
+                setSettings((current) =>
+                  updateSettings(
+                    current,
+                    {
+                      sessionQuestionCount: Number(event.target.value)
+                    },
+                    '2026-03-26T00:00:00.000Z'
+                  )
+                )
+              }
+            >
+              {sessionQuestionCountOptions.map((count) => (
+                <option key={count} value={count}>
+                  {locale === 'en' ? `${count} questions` : `${count}문제`}
                 </option>
               ))}
             </select>

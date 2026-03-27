@@ -133,7 +133,7 @@ describe('flashcards ui', () => {
     render(<FlashcardsClient />);
 
     expect(screen.getByText('こんにちは')).toBeTruthy();
-    expect(screen.getByText('카드 1 / 4')).toBeTruthy();
+    expect(screen.getByText('카드 1 / 5')).toBeTruthy();
   });
 
   it('renders writing mode for japanese cards and validates the answer', async () => {

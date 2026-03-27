@@ -14,7 +14,7 @@ afterEach(() => {
 
 beforeEach(() => {
   vi.restoreAllMocks();
-  vi.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0.999);
 });
 
 describe('quiz ui', () => {
@@ -39,9 +39,10 @@ describe('quiz ui', () => {
     await user.click(screen.getByRole('button', { name: '안녕하세요' }));
     await user.click(screen.getByRole('button', { name: '객관식 제출' }));
 
-    expect(screen.getByRole('alert').textContent).toContain(
-      '객관식 정답입니다.'
-    );
+    expect(screen.getByRole('alert').textContent).toContain('정답입니다.');
+    expect(
+      screen.getAllByRole('button', { name: '정답' }).length
+    ).toBeGreaterThan(0);
   });
 
   it('shows typed-answer feedback after submission', async () => {
@@ -65,9 +66,7 @@ describe('quiz ui', () => {
     await user.type(screen.getByLabelText('주관식 정답'), 'こんにちは');
     await user.click(screen.getByRole('button', { name: '주관식 제출' }));
 
-    expect(screen.getByRole('alert').textContent).toContain(
-      '주관식 정답입니다.'
-    );
+    expect(screen.getByRole('alert').textContent).toContain('정답입니다.');
     expect(screen.getByText('오타 거리 0 / 허용 1')).toBeTruthy();
   });
 
@@ -93,7 +92,7 @@ describe('quiz ui', () => {
     await user.click(screen.getByRole('button', { name: '주관식 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain(
-      '주관식 오답입니다.'
+      '틀렸어요. 천천히 생각해보세요.'
     );
   });
 });

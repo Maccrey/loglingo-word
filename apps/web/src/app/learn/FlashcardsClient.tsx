@@ -127,7 +127,8 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         : {
             learningLanguage: storedSettings.learningLanguage,
             learningLevel: storedSettings.learningLevel,
-            progressList: readStoredLearningProgressSnapshot()
+            progressList: readStoredLearningProgressSnapshot(),
+            limit: storedSettings.sessionQuestionCount
           }
     )
   );
