@@ -1,5 +1,16 @@
 import type { Cat, CatStage, CatStatus } from './types';
 
+export interface CatStateSnapshot {
+  status: CatStatus;
+  stage: CatStage;
+  severityStatus: 'healthy' | 'sick' | 'critical' | 'dead';
+  stressStatus: 'healthy' | 'stressed' | 'sick';
+  isHungry: boolean;
+  isSmelly: boolean;
+  isStressed: boolean;
+  shouldDie: boolean;
+}
+
 export interface EnvThresholds {
   CAT_HUNGRY_HOURS: number;
   CAT_SMELLY_HOURS: number;
@@ -70,6 +81,29 @@ export function isStressed(cat: Cat, currentTime: number, thresholds: EnvThresho
 }
 
 /**
+ * T2-3. 스트레스 상태 계산
+ */
+export function getStressState(
+  cat: Cat,
+  currentTime: number,
+  thresholds: EnvThresholds
+): 'healthy' | 'stressed' | 'sick' {
+  const stressMs = thresholds.CAT_STRESSED_HOURS * MS_PER_HOUR;
+  const sickMs = stressMs + thresholds.CAT_SICK_HOURS * MS_PER_HOUR;
+  const elapsed = currentTime - cat.lastPlayedAt;
+
+  if (elapsed >= sickMs) {
+    return 'sick';
+  }
+
+  if (elapsed >= stressMs) {
+    return 'stressed';
+  }
+
+  return 'healthy';
+}
+
+/**
  * T2-4. 질병 및 사망 판정
  * 가장 오래 방치된 시간(min of interaction times)을 기준으로 판정
  */
@@ -91,25 +125,89 @@ export function calculateSeverityStatus(cat: Cat, currentTime: number, threshold
 }
 
 /**
+ * T2-4. 종합 건강 상태 계산
+ */
+export function deriveCatHealthStatus(input: {
+  severityStatus: 'healthy' | 'sick' | 'critical' | 'dead';
+  isHungry: boolean;
+  isSmelly: boolean;
+  stressStatus: 'healthy' | 'stressed' | 'sick';
+}): CatStatus {
+  const { severityStatus, isHungry, isSmelly, stressStatus } = input;
+
+  if (severityStatus !== 'healthy') {
+    return severityStatus;
+  }
+
+  if (isHungry) {
+    return 'hungry';
+  }
+
+  if (isSmelly) {
+    return 'smelly';
+  }
+
+  if (stressStatus === 'sick') {
+    return 'sick';
+  }
+
+  if (stressStatus === 'stressed') {
+    return 'stressed';
+  }
+
+  return 'healthy';
+}
+
+/**
+ * T2-5. 사망 판정 함수
+ */
+export function shouldCatDie(
+  cat: Cat,
+  currentTime: number,
+  env: Partial<EnvThresholds> = {}
+): boolean {
+  const thresholds = getCatThresholds(env);
+  return calculateSeverityStatus(cat, currentTime, thresholds) === 'dead';
+}
+
+/**
+ * T2-6. 전체 상태 스냅샷 생성 함수
+ */
+export function buildCatStateSnapshot(
+  cat: Cat,
+  currentTime: number = Date.now(),
+  env: Partial<EnvThresholds> = {}
+): CatStateSnapshot {
+  const thresholds = getCatThresholds(env);
+  const severityStatus = calculateSeverityStatus(cat, currentTime, thresholds);
+  const stressStatus = getStressState(cat, currentTime, thresholds);
+  const hungry = isHungry(cat, currentTime, thresholds);
+  const smelly = isSmelly(cat, currentTime, thresholds);
+  const status = deriveCatHealthStatus({
+    severityStatus,
+    isHungry: hungry,
+    isSmelly: smelly,
+    stressStatus
+  });
+
+  return {
+    status,
+    stage: calculateCatStage(cat.activeDays, thresholds),
+    severityStatus,
+    stressStatus,
+    isHungry: hungry,
+    isSmelly: smelly,
+    isStressed: stressStatus !== 'healthy',
+    shouldDie: severityStatus === 'dead'
+  };
+}
+
+/**
  * T2-5. 종합 상태 판단 메인 함수
  * 현재 고양이의 Data 객체와 현재 시간을 받아 최신 CatStatus를 반환
  */
 export function calculateCatStatus(cat: Cat, currentTime: number = Date.now(), env: Partial<EnvThresholds> = {}): CatStatus {
-  const thresholds = getCatThresholds(env);
-  
-  // 1. 위급/사망/질병 상태 먼저 판단
-  const severity = calculateSeverityStatus(cat, currentTime, thresholds);
-  if (severity !== 'healthy') {
-    return severity; // 'dead', 'critical', 'sick'
-  }
-
-  // 2. 기본 상태 판별 (우선순위: Hungry > Smelly > Stressed)
-  if (isHungry(cat, currentTime, thresholds)) return 'hungry';
-  if (isSmelly(cat, currentTime, thresholds)) return 'smelly';
-  if (isStressed(cat, currentTime, thresholds)) return 'stressed';
-
-  // 3. 아무 문제 없으면 건강함
-  return 'healthy';
+  return buildCatStateSnapshot(cat, currentTime, env).status;
 }
 
 /**

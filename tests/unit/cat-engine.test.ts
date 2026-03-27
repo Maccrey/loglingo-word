@@ -1,10 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { 
+  buildCatStateSnapshot,
   calculateCatStatus, 
   calculateCatStage, 
+  deriveCatHealthStatus,
+  getStressState,
   isHungry, 
   isSmelly, 
-  isStressed 
+  isStressed,
+  shouldCatDie
 } from '../../packages/shared/src/cat/engine';
 import type { Cat } from '../../packages/shared/src/cat/types';
 
@@ -55,6 +59,15 @@ describe('Cat Status Transition Engine', () => {
       const stressedCat = createMockCat(0, 0, 25); // threshold is 24
       expect(isStressed(stressedCat, Date.now(), mockEnv as any)).toBe(true);
     });
+
+    it('should derive stress state boundaries from play neglect time', () => {
+      const stressedCat = createMockCat(0, 0, 25);
+      const sickStressCat = createMockCat(0, 0, 73);
+
+      expect(getStressState(createMockCat(0, 0, 5), Date.now(), mockEnv as any)).toBe('healthy');
+      expect(getStressState(stressedCat, Date.now(), mockEnv as any)).toBe('stressed');
+      expect(getStressState(sickStressCat, Date.now(), mockEnv as any)).toBe('sick');
+    });
   });
 
   describe('T2-4 & T2-5: Comprehensive Status Calculation', () => {
@@ -102,6 +115,52 @@ describe('Cat Status Transition Engine', () => {
       // Max neglect = 65h, which > Sick Threshold (60h). It should be SICK.
       const cat = createMockCat(10, 10, 65);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
+    });
+
+    it('should derive the same priority order through the helper', () => {
+      expect(
+        deriveCatHealthStatus({
+          severityStatus: 'healthy',
+          isHungry: true,
+          isSmelly: true,
+          stressStatus: 'stressed'
+        })
+      ).toBe('hungry');
+
+      expect(
+        deriveCatHealthStatus({
+          severityStatus: 'healthy',
+          isHungry: false,
+          isSmelly: true,
+          stressStatus: 'stressed'
+        })
+      ).toBe('smelly');
+
+      expect(
+        deriveCatHealthStatus({
+          severityStatus: 'healthy',
+          isHungry: false,
+          isSmelly: false,
+          stressStatus: 'stressed'
+        })
+      ).toBe('stressed');
+    });
+
+    it('should expose a consistent cat state snapshot', () => {
+      const cat = createMockCat(13, 25, 25);
+      const snapshot = buildCatStateSnapshot(cat, Date.now(), mockEnv);
+
+      expect(snapshot.status).toBe('hungry');
+      expect(snapshot.stage).toBe('kitten');
+      expect(snapshot.isHungry).toBe(true);
+      expect(snapshot.isSmelly).toBe(true);
+      expect(snapshot.isStressed).toBe(true);
+      expect(snapshot.shouldDie).toBe(false);
+    });
+
+    it('should detect fatal neglect through shouldCatDie', () => {
+      expect(shouldCatDie(createMockCat(157, 157, 157), Date.now(), mockEnv)).toBe(true);
+      expect(shouldCatDie(createMockCat(10, 10, 10), Date.now(), mockEnv)).toBe(false);
     });
   });
 
