@@ -1,5 +1,5 @@
 {
-  "common.action.quick_start": "Quick Start",
+  "common.action.quick_start": "Word Practice",
   "common.action.back_home": "Back to Home",
   "common.action.submit": "Submit",
   "common.action.reset": "Reset",
@@ -33,8 +33,8 @@
   "home.sync.description": "The recommended study result has been applied to your home summary.",
   "home.sync.leaderboard": "leaderboard",
   "home.sync.pending": "Syncing",
-  "home.quick_start": "Quick Start",
-  "home.quick_start.description": "Jump straight into today's queue with review and new study mixed together.",
+  "home.quick_start": "Word Practice",
+  "home.quick_start.description": "Start today's word practice with your selected language and level.",
   "learn.title": "Flashcard Study",
   "learn.heading": "Flashcard Study",
   "learn.description": "Start with missed words, continue through due reviews, then move into new words.",

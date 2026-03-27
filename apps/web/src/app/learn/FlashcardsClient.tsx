@@ -12,7 +12,8 @@ import { BackButton } from '../../components/BackButton';
 import { type AppLocale } from '../i18n';
 import {
   readStoredSettingsSnapshot,
-  saveStoredSettings
+  saveStoredSettings,
+  USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
 import {
   calculateMasteredWordRatio,
@@ -119,7 +120,9 @@ type FlashcardsClientProps = {
 
 export default function FlashcardsClient(props: FlashcardsClientProps) {
   const locale = props.locale ?? 'ko';
-  const [storedSettings] = useState(() => readStoredSettingsSnapshot());
+  const [storedSettings, setStoredSettings] = useState(() =>
+    readStoredSettingsSnapshot()
+  );
   const [session, setSession] = useState(() =>
     createFlashcardSession(
       props.focusWordIds
@@ -174,6 +177,35 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       ? `/?source=recommendation&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}`
       : null;
   const writingExercise = currentCard?.word.writing;
+
+  useEffect(() => {
+    if (props.focusWordIds && props.focusWordIds.length > 0) {
+      return;
+    }
+
+    function syncFromStoredSettings() {
+      const nextSettings = readStoredSettingsSnapshot();
+      setStoredSettings(nextSettings);
+      setSession(
+        createFlashcardSession({
+          learningLanguage: nextSettings.learningLanguage,
+          learningLevel: nextSettings.learningLevel,
+          progressList: readStoredLearningProgressSnapshot(),
+          limit: nextSettings.sessionQuestionCount
+        })
+      );
+    }
+
+    syncFromStoredSettings();
+    window.addEventListener(USER_SETTINGS_UPDATED_EVENT, syncFromStoredSettings);
+
+    return () => {
+      window.removeEventListener(
+        USER_SETTINGS_UPDATED_EVENT,
+        syncFromStoredSettings
+      );
+    };
+  }, [props.focusWordIds]);
 
   useEffect(() => {
     setWritingInput('');
@@ -345,6 +377,17 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
           ? `Not quite. Correct answer: ${writingExercise.answer}`
           : `아직 아닙니다. 정답: ${writingExercise.answer}`
     });
+  }
+
+  function handleWritingInputKeyDown(
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    event.preventDefault();
+    submitWritingAnswer();
   }
 
   return (
@@ -603,6 +646,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                         aria-label={locale === 'en' ? 'Writing answer' : '쓰기 정답'}
                         value={writingInput}
                         onChange={(event) => setWritingInput(event.target.value)}
+                        onKeyDown={handleWritingInputKeyDown}
                         placeholder={
                           locale === 'en'
                             ? 'Type the word in Japanese'

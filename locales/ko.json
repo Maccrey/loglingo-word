@@ -1,5 +1,5 @@
 {
-  "common.action.quick_start": "바로 시작",
+  "common.action.quick_start": "단어 연습",
   "common.action.back_home": "홈으로 돌아가기",
   "common.action.submit": "제출",
   "common.action.reset": "초기화",
@@ -33,8 +33,8 @@
   "home.sync.description": "추천 학습 결과가 홈 요약에 반영됐습니다.",
   "home.sync.leaderboard": "리더보드",
   "home.sync.pending": "동기화 중",
-  "home.quick_start": "바로 학습 시작",
-  "home.quick_start.description": "복습과 신규 학습이 섞인 오늘의 큐에서 바로 시작합니다.",
+  "home.quick_start": "단어 연습",
+  "home.quick_start.description": "설정한 학습 언어와 레벨 기준으로 오늘의 단어 연습을 시작합니다.",
   "learn.title": "플래시카드 학습",
   "learn.heading": "플래시카드 학습",
   "learn.description": "오늘은 틀린 단어를 먼저 다시 잡고, 복습이 도래한 카드 다음으로 새 단어를 이어서 학습합니다.",

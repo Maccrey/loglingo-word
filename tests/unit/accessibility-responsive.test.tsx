@@ -25,7 +25,7 @@ describe('accessibility and responsive layouts', () => {
   it('exposes key interactive controls with accessible names', () => {
     render(<HomeDashboard />);
 
-    expect(screen.getByRole('link', { name: '바로 시작' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: '단어 연습' })).toBeTruthy();
     expect(screen.getByRole('link', { name: '퀴즈 학습' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'AI 대화' })).toBeTruthy();
   });

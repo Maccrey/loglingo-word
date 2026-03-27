@@ -63,7 +63,7 @@ describe('cat card', () => {
       )
     ).toBeTruthy();
     expect(
-      screen.getByRole('link', { name: '바로 시작' }).getAttribute('href')
+      screen.getByRole('link', { name: '단어 연습' }).getAttribute('href')
     ).toBe('/learn');
   });
 

@@ -90,7 +90,7 @@ describe('home dashboard', () => {
   it('renders a quick start link to the study flow', () => {
     render(<HomeDashboard />);
 
-    const quickStart = screen.getByRole('link', { name: '바로 시작' });
+    const quickStart = screen.getByRole('link', { name: '단어 연습' });
     expect(quickStart.getAttribute('href')).toBe('/learn');
     expect(screen.getByRole('link', { name: '설정' }).getAttribute('href')).toBe(
       '/settings'
@@ -125,7 +125,7 @@ describe('home dashboard', () => {
     expect(screen.getAllByText("Today's Learning Flow").length).toBeGreaterThan(
       0
     );
-    expect(screen.getByRole('link', { name: 'Quick Start' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Word Practice' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Settings' }).getAttribute('href')).toBe(
       '/settings?locale=en'
     );

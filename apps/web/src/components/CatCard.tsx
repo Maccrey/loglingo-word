@@ -204,7 +204,7 @@ export default function CatCard() {
               textDecoration: 'none'
             }}
           >
-            바로 시작
+            단어 연습
           </Link>
         </div>
       ) : null}

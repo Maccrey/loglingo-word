@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import React from 'react';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -124,6 +124,7 @@ describe('flashcards ui', () => {
         appLanguage: 'ko',
         learningLanguage: 'ja',
         learningLevel: 'jlpt_n5',
+        sessionQuestionCount: 5,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-26T00:00:00.000Z'
@@ -146,6 +147,7 @@ describe('flashcards ui', () => {
         appLanguage: 'ko',
         learningLanguage: 'ja',
         learningLevel: 'jlpt_n5',
+        sessionQuestionCount: 5,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-26T00:00:00.000Z'
@@ -166,7 +168,35 @@ describe('flashcards ui', () => {
     );
   });
 
-  it('automatically advances to the next level when 90% of the current level is mastered', async () => {
+  it('submits the writing answer when Enter is pressed', async () => {
+    const user = userEvent.setup();
+
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'ja',
+        learningLevel: 'jlpt_n5',
+        sessionQuestionCount: 5,
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+
+    render(<FlashcardsClient />);
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    const input = screen.getByRole('textbox', { name: '쓰기 정답' });
+    await user.type(input, 'こんにちは{enter}');
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '정답입니다. 저장된 쓰기 정답과 일치합니다.'
+    );
+  });
+
+  it('automatically advances to the next level and refreshes the session when 90% of the current level is mastered', async () => {
     const user = userEvent.setup();
 
     window.localStorage.setItem(
@@ -176,6 +206,7 @@ describe('flashcards ui', () => {
         appLanguage: 'ko',
         learningLanguage: 'en',
         learningLevel: 'cefr_a1',
+        sessionQuestionCount: 4,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-26T00:00:00.000Z'
@@ -226,12 +257,13 @@ describe('flashcards ui', () => {
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
     await user.click(screen.getByRole('button', { name: 'Easy' }));
 
-    expect(screen.getByRole('status').textContent).toContain(
-      '다음 레벨 CEFR A2'
-    );
-    expect(
-      JSON.parse(window.localStorage.getItem('mock_user_settings') ?? '{}')
-        .learningLevel
-    ).toBe('cefr_a2');
+    await waitFor(() => {
+      expect(
+        JSON.parse(window.localStorage.getItem('mock_user_settings') ?? '{}')
+          .learningLevel
+      ).toBe('cefr_a2');
+    });
+    expect(screen.getByText('reservation')).toBeTruthy();
+    expect(screen.getByText('카드 1 / 2')).toBeTruthy();
   });
 });
