@@ -14,6 +14,12 @@ import {
   calculateGrowthDays
 } from '../../../../packages/shared/src/cat';
 import { createPointLedgerEntry, getPointBalance } from '../../../../services/core/src/point';
+import {
+  loadStoredCat,
+  loadStoredCatLedgers,
+  saveStoredCat,
+  saveStoredCatLedgers
+} from './catStorage';
 
 // Provide some default dummy env if we don't have access to the actual env
 const MOCK_ENV: Partial<EnvThresholds> = {
@@ -39,11 +45,11 @@ export function useCat() {
   // 1. Load from localStorage
   useEffect(() => {
     try {
-      const storedCat = localStorage.getItem('mock_cat_state');
-      const storedLedgers = localStorage.getItem('mock_cat_ledgers');
+      const storedCat = loadStoredCat();
+      const storedLedgers = loadStoredCatLedgers();
 
       if (storedCat) {
-        setCat(JSON.parse(storedCat));
+        setCat(storedCat);
       } else {
         // Create initial kitten
         const now = Date.now();
@@ -61,13 +67,12 @@ export function useCat() {
           activeDays: 0,
         };
         setCat(initialCat);
-        localStorage.setItem('mock_cat_state', JSON.stringify(initialCat));
+        saveStoredCat(initialCat);
       }
 
-      if (storedLedgers) {
-        const parsed = JSON.parse(storedLedgers) as PointLedger[];
-        setLedgers(parsed);
-        setPoints(getPointBalance(parsed) + INITIAL_POINTS); // starting with 5000 base
+      if (storedLedgers.length > 0) {
+        setLedgers(storedLedgers);
+        setPoints(getPointBalance(storedLedgers) + INITIAL_POINTS);
       } else {
         setLedgers([]);
         setPoints(INITIAL_POINTS);
@@ -83,7 +88,7 @@ export function useCat() {
     const interval = setInterval(() => {
       const updated = calculateGrowthDays(cat, Date.now(), MOCK_ENV);
       setCat(updated);
-      localStorage.setItem('mock_cat_state', JSON.stringify(updated));
+      saveStoredCat(updated);
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
@@ -119,8 +124,8 @@ export function useCat() {
       setLedgers(newLedgers);
       setPoints(prev => prev - res.cost);
 
-      localStorage.setItem('mock_cat_state', JSON.stringify(newCat));
-      localStorage.setItem('mock_cat_ledgers', JSON.stringify(newLedgers));
+      saveStoredCat(newCat);
+      saveStoredCatLedgers(newLedgers);
       return true;
     } catch (e) {
       console.error('Action failed', e);
