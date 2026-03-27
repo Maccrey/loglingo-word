@@ -641,37 +641,36 @@ export default function HomeDashboard(props: HomeDashboardProps) {
               </Link>
             </p>
           </article>
-        </section>
 
-        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
-          <div style={badgeStyle}>{t(locale, 'home.goal')}</div>
-          <h2 style={{ margin: 0 }}>
-            {t(locale, 'home.goal')} {dashboard.dailyGoal.completed}/
-            {dashboard.dailyGoal.target}
-          </h2>
-          <div
-            aria-label="daily-goal-progress"
-            style={{
-              height: 14,
-              borderRadius: 999,
-              background: 'var(--border-pencil)',
-              overflow: 'hidden'
-            }}
-          >
+          <article style={panelStyle} data-testid="home-daily-goal-card">
+            <div style={badgeStyle}>{t(locale, 'home.goal')}</div>
+            <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
+              {dashboard.dailyGoal.completed}/{dashboard.dailyGoal.target}
+            </h2>
             <div
+              aria-label="daily-goal-progress"
               style={{
-                width: `${dashboard.dailyGoal.progressPercent}%`,
-                height: '100%',
-                background: 'var(--accent-green)'
+                height: 14,
+                borderRadius: 999,
+                background: 'var(--border-pencil)',
+                overflow: 'hidden'
               }}
-            />
-          </div>
-          <p style={{ margin: 0 }}>
-            {dashboard.dailyGoal.progressPercent}% ·{' '}
-            {dashboard.dailyGoal.isComplete
-              ? t(locale, 'home.goal.complete')
-              : t(locale, 'home.goal.in_progress')}
-          </p>
+            >
+              <div
+                style={{
+                  width: `${dashboard.dailyGoal.progressPercent}%`,
+                  height: '100%',
+                  background: 'var(--accent-green)'
+                }}
+              />
+            </div>
+            <p style={{ margin: '12px 0 0' }}>
+              {dashboard.dailyGoal.progressPercent}% ·{' '}
+              {dashboard.dailyGoal.isComplete
+                ? t(locale, 'home.goal.complete')
+                : t(locale, 'home.goal.in_progress')}
+            </p>
+          </article>
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>

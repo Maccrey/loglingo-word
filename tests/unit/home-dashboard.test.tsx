@@ -44,7 +44,7 @@ beforeEach(() => {
 
 describe('home dashboard', () => {
   it('renders the main summary cards', () => {
-    render(
+    const { container } = render(
       <HomeDashboard
         leaderboardPreview={{
           weekId: '2026-W13',
@@ -73,6 +73,11 @@ describe('home dashboard', () => {
     expect(screen.getAllByText('주간 리더보드 점수').length).toBeGreaterThan(0);
     expect(screen.getByText('이번 주 순위 #2')).toBeTruthy();
     expect(screen.getByText('2026-W13')).toBeTruthy();
+    const summaryGrid = container.querySelector('[data-testid="home-summary-grid"]');
+    const dailyGoalCard = container.querySelector('[data-testid="home-daily-goal-card"]');
+    expect(summaryGrid).toBeTruthy();
+    expect(dailyGoalCard).toBeTruthy();
+    expect(summaryGrid?.contains(dailyGoalCard ?? null)).toBe(true);
     expect(
       screen
         .getByRole('link', { name: '리더보드에서 user-2 보기' })
