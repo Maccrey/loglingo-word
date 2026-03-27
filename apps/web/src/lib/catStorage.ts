@@ -2,6 +2,11 @@ import type { Cat, PointLedger } from '@wordflow/shared/cat';
 
 const CAT_STATE_KEY = 'mock_cat_state';
 const CAT_LEDGER_KEY = 'mock_cat_ledgers';
+export const CAT_STORAGE_UPDATED_EVENT = 'cat-storage-updated';
+
+function notifyCatStorageUpdated() {
+  window.dispatchEvent(new CustomEvent(CAT_STORAGE_UPDATED_EVENT));
+}
 
 export function loadStoredCat(): Cat | null {
   const storedCat = window.localStorage.getItem(CAT_STATE_KEY);
@@ -15,6 +20,7 @@ export function loadStoredCat(): Cat | null {
 
 export function saveStoredCat(cat: Cat) {
   window.localStorage.setItem(CAT_STATE_KEY, JSON.stringify(cat));
+  notifyCatStorageUpdated();
 }
 
 export function loadStoredCatLedgers(): PointLedger[] {
@@ -29,4 +35,5 @@ export function loadStoredCatLedgers(): PointLedger[] {
 
 export function saveStoredCatLedgers(ledgers: PointLedger[]) {
   window.localStorage.setItem(CAT_LEDGER_KEY, JSON.stringify(ledgers));
+  notifyCatStorageUpdated();
 }

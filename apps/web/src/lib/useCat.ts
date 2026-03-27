@@ -15,6 +15,7 @@ import {
 } from '../../../../packages/shared/src/cat';
 import { createPointLedgerEntry, getPointBalance } from '../../../../services/core/src/point';
 import {
+  CAT_STORAGE_UPDATED_EVENT,
   loadStoredCat,
   loadStoredCatLedgers,
   saveStoredCat,
@@ -67,8 +68,7 @@ export function useCat() {
     [syncPendingPoints]
   );
 
-  // 1. Load from localStorage
-  useEffect(() => {
+  const hydrateFromStorage = useCallback(() => {
     try {
       const storedCat = loadStoredCat();
       const storedLedgers = loadStoredCatLedgers();
@@ -76,7 +76,6 @@ export function useCat() {
       if (storedCat) {
         setCat(storedCat);
       } else {
-        // Create initial kitten
         const now = Date.now();
         const initialCat: Cat = {
           id: 'mock-cat-1',
@@ -89,7 +88,7 @@ export function useCat() {
           lastFedAt: now,
           lastWashedAt: now,
           lastPlayedAt: now,
-          activeDays: 0,
+          activeDays: 0
         };
         setCat(initialCat);
         saveStoredCat(initialCat);
@@ -106,6 +105,25 @@ export function useCat() {
       console.error('Failed to parse cat state', e);
     }
   }, []);
+
+  // 1. Load from localStorage
+  useEffect(() => {
+    hydrateFromStorage();
+  }, [hydrateFromStorage]);
+
+  useEffect(() => {
+    const handleStorageUpdated = () => {
+      hydrateFromStorage();
+    };
+
+    window.addEventListener(CAT_STORAGE_UPDATED_EVENT, handleStorageUpdated);
+    window.addEventListener('storage', handleStorageUpdated);
+
+    return () => {
+      window.removeEventListener(CAT_STORAGE_UPDATED_EVENT, handleStorageUpdated);
+      window.removeEventListener('storage', handleStorageUpdated);
+    };
+  }, [hydrateFromStorage]);
 
   // 2. Poll & update status every minute
   useEffect(() => {
