@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./cat-sync": "./src/cat-sync.ts",
     "./curriculum": "./src/curriculum.ts",
     "./dashboard": "./src/dashboard.ts",
     "./gamification": "./src/gamification.ts",

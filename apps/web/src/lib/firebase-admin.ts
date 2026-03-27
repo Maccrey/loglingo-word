@@ -2,6 +2,10 @@ import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
 import {
+  type CatSyncRecord,
+  type CatStateDocumentStore
+} from '@wordflow/core/cat-sync';
+import {
   type AIChatMessage,
   type AIChatMessageDocumentStore
 } from '@wordflow/ai';
@@ -89,6 +93,20 @@ export function createFirestoreDashboardStatsStore(): DashboardStatsDocumentStor
         .collection('dashboard_stats')
         .doc(stats.userId)
         .set(stats);
+    }
+  };
+}
+
+export function createFirestoreCatStateStore(): CatStateDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async get(userId) {
+      const snapshot = await firestore.collection('cats').doc(userId).get();
+      return snapshot.exists ? (snapshot.data() as CatSyncRecord) : null;
+    },
+    async set(record) {
+      await firestore.collection('cats').doc(record.userId).set(record);
     }
   };
 }
