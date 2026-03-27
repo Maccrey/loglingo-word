@@ -20,14 +20,14 @@ const MOCK_ENV: Partial<EnvThresholds> = {
   CAT_DEAD_DAYS: 3
 };
 
-function getStatusSummary(status: string, isStressWarning: boolean) {
+function getStatusSummary(name: string, status: string, isStressWarning: boolean) {
   if (status === 'stressed' && isStressWarning) {
     return '스트레스 경고 구간이에요. 12시간을 넘긴 상태라 빠르게 놀아주는 편이 안전합니다.';
   }
 
   switch (status) {
     case 'healthy':
-      return '나비가 안정적인 상태예요. 지금처럼 학습과 돌봄을 이어가면 됩니다.';
+      return `${name}가 안정적인 상태예요. 지금처럼 학습과 돌봄을 이어가면 됩니다.`;
     case 'hungry':
       return '배가 고파요. 먹이를 주거나 학습으로 돌봄 포인트를 확보하세요.';
     case 'smelly':
@@ -114,7 +114,7 @@ export default function CatDetailScreen() {
     0,
     100 - (hoursSincePlay / thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS) * 100
   );
-  const statusSummary = getStatusSummary(snapshot.status, snapshot.isStressWarning);
+  const statusSummary = getStatusSummary(cat.name, snapshot.status, snapshot.isStressWarning);
   const catSlots = buildCatSlots(cat);
 
   const currentImagePath = actionOverlay 

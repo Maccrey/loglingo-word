@@ -12,7 +12,7 @@ describe('cat repository', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'healthy',
         createdAt: 1,
@@ -26,6 +26,6 @@ describe('cat repository', () => {
 
     const repeatedLookup = await getCatStateRepository().findByUserId('demo-user');
 
-    expect(repeatedLookup?.cat.name).toBe('나비');
+    expect(repeatedLookup?.cat.name).toBe('로그링고');
   });
 });

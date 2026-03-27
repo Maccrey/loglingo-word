@@ -16,7 +16,7 @@ describe('cat sync', () => {
         cat: {
           id: 'cat-1',
           userId: 'demo-user',
-          name: '나비',
+          name: '로그링고',
           stage: 'kitten',
           status: 'healthy',
           createdAt: 1,
@@ -31,6 +31,6 @@ describe('cat sync', () => {
     );
 
     expect(result.userId).toBe('demo-user');
-    expect((await repository.findByUserId('demo-user'))?.cat.name).toBe('나비');
+    expect((await repository.findByUserId('demo-user'))?.cat.name).toBe('로그링고');
   });
 });

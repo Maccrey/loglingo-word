@@ -33,7 +33,7 @@ vi.mock('../../apps/web/src/lib/usePointSync', () => ({
 const sickCat: Cat = {
   id: 'cat-1',
   userId: 'demo-user',
-  name: '나비',
+  name: '로그링고',
   stage: 'kitten',
   status: 'sick',
   createdAt: 1,

@@ -24,7 +24,7 @@ describe('cat detail page', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'healthy',
         createdAt: Date.now(),
@@ -44,10 +44,10 @@ describe('cat detail page', () => {
 
     render(<CatDetailScreen />);
 
-    expect(screen.getByText('나비 상세 정보')).toBeTruthy();
+    expect(screen.getByText('로그링고 상세 정보')).toBeTruthy();
     expect(
       screen.getByText(
-        '나비가 안정적인 상태예요. 지금처럼 학습과 돌봄을 이어가면 됩니다.'
+        '로그링고가 안정적인 상태예요. 지금처럼 학습과 돌봄을 이어가면 됩니다.'
       )
     ).toBeTruthy();
     expect(screen.getByText('상태 게이지')).toBeTruthy();
@@ -64,7 +64,7 @@ describe('cat detail page', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'stressed',
         createdAt: Date.now(),
@@ -97,7 +97,7 @@ describe('cat detail page', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'healthy',
         createdAt: Date.now(),
@@ -127,7 +127,7 @@ describe('cat detail page', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'healthy',
         createdAt: Date.now(),

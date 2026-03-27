@@ -23,7 +23,7 @@ beforeEach(() => {
     cat: {
       id: 'cat-1',
       userId: 'demo-user',
-      name: '나비',
+      name: '로그링고',
       stage: 'kitten',
       status: 'healthy',
       createdAt: Date.now(),
@@ -241,7 +241,7 @@ describe('home dashboard', () => {
       cat: {
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비',
+        name: '로그링고',
         stage: 'kitten',
         status: 'stressed',
         createdAt: Date.now(),

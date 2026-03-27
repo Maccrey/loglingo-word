@@ -10,7 +10,7 @@ import { useCat } from '../../apps/web/src/lib/useCat';
 const mockCat: Cat = {
   id: 'cat-1',
   userId: 'demo-user',
-  name: '나비',
+  name: '로그링고',
   stage: 'kitten',
   status: 'healthy',
   createdAt: 1,
@@ -27,6 +27,7 @@ const syncCat = vi.fn(async () => true);
 const syncPendingPoints = vi.fn(async () => true);
 
 vi.mock('../../apps/web/src/lib/catStorage', () => ({
+  CAT_STORAGE_UPDATED_EVENT: 'cat-storage-updated',
   loadStoredCat: vi.fn(() => mockCat),
   loadStoredCatLedgers: vi.fn(() => []),
   saveStoredCat: (...args: unknown[]) => saveStoredCat(...args),
@@ -98,7 +99,7 @@ describe('useCat', () => {
       expect.objectContaining({
         id: 'cat-1',
         userId: 'demo-user',
-        name: '나비'
+        name: '로그링고'
       })
     );
     expect(syncPendingPoints).toHaveBeenCalledWith(
