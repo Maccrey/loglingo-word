@@ -142,7 +142,7 @@ export default function CatCard() {
         <button onClick={handlePlay} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
         <button onClick={handleWash} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
         {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
-          <button onClick={handleHeal} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
+          <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
         )}
       </div>
 

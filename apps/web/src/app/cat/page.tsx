@@ -200,7 +200,7 @@ export default function CatDetailScreen() {
           <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle('var(--accent-blue)')}>🧶 놀아주기 (200pt)</button>
           <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle('var(--accent-green)')}>🛁 씻기기 (150pt)</button>
           {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
-            <button onClick={() => handleAction(handleHeal, 'heal')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
+            <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle('var(--accent-pink)')}>💊 치료하기 (1000pt)</button>
           )}
         </div>
       </section>
