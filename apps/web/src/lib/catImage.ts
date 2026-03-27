@@ -102,6 +102,10 @@ export function getCatImagePath(stage: string, status: string): string {
   const normalizedStage = normalizeCatImageStage(stage);
   const normalizedStatus = normalizeCatImageStatus(stage, status);
 
+  if (normalizedStatus.startsWith('action-')) {
+    return `/images/cats/${normalizedStatus}.png`;
+  }
+
   if (availableStatusImages[normalizedStage]?.includes(normalizedStatus)) {
     return `/images/cats/${normalizedStage}-${normalizedStatus}.png`;
   }

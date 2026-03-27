@@ -20,16 +20,16 @@ describe('cat image mapping', () => {
 
   it('returns action image paths for care overlays', () => {
     expect(getCatImagePath('adult', 'action-feed')).toBe(
-      '/images/cats/adult-action-feed.png'
+      '/images/cats/action-feed.png'
     );
     expect(getCatImagePath('senior', 'action-play')).toBe(
-      '/images/cats/senior-action-play.png'
+      '/images/cats/action-play.png'
     );
   });
 
   it('falls back across stages when a matching image is missing', () => {
     expect(getCatImagePath('legacy', 'action-wash')).toBe(
-      '/images/cats/veteran-action-wash.png'
+      '/images/cats/action-wash.png'
     );
   });
 
