@@ -6,13 +6,42 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import CatDetailScreen from '../../apps/web/src/app/cat/page';
 
+vi.mock('../../apps/web/src/lib/useCat', () => ({
+  useCat: vi.fn()
+}));
+
+const { useCat } = await import('../../apps/web/src/lib/useCat');
+
 afterEach(() => {
   cleanup();
+  vi.clearAllMocks();
   vi.restoreAllMocks();
 });
 
 describe('cat detail page', () => {
-  it('renders the cat detail heading and action buttons', () => {
+  it('renders the cat detail heading, timer cards and action buttons', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '나비',
+        stage: 'kitten',
+        status: 'healthy',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now(),
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        activeDays: 1
+      },
+      points: 5000,
+      currentStatus: 'healthy',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
     render(<CatDetailScreen />);
 
     expect(screen.getByText('나비 상세 정보')).toBeTruthy();
@@ -22,12 +51,70 @@ describe('cat detail page', () => {
       )
     ).toBeTruthy();
     expect(screen.getByText('상태 게이지')).toBeTruthy();
+    expect(screen.getByText('급식 타이머')).toBeTruthy();
+    expect(screen.getByText('청결 타이머')).toBeTruthy();
+    expect(screen.getByText('놀이 타이머')).toBeTruthy();
     expect(screen.getByRole('button', { name: /밥주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /놀아주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /씻기기/ })).toBeTruthy();
   });
 
+  it('shows a stress warning alert when play time passes the warning threshold', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '나비',
+        stage: 'kitten',
+        status: 'stressed',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now(),
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now() - 13 * 60 * 60 * 1000,
+        activeDays: 1
+      },
+      points: 5000,
+      currentStatus: 'stressed',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
+    render(<CatDetailScreen />);
+
+    expect(screen.getByText(/스트레스 경고 구간이에요/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        '스트레스 경고: 마지막으로 놀아준 지 13시간이 지났어요. 15시간 전에 놀아주면 아프지 않게 유지할 수 있습니다.'
+      )
+    ).toBeTruthy();
+  });
+
   it('shows the growth summary section', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '나비',
+        stage: 'kitten',
+        status: 'healthy',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now(),
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        activeDays: 1
+      },
+      points: 5000,
+      currentStatus: 'healthy',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
     render(<CatDetailScreen />);
 
     expect(screen.getByText('성장 기록')).toBeTruthy();
@@ -36,6 +123,28 @@ describe('cat detail page', () => {
   });
 
   it('shows the cat slot list with a locked reward slot', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '나비',
+        stage: 'kitten',
+        status: 'healthy',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now(),
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        activeDays: 1
+      },
+      points: 5000,
+      currentStatus: 'healthy',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
     render(<CatDetailScreen />);
 
     expect(screen.getByText('고양이 슬롯')).toBeTruthy();
