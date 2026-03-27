@@ -20,6 +20,8 @@ import {
   saveStoredCat,
   saveStoredCatLedgers
 } from './catStorage';
+import { useCatSync } from './useCatSync';
+import { usePointSync } from './usePointSync';
 
 // Provide some default dummy env if we don't have access to the actual env
 const MOCK_ENV: Partial<EnvThresholds> = {
@@ -41,6 +43,24 @@ export function useCat() {
   const [cat, setCat] = useState<Cat | null>(null);
   const [points, setPoints] = useState<number>(INITIAL_POINTS);
   const [ledgers, setLedgers] = useState<PointLedger[]>([]);
+  const { syncCat } = useCatSync();
+  const { syncPendingPoints } = usePointSync();
+
+  const persistCatState = useCallback(
+    (nextCat: Cat) => {
+      saveStoredCat(nextCat);
+      void syncCat(nextCat.userId, nextCat);
+    },
+    [syncCat]
+  );
+
+  const persistPointLedgers = useCallback(
+    (userId: string, nextLedgers: PointLedger[], pendingLedgers: PointLedger[] = nextLedgers) => {
+      saveStoredCatLedgers(nextLedgers);
+      void syncPendingPoints(userId, pendingLedgers);
+    },
+    [syncPendingPoints]
+  );
 
   // 1. Load from localStorage
   useEffect(() => {
@@ -88,11 +108,11 @@ export function useCat() {
     const interval = setInterval(() => {
       const updated = calculateGrowthDays(cat, Date.now(), MOCK_ENV);
       setCat(updated);
-      saveStoredCat(updated);
+      persistCatState(updated);
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
-  }, [cat]);
+  }, [cat, persistCatState]);
 
   // Action Helpers
   const performAction = useCallback((
@@ -124,14 +144,14 @@ export function useCat() {
       setLedgers(newLedgers);
       setPoints(prev => prev - res.cost);
 
-      saveStoredCat(newCat);
-      saveStoredCatLedgers(newLedgers);
+      persistCatState(newCat);
+      persistPointLedgers(newCat.userId, newLedgers, [ledgerEntry]);
       return true;
     } catch (e) {
       console.error('Action failed', e);
       return false;
     }
-  }, [cat, points, ledgers]);
+  }, [cat, points, ledgers, persistCatState, persistPointLedgers]);
 
   const handleFeed = () => performAction(feedCat, 'cat_care_feed');
   const handleWash = () => performAction(batheCat, 'cat_care_wash');
