@@ -83,7 +83,7 @@ function buildCatSlots(cat: { id: string; name: string; stage: string }) {
 
 export default function CatDetailScreen() {
   const searchParams = useSearchParams();
-  const locale = resolveLocale(searchParams.get('locale') ?? undefined);
+  const locale = resolveLocale(searchParams?.get('locale') ?? undefined);
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
   const [actionOverlay, setActionOverlay] = useState<string | null>(null);

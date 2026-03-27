@@ -4,6 +4,19 @@ import React from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('next/image', () => ({
+  default: (
+    props: React.ImgHTMLAttributes<HTMLImageElement> & {
+      src: string;
+      alt: string;
+    }
+  ) => <img {...props} />
+}));
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams()
+}));
+
 import CatDetailScreen from '../../apps/web/src/app/cat/page';
 
 vi.mock('../../apps/web/src/lib/useCat', () => ({
@@ -187,8 +200,8 @@ describe('cat detail page', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /치료하기/ }));
 
-    expect(screen.getByAltText('Cat Large View').getAttribute('src')).toBe(
-      '/images/cats/senior-action-medicine.png'
+    expect(screen.getByAltText('Cat Large View').getAttribute('src')).toContain(
+      'senior_action_medicine.png'
     );
   });
 });

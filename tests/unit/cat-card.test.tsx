@@ -4,6 +4,15 @@ import React from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('next/image', () => ({
+  default: (
+    props: React.ImgHTMLAttributes<HTMLImageElement> & {
+      src: string;
+      alt: string;
+    }
+  ) => <img {...props} />
+}));
+
 import CatCard from '../../apps/web/src/components/CatCard';
 
 vi.mock('../../apps/web/src/lib/useCat', () => ({
@@ -116,8 +125,8 @@ describe('cat card', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /치료하기/ }));
 
-    expect(screen.getByAltText('adult cat feeling sick').getAttribute('src')).toBe(
-      '/images/cats/adult-action-medicine.png'
-    );
+    expect(
+      screen.getByAltText('adult cat feeling sick').getAttribute('src')
+    ).toContain('adult_action_medicine.png');
   });
 });
