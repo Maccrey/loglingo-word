@@ -16,6 +16,7 @@
     "./settings": "./src/settings.ts",
     "./social": "./src/social.ts",
     "./sentence": "./src/sentence.ts"
+    ,"./point-sync": "./src/point-sync.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

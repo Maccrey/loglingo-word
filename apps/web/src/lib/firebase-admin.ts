@@ -6,6 +6,10 @@ import {
   type CatStateDocumentStore
 } from '@wordflow/core/cat-sync';
 import {
+  type PointLedgerSyncDocumentStore,
+  type PointLedgerSyncRecord
+} from '@wordflow/core/point-sync';
+import {
   type AIChatMessage,
   type AIChatMessageDocumentStore
 } from '@wordflow/ai';
@@ -107,6 +111,23 @@ export function createFirestoreCatStateStore(): CatStateDocumentStore {
     },
     async set(record) {
       await firestore.collection('cats').doc(record.userId).set(record);
+    }
+  };
+}
+
+export function createFirestorePointLedgerSyncStore(): PointLedgerSyncDocumentStore {
+  const firestore = getFirestore(getFirebaseAdminApp());
+
+  return {
+    async get(userId) {
+      const snapshot = await firestore
+        .collection('point_ledgers')
+        .doc(userId)
+        .get();
+      return snapshot.exists ? (snapshot.data() as PointLedgerSyncRecord) : null;
+    },
+    async set(record) {
+      await firestore.collection('point_ledgers').doc(record.userId).set(record);
     }
   };
 }

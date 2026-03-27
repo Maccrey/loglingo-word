@@ -12,4 +12,5 @@ export * from './settings';
 export * from './social';
 export * from './sentence';
 export * from './point';
+export * from './point-sync';
 export * from './point-integration';
