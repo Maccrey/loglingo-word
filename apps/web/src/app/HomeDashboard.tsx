@@ -10,9 +10,11 @@ import {
   updateLearningStreak
 } from '@wordflow/core/gamification';
 import { buildReviewSelection } from '@wordflow/core/memory';
+import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
 import { type UserDashboardStats } from '@wordflow/shared/types';
 import { t, type AppLocale } from './i18n';
 import CatCard from '../components/CatCard';
+import { useCat } from '../lib/useCat';
 
 type HomeDashboardProps = {
   loading?: boolean;
@@ -83,6 +85,20 @@ const badgeStyle: Record<string, string | number> = {
   letterSpacing: '0.04em',
   textTransform: 'uppercase',
   fontWeight: 600
+};
+
+const CAT_ENV: Partial<EnvThresholds> = {
+  CAT_HUNGRY_HOURS: 12,
+  CAT_SMELLY_HOURS: 24,
+  CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
+  CAT_STRESS_WARNING_LIMIT_HOURS: 12,
+  CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
+  CAT_SICK_AFTER_SMELLY_HOURS: 72,
+  CAT_DEATH_AFTER_NO_FEED_DAYS: 7,
+  CAT_STRESSED_HOURS: 24,
+  CAT_SICK_HOURS: 48,
+  CAT_CRITICAL_HOURS: 24,
+  CAT_DEAD_DAYS: 3
 };
 
 function buildDashboardState() {
@@ -205,6 +221,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     leaderboardPreview = null
   } = props;
   const dashboard = buildDashboardState();
+  const { cat } = useCat();
+  const thresholds = getCatThresholds(CAT_ENV);
   const pendingPointsValue =
     pendingSource === 'recommendation'
       ? parsePositiveInteger(pendingPoints)
@@ -233,6 +251,22 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     loading: false,
     synced: false
   });
+  const catSnapshot = cat ? buildCatStateSnapshot(cat, Date.now(), thresholds) : null;
+  const hoursSinceFeed = cat ? (Date.now() - cat.lastFedAt) / (60 * 60 * 1000) : 0;
+  const hoursSinceWash = cat ? (Date.now() - cat.lastWashedAt) / (60 * 60 * 1000) : 0;
+  const hoursSincePlay = cat ? (Date.now() - cat.lastPlayedAt) / (60 * 60 * 1000) : 0;
+
+  const careSummary =
+    !cat || !catSnapshot
+      ? null
+      : buildHomeCareSummary({
+          status: catSnapshot.status,
+          isStressWarning: catSnapshot.isStressWarning,
+          hoursSinceFeed,
+          hoursSinceWash,
+          hoursSincePlay,
+          thresholds
+        });
 
   const quickStartPanel = (
     <section
@@ -243,6 +277,24 @@ export default function HomeDashboard(props: HomeDashboardProps) {
       <p style={{ margin: 0, lineHeight: 1.6 }}>
         {t(locale, 'home.quick_start.description')}
       </p>
+      {careSummary ? (
+        <div
+          style={{
+            borderRadius: 14,
+            padding: '14px 16px',
+            background: 'var(--bg-paper)',
+            border: '1px solid var(--border-pencil)',
+            display: 'grid',
+            gap: 6
+          }}
+        >
+          <strong>지금 필요한 돌봄</strong>
+          <span style={{ color: 'var(--text-ink)' }}>{careSummary.title}</span>
+          <span style={{ color: 'var(--text-faded)', lineHeight: 1.5 }}>
+            {careSummary.description}
+          </span>
+        </div>
+      ) : null}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <Link
           href="/learn"
@@ -704,4 +756,78 @@ export default function HomeDashboard(props: HomeDashboardProps) {
       </div>
     </main>
   );
+}
+
+function buildHomeCareSummary(input: {
+  status: string;
+  isStressWarning: boolean;
+  hoursSinceFeed: number;
+  hoursSinceWash: number;
+  hoursSincePlay: number;
+  thresholds: EnvThresholds;
+}) {
+  const {
+    status,
+    isStressWarning,
+    hoursSinceFeed,
+    hoursSinceWash,
+    hoursSincePlay,
+    thresholds
+  } = input;
+
+  if (status === 'critical') {
+    return {
+      title: '즉시 치료가 필요해요',
+      description: '위험 상태라서 바로 치료하지 않으면 더 악화될 수 있습니다.'
+    };
+  }
+
+  if (status === 'sick') {
+    return {
+      title: '약을 먹여서 회복시켜야 해요',
+      description: '질병 상태이므로 치료하기 액션을 먼저 실행하는 편이 안전합니다.'
+    };
+  }
+
+  if (isStressWarning) {
+    return {
+      title: '15시간 전에 놀아줘야 해요',
+      description: `현재 ${Math.floor(hoursSincePlay)}시간째라서 스트레스 질병 구간에 가까워지고 있습니다.`
+    };
+  }
+
+  if (status === 'stressed') {
+    return {
+      title: '조금 놀아주면 안정돼요',
+      description: `마지막으로 놀아준 지 ${Math.floor(hoursSincePlay)}시간 지났습니다.`
+    };
+  }
+
+  if (status === 'smelly') {
+    return {
+      title: '씻기기 타이밍이에요',
+      description: `냄새 상태가 시작됐고 ${Math.max(
+        0,
+        thresholds.CAT_SICK_AFTER_SMELLY_HOURS - Math.floor(hoursSinceWash)
+      )}시간 안에 씻기면 안전합니다.`
+    };
+  }
+
+  if (status === 'hungry') {
+    return {
+      title: '밥을 먼저 줘야 해요',
+      description: `배고픔 상태이며 ${Math.max(
+        0,
+        thresholds.CAT_DEATH_AFTER_NO_FEED_DAYS * 24 - Math.floor(hoursSinceFeed)
+      )}시간 뒤 생존 위험이 커집니다.`
+    };
+  }
+
+  return {
+    title: '오늘 15분 학습이면 충분해요',
+    description: `다음 놀이 경고까지 ${Math.max(
+      0,
+      thresholds.CAT_STRESS_WARNING_LIMIT_HOURS - Math.floor(hoursSincePlay)
+    )}시간 남았습니다.`
+  };
 }

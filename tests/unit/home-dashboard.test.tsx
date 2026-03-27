@@ -7,12 +7,39 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import HomeDashboard from '../../apps/web/src/app/HomeDashboard';
 
+vi.mock('../../apps/web/src/lib/useCat', () => ({
+  useCat: vi.fn()
+}));
+
+const { useCat } = await import('../../apps/web/src/lib/useCat');
+
 afterEach(() => {
   cleanup();
 });
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  vi.mocked(useCat).mockReturnValue({
+    cat: {
+      id: 'cat-1',
+      userId: 'demo-user',
+      name: '나비',
+      stage: 'kitten',
+      status: 'healthy',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      lastFedAt: Date.now(),
+      lastWashedAt: Date.now(),
+      lastPlayedAt: Date.now(),
+      activeDays: 1
+    },
+    points: 5000,
+    currentStatus: 'healthy',
+    handleFeed: vi.fn(() => true),
+    handleWash: vi.fn(() => true),
+    handlePlay: vi.fn(() => true),
+    handleHeal: vi.fn(() => true)
+  });
 });
 
 describe('home dashboard', () => {
@@ -58,6 +85,8 @@ describe('home dashboard', () => {
 
     const quickStart = screen.getByRole('link', { name: '바로 시작' });
     expect(quickStart.getAttribute('href')).toBe('/learn');
+    expect(screen.getByText('지금 필요한 돌봄')).toBeTruthy();
+    expect(screen.getByText('오늘 15분 학습이면 충분해요')).toBeTruthy();
   });
 
   it('renders the cat card and quick start panel in the same feature row', () => {
@@ -197,6 +226,37 @@ describe('home dashboard', () => {
 
     expect(
       screen.getByText('이번 주 리더보드 기록이 아직 없습니다.')
+    ).toBeTruthy();
+  });
+
+  it('shows a cat care warning summary in the quick start panel', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '나비',
+        stage: 'kitten',
+        status: 'stressed',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now(),
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now() - 13 * 60 * 60 * 1000,
+        activeDays: 1
+      },
+      points: 5000,
+      currentStatus: 'stressed',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
+    render(<HomeDashboard />);
+
+    expect(screen.getByText('15시간 전에 놀아줘야 해요')).toBeTruthy();
+    expect(
+      screen.getByText(/스트레스 질병 구간에 가까워지고 있습니다\./)
     ).toBeTruthy();
   });
 });
