@@ -1,7 +1,8 @@
 import FlashcardsClient from './FlashcardsClient';
+import { resolveLocale } from '../i18n';
 
 type LearnPageProps = {
-  searchParams?: Promise<{ focus?: string }>;
+  searchParams?: Promise<{ focus?: string; locale?: string }>;
 };
 
 function parseFocusWordIds(value?: string): string[] {
@@ -19,6 +20,9 @@ export default async function LearnPage(props: LearnPageProps) {
   const searchParams = await props.searchParams;
 
   return (
-    <FlashcardsClient focusWordIds={parseFocusWordIds(searchParams?.focus)} />
+    <FlashcardsClient
+      locale={resolveLocale(searchParams?.locale)}
+      focusWordIds={parseFocusWordIds(searchParams?.focus)}
+    />
   );
 }

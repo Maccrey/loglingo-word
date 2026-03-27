@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
+import { BackButton } from '../../components/BackButton';
+import { resolveLocale } from '../i18n';
 import { useCat } from '../../lib/useCat';
 import { getCatImagePath } from '../../lib/catImage';
 
@@ -79,13 +82,25 @@ function buildCatSlots(cat: { id: string; name: string; stage: string }) {
 }
 
 export default function CatDetailScreen() {
+  const searchParams = useSearchParams();
+  const locale = resolveLocale(searchParams.get('locale') ?? undefined);
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
   const [actionOverlay, setActionOverlay] = useState<string | null>(null);
+  const [displayImagePath, setDisplayImagePath] = useState('/images/cats/kitten-base.png');
+  const currentImagePath = cat
+    ? actionOverlay
+      ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
+      : getCatImagePath(cat.stage, currentStatus)
+    : '/images/cats/kitten-base.png';
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    setDisplayImagePath(currentImagePath);
+  }, [currentImagePath]);
 
   if (!mounted || !cat) {
     return <div style={{ padding: 20 }}>Loading...</div>;
@@ -117,14 +132,10 @@ export default function CatDetailScreen() {
   const statusSummary = getStatusSummary(cat.name, snapshot.status, snapshot.isStressWarning);
   const catSlots = buildCatSlots(cat);
 
-  const currentImagePath = actionOverlay 
-    ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
-    : getCatImagePath(cat.stage, snapshot.status);
-
   return (
     <main style={{ padding: '32px 20px', maxWidth: 640, margin: '0 auto', color: 'var(--text-ink)' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-faded)', fontSize: 24 }}>← Home</Link>
+        <BackButton locale={locale} />
         <div style={{ background: 'var(--bg-surface)', padding: '6px 16px', borderRadius: 999, fontWeight: 700 }}>
           ⭐ {points} pt
         </div>
@@ -139,12 +150,16 @@ export default function CatDetailScreen() {
       </section>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-        <img 
-          src={currentImagePath} 
-          alt="Cat Large View" 
+        <Image
+          src={displayImagePath}
+          alt="Cat Large View"
+          width={300}
+          height={300}
           style={{ width: 300, height: 300, objectFit: 'contain' }}
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/images/cats/kitten-base.png';
+          onError={() => {
+            if (displayImagePath !== '/images/cats/kitten-base.png') {
+              setDisplayImagePath('/images/cats/kitten-base.png');
+            }
           }}
         />
       </div>

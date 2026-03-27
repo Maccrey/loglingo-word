@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
 
 import {
@@ -13,6 +12,7 @@ import { createDefaultSettings, updateSettings } from '@wordflow/core/settings';
 
 import { resolveAppErrorMessage } from '../errors';
 import { t, type AppLocale } from '../i18n';
+import { BackButton } from '../../components/BackButton';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -122,12 +122,7 @@ export default function SettingsClient(props: SettingsClientProps) {
           <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
             {t(locale, 'settings.heading')}
           </h1>
-          <Link
-            href="/"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'common.action.back_home')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 16 }}>

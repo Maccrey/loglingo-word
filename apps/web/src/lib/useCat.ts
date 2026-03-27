@@ -86,12 +86,15 @@ export function useCat() {
 
   const hydrateFromStorage = useCallback(() => {
     try {
-      const storedCat = migrateStoredCatName(loadStoredCat());
+      const persistedCat = loadStoredCat();
+      const storedCat = migrateStoredCatName(persistedCat);
       const storedLedgers = loadStoredCatLedgers();
 
       if (storedCat) {
         setCat(storedCat);
-        saveStoredCat(storedCat);
+        if (persistedCat?.name !== storedCat.name) {
+          saveStoredCat(storedCat);
+        }
       } else {
         const now = Date.now();
         const initialCat: Cat = {

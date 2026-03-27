@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
+import { BackButton } from '../../components/BackButton';
 
 import {
   applyShareQuestReward,
@@ -158,12 +158,7 @@ export default function FeedClient(props: FeedClientProps) {
           >
             {t(locale, 'feed.description')}
           </p>
-          <Link
-            href="/"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'common.action.back_home')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         <section

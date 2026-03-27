@@ -90,6 +90,16 @@ const stageFallbackChain = [
   'kitten'
 ];
 
+const medicineImagePathByStage: Record<string, string> = {
+  kitten: '/images/cats/kitten_action_medicine.png',
+  junior: '/images/cats/junior_action_medicine.png',
+  adult: '/images/cats/adult_action_medicine.png',
+  'middle-age': '/images/cats/middle_age_medicine.png',
+  senior: '/images/cats/senior_action_medicine.png',
+  veteran: '/images/cats/veteran_action_medicine.png',
+  legacy: '/images/cats/veteran_action_medicine.png'
+};
+
 export function normalizeCatImageStage(stage: string): string {
   return stage === 'middleAge' ? 'middle-age' : stage;
 }
@@ -113,6 +123,13 @@ export function getCatImagePath(stage: string, status: string): string {
   const normalizedStatus = normalizeCatImageStatus(stage, status);
 
   if (normalizedStatus.startsWith('action-')) {
+    if (normalizedStatus === 'action-medicine') {
+      return (
+        medicineImagePathByStage[normalizedStage] ??
+        '/images/cats/veteran_action_medicine.png'
+      );
+    }
+
     if (
       normalizedStatus === 'action-feed' ||
       normalizedStatus === 'action-play' ||

@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
+import { BackButton } from '../../components/BackButton';
 
 import type { AIChatMessage } from '@wordflow/ai/chat';
 
@@ -142,12 +142,7 @@ export default function ChatClient(props: ChatClientProps) {
           >
             {t(locale, 'chat.description')}
           </p>
-          <Link
-            href="/"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'common.action.back_home')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         <section

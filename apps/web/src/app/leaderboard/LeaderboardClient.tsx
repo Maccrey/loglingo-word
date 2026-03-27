@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { BackButton } from '../../components/BackButton';
 
 import { type LeaderboardEntryRecord } from '@wordflow/leaderboard';
 import { getLeaderboardWeek } from '@wordflow/leaderboard';
@@ -9,6 +9,7 @@ import { type LeaderboardViewMode } from './state';
 import { t, type AppLocale } from '../i18n';
 
 type LeaderboardClientProps = {
+  locale?: AppLocale;
   entries?: LeaderboardEntryRecord[];
   currentUserId?: string;
   focusedUserId?: string;
@@ -97,7 +98,7 @@ function getSharePreviewText(
 }
 
 export default function LeaderboardClient(props: LeaderboardClientProps) {
-  const locale: AppLocale = 'ko';
+  const locale = props.locale ?? 'ko';
   const {
     entries = [],
     currentUserId = 'demo-user',
@@ -225,12 +226,7 @@ export default function LeaderboardClient(props: LeaderboardClientProps) {
             {currentWeek.weekId} · {currentWeek.weekStart} ~{' '}
             {currentWeek.weekEnd}
           </p>
-          <Link
-            href="/"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'common.action.back_home')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         {pendingScoreDelta && pendingScoreDelta > 0 ? (

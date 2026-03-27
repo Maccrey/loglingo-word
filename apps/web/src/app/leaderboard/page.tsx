@@ -2,9 +2,11 @@ import React from 'react';
 
 import LeaderboardClient from './LeaderboardClient';
 import { buildLeaderboardPageState } from './state';
+import { resolveLocale } from '../i18n';
 
 type LeaderboardPageProps = {
   searchParams?: Promise<{
+    locale?: string;
     source?: string;
     score?: string;
     userId?: string;
@@ -18,6 +20,7 @@ export default async function LeaderboardPage(props: LeaderboardPageProps) {
 
   return (
     <LeaderboardClient
+      locale={resolveLocale(searchParams?.locale)}
       entries={state.entries}
       currentUserId={state.currentUserId}
       focusedUserId={state.focusedUserId}

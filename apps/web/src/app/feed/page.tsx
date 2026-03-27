@@ -2,12 +2,14 @@ import React from 'react';
 
 import FeedClient from './FeedClient';
 import { createSharedFeedPost } from './shared-post';
+import { resolveLocale } from '../i18n';
 
 import { createAutoLearningResultPost } from '@wordflow/core/social';
 import type { LearningResultPost } from '@wordflow/shared/types';
 
 type FeedPageProps = {
   searchParams?: Promise<{
+    locale?: string;
     source?: string;
     completed?: string;
     points?: string;
@@ -42,5 +44,10 @@ export default async function FeedPage(props: FeedPageProps) {
   const searchParams = await props.searchParams;
   const sharedPost = createSharedFeedPost(searchParams ?? {});
 
-  return <FeedClient initialPosts={buildInitialPosts(sharedPost)} />;
+  return (
+    <FeedClient
+      locale={resolveLocale(searchParams?.locale)}
+      initialPosts={buildInitialPosts(sharedPost)}
+    />
+  );
 }

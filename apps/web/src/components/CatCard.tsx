@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { buildCatStateSnapshot, getCatThresholds, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
 import { useCat } from '../lib/useCat';
@@ -49,10 +50,20 @@ export default function CatCard() {
   const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
   const [mounted, setMounted] = useState(false);
   const [actionOverlay, setActionOverlay] = useState<string | null>(null);
+  const [displayImagePath, setDisplayImagePath] = useState('/images/cats/kitten-base.png');
+  const currentImagePath = cat
+    ? actionOverlay
+      ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
+      : getCatImagePath(cat.stage, currentStatus)
+    : '/images/cats/kitten-base.png';
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    setDisplayImagePath(currentImagePath);
+  }, [currentImagePath]);
 
   if (!mounted || !cat) {
     return (
@@ -73,9 +84,6 @@ export default function CatCard() {
 
   const thresholds = getCatThresholds(MOCK_ENV);
   const snapshot = buildCatStateSnapshot(cat, Date.now(), thresholds);
-  const currentImagePath = actionOverlay 
-    ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
-    : getCatImagePath(cat.stage, snapshot.status);
   const requiredCare = getRequiredCare(snapshot.status);
   const missingPoints = Math.max(0, requiredCare.cost - points);
 
@@ -104,13 +112,16 @@ export default function CatCard() {
       </div>
 
       <div style={{ position: 'relative', width: 240, height: 240, marginBottom: 16, alignSelf: 'center' }}>
-        <img 
-          src={currentImagePath} 
+        <Image
+          src={displayImagePath}
           alt={`${cat.stage} cat feeling ${snapshot.status}`}
+          width={240}
+          height={240}
           style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12 }}
-          onError={(e) => {
-            // Fallback back to kitten-base if image is missing
-            (e.target as HTMLImageElement).src = '/images/cats/kitten-base.png';
+          onError={() => {
+            if (displayImagePath !== '/images/cats/kitten-base.png') {
+              setDisplayImagePath('/images/cats/kitten-base.png');
+            }
           }}
         />
         {/* Status Badge */}

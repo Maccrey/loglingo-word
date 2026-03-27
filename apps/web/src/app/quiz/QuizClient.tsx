@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { t, type AppLocale } from '../i18n';
+import { BackButton } from '../../components/BackButton';
 
 import {
   createDemoQuizSession,
@@ -61,9 +61,13 @@ function feedbackColor(status: 'idle' | 'success' | 'error'): string {
   return 'var(--text-faded)';
 }
 
-export default function QuizClient() {
+type QuizClientProps = {
+  locale?: AppLocale;
+};
+
+export default function QuizClient(props: QuizClientProps) {
   const [session, setSession] = useState(createDemoQuizSession);
-  const locale: AppLocale = 'ko';
+  const locale = props.locale ?? 'ko';
 
   return (
     <main style={surfaceStyle}>
@@ -85,12 +89,7 @@ export default function QuizClient() {
               {t(locale, 'quiz.description')}
             </p>
           </div>
-          <Link
-            href="/learn"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'learn.title')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>

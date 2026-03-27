@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { BackButton } from '../../components/BackButton';
+import { type AppLocale } from '../i18n';
 
 import {
   supportedLanguages,
@@ -50,7 +52,12 @@ function LanguageSelect(props: {
   );
 }
 
-export default function OnboardingClient() {
+type OnboardingClientProps = {
+  locale?: AppLocale;
+};
+
+export default function OnboardingClient(props: OnboardingClientProps) {
+  const locale = props.locale ?? 'ko';
   const [state, setState] = useState<OnboardingState>({});
   const [error, setError] = useState<string>('');
   const [saveState, setSaveState] = useState<'idle' | 'loading' | 'success'>(
@@ -107,6 +114,7 @@ export default function OnboardingClient() {
 
   return (
     <main style={{ padding: 24, display: 'grid', gap: 16 }}>
+      <BackButton locale={locale} />
       <h1>온보딩</h1>
       <p>현재 단계: {currentStep}</p>
 

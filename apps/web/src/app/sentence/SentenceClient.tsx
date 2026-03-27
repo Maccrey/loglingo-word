@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { t, type AppLocale } from '../i18n';
+import { BackButton } from '../../components/BackButton';
 
 import {
   createDemoSentenceSession,
@@ -61,9 +61,13 @@ function tokenStyle(active: boolean): Record<string, string | number> {
   };
 }
 
-export default function SentenceClient() {
+type SentenceClientProps = {
+  locale?: AppLocale;
+};
+
+export default function SentenceClient(props: SentenceClientProps) {
   const [session, setSession] = useState(createDemoSentenceSession);
-  const locale: AppLocale = 'ko';
+  const locale = props.locale ?? 'ko';
 
   return (
     <main style={surfaceStyle}>
@@ -83,12 +87,7 @@ export default function SentenceClient() {
           >
             {t(locale, 'sentence.description')}
           </p>
-          <Link
-            href="/quiz"
-            style={{ color: 'var(--text-ink)', textDecoration: 'underline' }}
-          >
-            {t(locale, 'quiz.title')}
-          </Link>
+          <BackButton locale={locale} />
         </section>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>

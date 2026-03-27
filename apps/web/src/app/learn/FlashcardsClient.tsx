@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { BackButton } from '../../components/BackButton';
+import { type AppLocale } from '../i18n';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
@@ -83,10 +85,12 @@ function reasonLabel(reason: string): string {
 }
 
 type FlashcardsClientProps = {
+  locale?: AppLocale;
   focusWordIds?: string[];
 };
 
 export default function FlashcardsClient(props: FlashcardsClientProps) {
+  const locale = props.locale ?? 'ko';
   const [session, setSession] = useState(() =>
     createFlashcardSession(
       props.focusWordIds ? { focusWordIds: props.focusWordIds } : undefined
@@ -182,6 +186,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     <main style={surfaceStyle}>
       <div style={shellStyle}>
         <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>
+          <BackButton locale={locale} />
           <div style={badgeStyle}>Today&apos;s Study</div>
           <div
             style={{
@@ -250,20 +255,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 마지막 난이도 선택: {session.lastRating ?? '없음'}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link
-                  href="/"
-                  style={{
-                    background: 'var(--accent-yellow)',
-                    border: '1px solid var(--border-pencil)',
-                    padding: '8px 16px',
-                    borderRadius: 12,
-                    color: 'var(--text-ink)',
-                    fontWeight: 600,
-                    boxShadow: 'var(--shadow-card)'
-                  }}
-                >
-                  홈으로 돌아가기
-                </Link>
+                <BackButton locale={locale} />
                 {homeHref ? (
                   <Link
                     href={homeHref}

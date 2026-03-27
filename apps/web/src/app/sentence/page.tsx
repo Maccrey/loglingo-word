@@ -1,5 +1,14 @@
 import SentenceClient from './SentenceClient';
+import { resolveLocale } from '../i18n';
 
-export default function SentencePage() {
-  return <SentenceClient />;
+type SentencePageProps = {
+  searchParams?: Promise<{
+    locale?: string;
+  }>;
+};
+
+export default async function SentencePage(props: SentencePageProps) {
+  const searchParams = await props.searchParams;
+
+  return <SentenceClient locale={resolveLocale(searchParams?.locale)} />;
 }
