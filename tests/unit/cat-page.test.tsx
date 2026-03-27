@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
 import React from 'react';
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CatDetailScreen from '../../apps/web/src/app/cat/page';
 
@@ -12,10 +12,15 @@ vi.mock('../../apps/web/src/lib/useCat', () => ({
 
 const { useCat } = await import('../../apps/web/src/lib/useCat');
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 describe('cat detail page', () => {
@@ -153,5 +158,37 @@ describe('cat detail page', () => {
     expect(
       screen.getByText('1년 육성 보상으로 새끼 고양이를 해금하면 열립니다.')
     ).toBeTruthy();
+  });
+
+  it('shows the stage-specific medicine overlay after treatment', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'senior',
+        status: 'sick',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 10 * 60 * 60 * 1000,
+        lastWashedAt: Date.now() - 73 * 60 * 60 * 1000,
+        lastPlayedAt: Date.now() - 10 * 60 * 60 * 1000,
+        activeDays: 220
+      },
+      points: 5000,
+      currentStatus: 'sick',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
+    render(<CatDetailScreen />);
+
+    fireEvent.click(screen.getByRole('button', { name: /치료하기/ }));
+
+    expect(screen.getByAltText('Cat Large View').getAttribute('src')).toBe(
+      '/images/cats/senior-action-medicine.png'
+    );
   });
 });
