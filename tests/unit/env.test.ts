@@ -37,15 +37,19 @@ describe('parseEnv', () => {
     expect(parsed.CAT_STRESS_AFTER_PLAY_MISS_HOURS).toBe(3);
     expect(parsed.CAT_STRESS_WARNING_LIMIT_HOURS).toBe(12);
     expect(parsed.CAT_SICK_AFTER_NO_PLAY_HOURS).toBe(15);
+    expect(parsed.CAT_SICK_AFTER_SMELLY_HOURS).toBe(72);
+    expect(parsed.CAT_DEATH_AFTER_NO_FEED_DAYS).toBe(7);
   });
 
   it('coerces string numbers for cat and point configurations', () => {
     const parsed = parseEnv({
       ...validEnv,
       CAT_STAGE_JUNIOR_DAYS: '40',
-      CAT_STRESS_WARNING_LIMIT_HOURS: '10'
+      CAT_STRESS_WARNING_LIMIT_HOURS: '10',
+      CAT_DEATH_AFTER_NO_FEED_DAYS: '8'
     });
     expect(parsed.CAT_STAGE_JUNIOR_DAYS).toBe(40);
     expect(parsed.CAT_STRESS_WARNING_LIMIT_HOURS).toBe(10);
+    expect(parsed.CAT_DEATH_AFTER_NO_FEED_DAYS).toBe(8);
   });
 });

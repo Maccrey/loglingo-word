@@ -32,6 +32,8 @@ export const envSchema = z.object({
   CAT_STRESS_AFTER_PLAY_MISS_HOURS: z.coerce.number().default(3),
   CAT_STRESS_WARNING_LIMIT_HOURS: z.coerce.number().default(12),
   CAT_SICK_AFTER_NO_PLAY_HOURS: z.coerce.number().default(15),
+  CAT_SICK_AFTER_SMELLY_HOURS: z.coerce.number().default(72),
+  CAT_DEATH_AFTER_NO_FEED_DAYS: z.coerce.number().default(7),
   CAT_SICK_HOURS: z.coerce.number().default(48),
   CAT_CRITICAL_HOURS: z.coerce.number().default(24),
   CAT_DEAD_DAYS: z.coerce.number().default(3),

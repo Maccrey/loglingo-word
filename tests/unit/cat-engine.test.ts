@@ -20,6 +20,8 @@ describe('Cat Status Transition Engine', () => {
     CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
     CAT_STRESS_WARNING_LIMIT_HOURS: 12,
     CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
+    CAT_SICK_AFTER_SMELLY_HOURS: 72,
+    CAT_DEATH_AFTER_NO_FEED_DAYS: 7,
     CAT_SICK_HOURS: 48,
     CAT_CRITICAL_HOURS: 24,
     CAT_DEAD_DAYS: 3, // 72 hours
@@ -82,43 +84,37 @@ describe('Cat Status Transition Engine', () => {
     });
 
     it('should prioritize hungry > smelly > stressed', () => {
-      // 25 hours passed for both feed, wash, play. 
-      // Hungry threshold = 12, Smelly = 24, Stressed = 24. All violated.
-      const cat = createMockCat(25, 25, 25);
-      // Wait, 25 hours is NOT sick yet. Sick threshold is Hungry(12) + Sick(48) = 60 hours.
+      const cat = createMockCat(13, 25, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('hungry');
       
       // If we only violate smelly and stressed
-      const cat2 = createMockCat(5, 25, 25);
+      const cat2 = createMockCat(5, 25, 10);
       expect(calculateCatStatus(cat2, Date.now(), mockEnv)).toBe('smelly');
       
       // If only stressed violated
-      const cat3 = createMockCat(5, 5, 25);
-      expect(calculateCatStatus(cat3, Date.now(), mockEnv)).toBe('sick');
+      const cat3 = createMockCat(2, 2, 4);
+      expect(calculateCatStatus(cat3, Date.now(), mockEnv)).toBe('stressed');
     });
 
     it('should return sick when abandoned past sick threshold', () => {
       // Sick threshold = 12(hungry) + 48(sick) = 60 hours
-      const cat = createMockCat(61, 61, 61);
+      const cat = createMockCat(10, 73, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
     });
 
     it('should return critical when abandoned past critical threshold', () => {
-      // Critical threshold = 12(hungry) + 48(sick) + 24(critical) = 84 hours
-      const cat = createMockCat(85, 85, 85);
+      const cat = createMockCat(10, 97, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('critical');
     });
 
     it('should return dead when abandoned past dead threshold', () => {
-      // Dead threshold = 12(hungry) + 48(sick) + 24(critical) + 72(dead_days) = 156 hours
-      const cat = createMockCat(157, 157, 157);
+      const cat = createMockCat(169, 10, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('dead');
     });
     
-    it('should base severity on the MOST neglected metric (min of last interaction)', () => {
-      // Feed is ok (10h), wash is ok (10h), play is ignored for 65h
-      // Max neglect = 65h, which > Sick Threshold (60h). It should be SICK.
-      const cat = createMockCat(10, 10, 65);
+    it('should trigger severity from the specific neglected care dimension', () => {
+      // Feed and wash are ok, but play neglect alone should trigger sickness.
+      const cat = createMockCat(10, 10, 16);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
     });
 
@@ -165,7 +161,7 @@ describe('Cat Status Transition Engine', () => {
     });
 
     it('should detect fatal neglect through shouldCatDie', () => {
-      expect(shouldCatDie(createMockCat(157, 157, 157), Date.now(), mockEnv)).toBe(true);
+      expect(shouldCatDie(createMockCat(169, 10, 10), Date.now(), mockEnv)).toBe(true);
       expect(shouldCatDie(createMockCat(10, 10, 10), Date.now(), mockEnv)).toBe(false);
     });
   });

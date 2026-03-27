@@ -19,6 +19,8 @@ export interface EnvThresholds {
   CAT_STRESS_AFTER_PLAY_MISS_HOURS: number;
   CAT_STRESS_WARNING_LIMIT_HOURS: number;
   CAT_SICK_AFTER_NO_PLAY_HOURS: number;
+  CAT_SICK_AFTER_SMELLY_HOURS: number;
+  CAT_DEATH_AFTER_NO_FEED_DAYS: number;
   CAT_SICK_HOURS: number;
   CAT_CRITICAL_HOURS: number;
   CAT_DEAD_DAYS: number;
@@ -44,6 +46,8 @@ const DEFAULT_THRESHOLDS: EnvThresholds = {
   CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
   CAT_STRESS_WARNING_LIMIT_HOURS: 12,
   CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
+  CAT_SICK_AFTER_SMELLY_HOURS: 72,
+  CAT_DEATH_AFTER_NO_FEED_DAYS: 7,
   CAT_SICK_HOURS: 48,
   CAT_CRITICAL_HOURS: 24,
   CAT_DEAD_DAYS: 3,
@@ -122,19 +126,29 @@ export function getStressState(
  * 가장 오래 방치된 시간(min of interaction times)을 기준으로 판정
  */
 export function calculateSeverityStatus(cat: Cat, currentTime: number, thresholds: EnvThresholds): 'healthy' | 'sick' | 'critical' | 'dead' {
-  const lastInteraction = Math.min(cat.lastFedAt, cat.lastWashedAt, cat.lastPlayedAt);
-  const msSinceLastInteraction = currentTime - lastInteraction;
+  const feedElapsed = currentTime - cat.lastFedAt;
+  const washElapsed = currentTime - cat.lastWashedAt;
+  const playElapsed = currentTime - cat.lastPlayedAt;
+  const criticalMs = thresholds.CAT_CRITICAL_HOURS * MS_PER_HOUR;
 
-  // Base threshold is the minimum interaction gap (using Hungry as base)
-  const baseMs = thresholds.CAT_HUNGRY_HOURS * MS_PER_HOUR;
-  const sickMs = baseMs + (thresholds.CAT_SICK_HOURS * MS_PER_HOUR);
-  const criticalMs = sickMs + (thresholds.CAT_CRITICAL_HOURS * MS_PER_HOUR);
-  const deadMs = criticalMs + (thresholds.CAT_DEAD_DAYS * MS_PER_DAY);
+  if (feedElapsed >= thresholds.CAT_DEATH_AFTER_NO_FEED_DAYS * MS_PER_DAY) {
+    return 'dead';
+  }
 
-  if (msSinceLastInteraction >= deadMs) return 'dead';
-  if (msSinceLastInteraction >= criticalMs) return 'critical';
-  if (msSinceLastInteraction >= sickMs) return 'sick';
-  
+  if (
+    washElapsed >= (thresholds.CAT_SICK_AFTER_SMELLY_HOURS * MS_PER_HOUR) + criticalMs ||
+    playElapsed >= (thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR) + criticalMs
+  ) {
+    return 'critical';
+  }
+
+  if (
+    washElapsed >= thresholds.CAT_SICK_AFTER_SMELLY_HOURS * MS_PER_HOUR ||
+    playElapsed >= thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR
+  ) {
+    return 'sick';
+  }
+
   return 'healthy';
 }
 
