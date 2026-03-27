@@ -75,9 +75,11 @@ describe('home dashboard', () => {
     expect(screen.getByText('2026-W13')).toBeTruthy();
     const summaryGrid = container.querySelector('[data-testid="home-summary-grid"]');
     const dailyGoalCard = container.querySelector('[data-testid="home-daily-goal-card"]');
+    const wideCards = container.querySelectorAll('.home-summary-grid__wide');
     expect(summaryGrid).toBeTruthy();
     expect(dailyGoalCard).toBeTruthy();
     expect(summaryGrid?.contains(dailyGoalCard ?? null)).toBe(true);
+    expect(wideCards.length).toBe(2);
     expect(
       screen
         .getByRole('link', { name: '리더보드에서 user-2 보기' })

@@ -535,6 +535,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         ) : null}
 
         <section
+          className="home-summary-grid"
           data-testid="home-summary-grid"
           style={{
             display: 'grid',
@@ -576,7 +577,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             </p>
           </article>
 
-          <article style={panelStyle}>
+          <article
+            className="home-summary-grid__wide"
+            style={panelStyle}
+          >
             <div style={badgeStyle}>
               {t(locale, 'home.summary.leaderboard')}
             </div>
@@ -642,7 +646,11 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             </p>
           </article>
 
-          <article style={panelStyle} data-testid="home-daily-goal-card">
+          <article
+            className="home-summary-grid__wide"
+            style={panelStyle}
+            data-testid="home-daily-goal-card"
+          >
             <div style={badgeStyle}>{t(locale, 'home.goal')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
               {dashboard.dailyGoal.completed}/{dashboard.dailyGoal.target}

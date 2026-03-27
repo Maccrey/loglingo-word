@@ -102,4 +102,8 @@ a {
   .home-feature-row {
     grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   }
+
+  .home-summary-grid__wide {
+    grid-column: span 2;
+  }
 }
