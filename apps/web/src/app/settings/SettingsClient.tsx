@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 
 import {
   supportedAppLanguages,
-  type SupportedAppLanguage
+  type SupportedAppLanguage,
+  userSettingsSchema
 } from '@wordflow/shared/types';
 import {
   getPaymentProducts,
@@ -26,6 +27,11 @@ import {
   loadStoredSettings,
   saveStoredSettings
 } from '../../lib/settingsStorage';
+import {
+  hasFirebaseWebConfig,
+  initializeFirebaseAnalytics,
+  signInWithGooglePopup
+} from '../../lib/firebase-client';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -142,6 +148,10 @@ export default function SettingsClient(props: SettingsClientProps) {
     saveStoredSettings(settings);
   }, [hydrated, settings]);
 
+  useEffect(() => {
+    void initializeFirebaseAnalytics();
+  }, []);
+
   async function startCheckout(productId: PaymentProductId) {
     const response = await fetch('/api/payments/checkout', {
       method: 'POST',
@@ -184,8 +194,34 @@ export default function SettingsClient(props: SettingsClientProps) {
     );
   }
 
-  function startGoogleLogin() {
-    setAuthMessage(t(locale, 'settings.google_login_pending'));
+  async function startGoogleLogin() {
+    if (!hasFirebaseWebConfig()) {
+      setAuthMessage(t(locale, 'settings.google_login_missing_config'));
+      return;
+    }
+
+    try {
+      const result = await signInWithGooglePopup();
+      const nextUserId = result.user.uid;
+      const displayName = result.user.displayName?.trim() || result.user.email?.trim() || nextUserId;
+
+      setSettings((current) =>
+        userSettingsSchema.parse({
+          ...current,
+          userId: nextUserId,
+          updatedAt: new Date().toISOString()
+        })
+      );
+      setAuthMessage(
+        `${t(locale, 'settings.google_login_success')} ${displayName}`
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : t(locale, 'settings.google_login_error');
+      setAuthMessage(`${t(locale, 'settings.google_login_error')} ${message}`);
+    }
   }
 
   return (
@@ -368,7 +404,7 @@ export default function SettingsClient(props: SettingsClientProps) {
             <button
               type="button"
               aria-label={t(locale, 'settings.google_login')}
-              onClick={startGoogleLogin}
+              onClick={() => void startGoogleLogin()}
               style={{
                 width: 'fit-content',
                 border: '1px solid var(--border-pencil)',

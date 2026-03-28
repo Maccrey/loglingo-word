@@ -5,12 +5,27 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+const signInWithGooglePopupMock = vi.fn();
+const hasFirebaseWebConfigMock = vi.fn(() => true);
+const initializeFirebaseAnalyticsMock = vi.fn(async () => null);
+
+vi.mock('../../apps/web/src/lib/firebase-client', () => ({
+  hasFirebaseWebConfig: () => hasFirebaseWebConfigMock(),
+  initializeFirebaseAnalytics: () => initializeFirebaseAnalyticsMock(),
+  signInWithGooglePopup: () => signInWithGooglePopupMock()
+}));
+
 import SettingsClient from '../../apps/web/src/app/settings/SettingsClient';
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
   window.localStorage.clear();
+  signInWithGooglePopupMock.mockReset();
+  hasFirebaseWebConfigMock.mockReset();
+  hasFirebaseWebConfigMock.mockReturnValue(true);
+  initializeFirebaseAnalyticsMock.mockReset();
+  initializeFirebaseAnalyticsMock.mockResolvedValue(null);
 });
 
 describe('settings ui', () => {
@@ -31,15 +46,35 @@ describe('settings ui', () => {
     );
   });
 
-  it('shows the firebase auth preparation message when the google login button is clicked', async () => {
+  it('shows a missing-config message when firebase web settings are unavailable', async () => {
     const user = userEvent.setup();
+    hasFirebaseWebConfigMock.mockReturnValue(false);
 
     render(<SettingsClient />);
 
     await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
 
     expect(screen.getByRole('status').textContent).toContain(
-      '구글 로그인은 Firebase Auth 연결 태스크 완료 후 활성화됩니다.'
+      'Firebase 웹 설정이 없어 구글 로그인을 시작할 수 없습니다.'
+    );
+  });
+
+  it('updates the user after a successful google sign-in', async () => {
+    const user = userEvent.setup();
+    signInWithGooglePopupMock.mockResolvedValue({
+      user: {
+        uid: 'firebase-user-1',
+        displayName: '테스트 사용자',
+        email: 'tester@example.com'
+      }
+    });
+
+    render(<SettingsClient />);
+
+    await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '구글 로그인 완료: 테스트 사용자'
     );
   });
 
