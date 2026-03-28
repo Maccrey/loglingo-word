@@ -103,6 +103,7 @@ describe('sentence session state', () => {
       'water.',
       'every day'
     ]);
+    expect(stage?.goalTranslations.ko.text).toBe('매일 나는 물을 마신다.');
     expect(stage?.goalTranslations.ko.segmentBlockIndexes).toEqual([3, 0, 2, 1]);
   });
 
@@ -114,6 +115,48 @@ describe('sentence session state', () => {
 
     expect(stage?.goalTranslations.en.text).toBe('My friend goes to school.');
     expect(stage?.goalTranslations.en.segmentBlockIndexes).toEqual([0, 2, 1]);
+  });
+
+  it('keeps japanese source time blocks without topic particles', () => {
+    const badStages = jlptN5SentenceAssemblyExercises.flatMap((exercise) =>
+      exercise.stages.filter((stage) =>
+        stage.correctBlocks.some((block) =>
+          ['今日は', '明日は', '昨日は', '朝は', '夜は', '今は'].includes(block.text)
+        )
+      )
+    );
+
+    expect(badStages).toHaveLength(0);
+  });
+
+  it('keeps korean goal translations in natural object and place order', () => {
+    const badStages = [
+      ...cefrA1SentenceAssemblyExercises,
+      ...jlptN5SentenceAssemblyExercises
+    ].flatMap((exercise) =>
+      exercise.stages.filter((stage) =>
+        /\.학교에|\.역에|\.집에|\.가게에|\.물을|\.차를|\.밥을|\.빵을|\.이름을/.test(
+          stage.goalTranslations.ko.text
+        )
+      )
+    );
+
+    expect(badStages).toHaveLength(0);
+  });
+
+  it('keeps chinese target sentences in natural verb order', () => {
+    const badStages = [
+      ...cefrA1SentenceAssemblyExercises,
+      ...jlptN5SentenceAssemblyExercises
+    ].flatMap((exercise) =>
+      exercise.stages.filter((stage) =>
+        /去学校去。|去车站去。|去商店去。|回家去。|我水喝。|我茶喝。|我米饭吃。|我面包吃。|我书读。|我名字写。/.test(
+          stage.goalTranslations.zh.text
+        )
+      )
+    );
+
+    expect(badStages).toHaveLength(0);
   });
 
   it('builds the sentence one correct block at a time', () => {

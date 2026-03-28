@@ -75,11 +75,11 @@
         "学生は": "student"
       },
       "time": {
-        "今日は": "today",
-        "明日は": "tomorrow",
-        "昨日は": "yesterday",
-        "朝は": "in_the_morning",
-        "夜は": "at_night",
+        "今日": "today",
+        "明日": "tomorrow",
+        "昨日": "yesterday",
+        "朝": "in_the_morning",
+        "夜": "at_night",
         "毎日": "every_day"
       },
       "place": {
@@ -137,10 +137,10 @@
     },
     "zh": {
       "two": ["subject", "predicate"],
-      "three_place": ["subject", "place", "predicate"],
-      "three_object": ["subject", "object", "predicate"],
-      "four_place": ["time", "subject", "place", "predicate"],
-      "four_object": ["time", "subject", "object", "predicate"]
+      "three_place": ["subject", "predicate", "place"],
+      "three_object": ["subject", "predicate", "object"],
+      "four_place": ["time", "subject", "predicate", "place"],
+      "four_object": ["time", "subject", "predicate", "object"]
     },
     "de": {
       "two": ["subject", "predicate"],
@@ -257,12 +257,12 @@
         "student": "学生は"
       },
       "time": {
-        "today": "今日は",
-        "tomorrow": "明日は",
-        "yesterday": "昨日は",
-        "every_day": "毎日",
-        "in_the_morning": "朝は",
-        "at_night": "夜は"
+        "today": "今日、",
+        "tomorrow": "明日、",
+        "yesterday": "昨日、",
+        "every_day": "毎日、",
+        "in_the_morning": "朝、",
+        "at_night": "夜、"
       },
       "place": {
         "school": "学校に",
@@ -313,10 +313,10 @@
         "at_night": "晚上"
       },
       "place": {
-        "school": "去学校",
-        "station": "去车站",
-        "home": "回家",
-        "store": "去商店"
+        "school": "学校",
+        "station": "车站",
+        "home": "家",
+        "store": "商店"
       },
       "object": {
         "water": "水",
@@ -327,20 +327,20 @@
         "my_name": "名字"
       },
       "predicate": {
-        "go": "去。",
-        "come": "来。",
-        "drink": "喝。",
-        "eat": "吃。",
-        "read": "读。",
-        "write": "写。",
-        "buy": "买。",
-        "want_to_go": "想去。",
-        "want_to_come": "想来。",
-        "want_to_drink": "想喝。",
-        "want_to_eat": "想吃。",
-        "want_to_read": "想读。",
-        "want_to_write": "想写。",
-        "want_to_buy": "想买。"
+        "go": "去",
+        "come": "来",
+        "drink": "喝",
+        "eat": "吃",
+        "read": "读",
+        "write": "写",
+        "buy": "买",
+        "want_to_go": "想去",
+        "want_to_come": "想来",
+        "want_to_drink": "想喝",
+        "want_to_eat": "想吃",
+        "want_to_read": "想读",
+        "want_to_write": "想写",
+        "want_to_buy": "想买"
       }
     },
     "de": {

@@ -17,10 +17,10 @@ const subjects = [
 ];
 
 const times = [
-  { id: 'today', block: '今日は', goal: '오늘은 ' },
-  { id: 'tomorrow', block: '明日は', goal: '내일은 ' },
-  { id: 'morning', block: '朝は', goal: '아침에는 ' },
-  { id: 'night', block: '夜は', goal: '밤에는 ' },
+  { id: 'today', block: '今日', goal: '오늘은 ' },
+  { id: 'tomorrow', block: '明日', goal: '내일은 ' },
+  { id: 'morning', block: '朝', goal: '아침에는 ' },
+  { id: 'night', block: '夜', goal: '밤에는 ' },
   { id: 'everyday', block: '毎日', goal: '매일 ' }
 ];
 
@@ -143,6 +143,36 @@ function isNaturalTravelCombination(time, place) {
   return true;
 }
 
+function normalizeJapaneseTimeBlock(text) {
+  const replacements = {
+    '今日は': '今日',
+    '明日は': '明日',
+    '昨日は': '昨日',
+    '朝は': '朝',
+    '夜は': '夜',
+    '今は': '今'
+  };
+
+  return replacements[text] ?? text;
+}
+
+function normalizeBaseExercise(exercise) {
+  return {
+    ...exercise,
+    stages: exercise.stages.map((stage) => ({
+      ...stage,
+      correctBlocks: stage.correctBlocks.map((block) => ({
+        ...block,
+        text: normalizeJapaneseTimeBlock(block.text)
+      })),
+      distractorBlocks: stage.distractorBlocks.map((block) => ({
+        ...block,
+        text: normalizeJapaneseTimeBlock(block.text)
+      }))
+    }))
+  };
+}
+
 function createTravelExercise(subject, time, place, order) {
   const stage2DistractorPlace = pickAlternativePlaceBlock(place.block, '店に');
   const stage3DistractorPlace = pickAlternativePlaceBlock(place.block, '駅に');
@@ -222,7 +252,7 @@ function createTravelExercise(subject, time, place, order) {
         distractorBlocks: [
           {
             id: `travel-${order}-s3-d1`,
-            text: '今は',
+            text: '今',
             advice: '여기서는 설정된 시간 표현이 먼저입니다.'
           },
           {
@@ -339,7 +369,7 @@ function createObjectExercise(subject, time, pattern, order) {
         distractorBlocks: [
           {
             id: `object-${order}-s3-d1`,
-            text: '今は',
+            text: '今',
             advice: '여기서는 설정된 시간 표현이 먼저입니다.'
           },
           {
@@ -383,7 +413,7 @@ function createObjectExercise(subject, time, pattern, order) {
 async function main() {
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   const currentSeed = JSON.parse(await fs.readFile(outputPath, 'utf8'));
-  const baseExercise = currentSeed[0];
+  const baseExercise = normalizeBaseExercise(currentSeed[0]);
   const exercises = [baseExercise];
 
   let order = 1;

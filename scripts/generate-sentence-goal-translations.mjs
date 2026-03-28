@@ -109,6 +109,24 @@ function renderTargetRole(targetLanguage, role, concept, subjectConcept) {
   return token;
 }
 
+function ensureTerminalPunctuation(targetLanguage, segments) {
+  if (segments.length === 0) {
+    return segments;
+  }
+
+  const punctuated = [...segments];
+  const lastIndex = punctuated.length - 1;
+  const lastSegment = punctuated[lastIndex];
+
+  if (/[.!?。！？]$/.test(lastSegment)) {
+    return punctuated;
+  }
+
+  const suffix = targetLanguage === 'ja' || targetLanguage === 'zh' ? '。' : '.';
+  punctuated[lastIndex] = `${lastSegment}${suffix}`;
+  return punctuated;
+}
+
 function buildStructuredGoalTranslations(sourceLanguage, blocks) {
   const parts = detectStructuredParts(sourceLanguage, blocks);
 
@@ -142,13 +160,15 @@ function buildStructuredGoalTranslations(sourceLanguage, blocks) {
       return null;
     }
 
-    const segments = orderedParts.map((part) =>
+    const rawSegments = orderedParts.map((part) =>
       renderTargetRole(targetLanguage, part.role, part.concept, subjectConcept)
     );
 
-    if (segments.some((segment) => !segment)) {
+    if (rawSegments.some((segment) => !segment)) {
       return null;
     }
+
+    const segments = ensureTerminalPunctuation(targetLanguage, rawSegments);
 
     translations[targetLanguage] = {
       text: segments.join(''),
