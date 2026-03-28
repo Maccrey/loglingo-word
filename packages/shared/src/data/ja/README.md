@@ -31,6 +31,9 @@ Target output for every Japanese level:
 - Use Japanese script intentionally:
   - `reading` for kana reading support
   - `writing.script` as `kana`, `kanji`, or `mixed`
+- `reading` must use standard kana for the exact authored surface form.
+- Do not use romaji as the primary `reading` field for Japanese learning data.
+- If the term is already written only in kana, `reading` may match the term exactly.
 - `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in Japanese if the exercise is for Japanese learning.
 - Use level vocabulary from `jlpt-n5.json` as the base for sentence blocks.
 - Particles, auxiliaries, politeness endings, and conjugated forms may be added when needed, but core content words should stay inside the same JLPT level.
@@ -46,6 +49,7 @@ Target output for every Japanese level:
 ### Curriculum Notes
 
 - Include `reading` whenever kanji is present.
+- When sentence blocks include kanji, keep the block wording and any linked curriculum word `reading` aligned to the same kana form.
 - Include `writing` metadata for kana and kanji writing drills.
 - Distractors should reflect common JLPT learner mistakes, not random unrelated words.
 

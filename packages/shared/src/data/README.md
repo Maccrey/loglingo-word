@@ -85,6 +85,13 @@ Required rules:
 - `level` is the internal sequence number used by the app.
 - `quiz.distractors` must not duplicate the correct answer.
 - `writing` should be included when the level supports writing mode.
+- For languages that need pronunciation support in the UI, author `reading` with a recognized standard romanization or phonetic notation.
+- Required pronunciation standards by learning language:
+  - `ja`: standard kana reading for the authored surface form. Do not invent ad hoc romaji as the primary `reading` value.
+  - `zh`: standard Hanyu Pinyin with tone marks where possible.
+  - `ko`: standard Revised Romanization of Korean.
+  - `en`: IPA pronunciation is recommended for curriculum words.
+  - `de`: `reading` is optional and should only be added when there is a strong product reason.
 - Curriculum words should be the source vocabulary for sentence assembly.
 - Do not design sentence datasets first and backfill the vocabulary later.
 
@@ -172,6 +179,7 @@ Required rules:
   - This is invalid.
   - Correct English target sentence: `My friend goes home.` or in this app's simplified pattern `My friend go home.` must be avoided in authored data.
 - `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in the learning language used by the exercise.
+- If the learning language requires pronunciation support in the product, keep sentence blocks and curriculum words aligned so the runtime can display the same standardized `reading` consistently.
 - Each level should use that same level's curriculum vocabulary as the base.
 - Inflection, particles, auxiliaries, and fixed grammar blocks may be added when needed, but do not import core content words from a different level or different language.
 - Distractor texts must be unique within the current turn.
@@ -200,6 +208,22 @@ To avoid setting mismatches:
 - Use the shared role profile and target sentence pattern data, or author the translated sentence manually.
 - UI highlighting in the target sentence must follow `segmentBlockIndexes`, not the visible word order.
 - Advice shown in the UI should be rendered in the current app language, but the source dataset should still author the canonical advice in the learning language.
+
+## Pronunciation Rules
+
+Use one pronunciation convention per learning language and stay consistent across all levels.
+
+- `ja`: `reading` must be standard kana that matches the displayed term or block. If the term is already kana-only, `reading` may match the term exactly.
+- `zh`: `reading` must be standard Hanyu Pinyin. Prefer tone marks such as `nǐ hǎo` over tone numbers such as `ni3 hao3` unless an input-method constraint makes tone numbers necessary across the whole dataset.
+- `ko`: `reading` must be standard Revised Romanization such as `annyeonghaseyo`. Do not mix Revised Romanization with McCune-Reischauer or ad hoc spellings.
+- `en`: `reading` should use IPA such as `/tiːtʃər/`. Do not mix IPA with ad hoc respellings such as `tee-cher`.
+- `de`: do not add broad phonetic spellings by default. If pronunciation support is needed later, define one standard first and document it in the language README before generating data.
+
+When generating new datasets:
+
+- Do not mix multiple pronunciation standards in one file or one language folder.
+- Do not leave `reading` partially populated for one level if the UI expects pronunciation support for that language.
+- If a source word or sentence block changes, update its `reading` in the same change.
 
 ## Integration Checklist
 

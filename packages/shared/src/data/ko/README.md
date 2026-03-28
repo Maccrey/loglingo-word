@@ -30,6 +30,8 @@ Target output for every Korean level:
 - Source authoring must stay in Korean. Do not author English, Japanese, Chinese, or German sentence variants as the source data.
 - `goal`, `goalSegments`, and `correctBlocks` must follow natural Korean word order.
 - `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in Korean.
+- If `reading` is included, it must use standard Revised Romanization of Korean.
+- Do not mix Revised Romanization with McCune-Reischauer, Yale, or ad hoc spellings in the same dataset.
 - Use level vocabulary from the matching TOPIK curriculum file as the base for sentence blocks.
 - 조사, 어미, 보조 표현, 높임 표현은 필요 시 추가할 수 있지만 핵심 내용어는 같은 TOPIK 레벨 안에서 유지하세요.
 - App-language translations and highlight structures are generated artifacts, not the authoring target.
@@ -38,6 +40,7 @@ Target output for every Korean level:
 ### Curriculum Notes
 
 - Add `partOfSpeech` when it helps level progression.
+- Add `reading` when the product needs pronunciation support, and keep it in standard Revised Romanization.
 - Include `writing` metadata when spelling or 받아쓰기 should be trained.
 - Quiz distractors should be close enough to teach distinctions in 조사, 높임, 활용, or 의미.
 

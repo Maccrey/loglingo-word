@@ -36,7 +36,7 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
-    expect(screen.getByText('읽기: こんにちは')).toBeTruthy();
+    expect(screen.getByText('발음: こんにちは')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: '안녕하세요' }));
 
     expect(screen.getByRole('alert').textContent).toContain('정답입니다.');
@@ -123,5 +123,24 @@ describe('quiz ui', () => {
 
     expect(screen.getByLabelText('주관식 정답')).toBeTruthy();
     expect(screen.getByRole('button', { name: '주관식 제출' })).toBeTruthy();
+  });
+
+  it('shows ipa reading for english learning words', async () => {
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'en',
+        learningLevel: 'cefr_a1',
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-28T00:00:00.000Z'
+      })
+    );
+
+    render(<QuizClient />);
+
+    expect(screen.getByText('발음: /aɪ/')).toBeTruthy();
   });
 });

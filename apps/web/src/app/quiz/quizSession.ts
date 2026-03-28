@@ -96,11 +96,13 @@ function buildQuizForQuestion(
   learningLanguage: SupportedLearningLanguage,
   learningLevel: SupportedLearningLevel,
   baseQuestionWordIds: string[],
-  index: number
+  index: number,
+  randomizeOptions = true
 ): MultipleChoiceQuiz {
   return buildMultipleChoiceQuiz({
     wordId: baseQuestionWordIds[index] ?? baseQuestionWordIds[0] ?? 'hello',
-    curriculum: getCurriculumByStandardLevel(learningLanguage, learningLevel)
+    curriculum: getCurriculumByStandardLevel(learningLanguage, learningLevel),
+    randomizeOptions
   });
 }
 
@@ -230,7 +232,8 @@ export function createDemoQuizSession(input?: {
       learningLanguage,
       learningLevel,
       baseQuestionWordIds,
-      0
+      0,
+      input?.randomizeQuestions ?? true
     ),
     shortAnswer: '',
     loading: false,
@@ -438,6 +441,7 @@ export function advanceQuizQuestion(
   input?: {
     learningLanguage?: SupportedLearningLanguage;
     learningLevel?: SupportedLearningLevel;
+    randomizeQuestions?: boolean;
   }
 ): QuizSessionState {
   if (state.completed || state.reviewRound) {
@@ -450,8 +454,8 @@ export function advanceQuizQuestion(
   const nextIndex = state.currentQuestionIndex + 1;
 
   if (nextIndex >= state.baseQuestionWordIds.length) {
-    return {
-      ...state,
+  return {
+    ...state,
       completed: true,
       feedback: {
         status: 'success',
@@ -490,7 +494,8 @@ export function advanceQuizQuestion(
       learningLanguage,
       learningLevel,
       state.baseQuestionWordIds,
-      nextIndex
+      nextIndex,
+      input?.randomizeQuestions ?? true
     ),
     shortAnswer: '',
     loading: false,

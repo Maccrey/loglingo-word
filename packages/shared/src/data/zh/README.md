@@ -30,6 +30,8 @@ Target output for every Chinese level:
 - Source authoring must stay in Chinese. Do not author English, Korean, Japanese, or German sentence variants as the source data.
 - `goal`, `goalSegments`, and `correctBlocks` must follow natural Chinese word order.
 - `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in Chinese.
+- If `reading` is included, it must use standard Hanyu Pinyin.
+- Prefer tone marks such as `xuéxiào` over tone numbers unless the whole dataset intentionally uses one fallback format.
 - Use level vocabulary from the matching HSK curriculum file as the base for sentence blocks.
 - Aspect markers, measure words, and function words may be added when needed, but core content words should stay inside the same HSK level.
 - App-language translations and highlight structures are generated artifacts, not the authoring target.
@@ -37,7 +39,8 @@ Target output for every Chinese level:
 
 ### Curriculum Notes
 
-- If pinyin support is added later, keep source words stable so pronunciation data can be attached cleanly.
+- Include `reading` in standard Hanyu Pinyin when the product shows pronunciation.
+- Keep pinyin spacing and tone-mark style consistent across the entire level file.
 - Distractors should teach common beginner confusions such as measure words, aspect markers, or similar verbs.
 - Writing metadata should be designed so simplified Chinese input is unambiguous.
 

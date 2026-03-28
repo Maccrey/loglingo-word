@@ -77,7 +77,7 @@ type QuizClientProps = {
 type QuizMode = 'multiple' | 'short';
 
 function readingLabel(locale: AppLocale): string {
-  return locale === 'en' ? 'Reading' : '읽기';
+  return locale === 'en' ? 'Pronunciation' : '발음';
 }
 
 export default function QuizClient(props: QuizClientProps) {

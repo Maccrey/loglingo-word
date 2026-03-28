@@ -22,6 +22,7 @@ export type BuildMultipleChoiceQuizInput = {
   wordId: string;
   curriculum?: CurriculumUnit[];
   optionCount?: number;
+  randomizeOptions?: boolean;
 };
 
 export type ShortAnswerGrade = {
@@ -47,6 +48,28 @@ function buildFallbackOption(
     text: `${word.meaning} (${index + 1})`,
     isCorrect: false
   };
+}
+
+function resolveDistractorText(
+  text: string,
+  words: CurriculumWord[],
+  targetWord: CurriculumWord
+): string | null {
+  const normalized = text.trim().toLowerCase();
+  const matchedWord = words.find(
+    (word) =>
+      word.id.toLowerCase() === normalized || word.term.trim().toLowerCase() === normalized
+  );
+
+  if (matchedWord) {
+    if (matchedWord.id === targetWord.id) {
+      return null;
+    }
+
+    return matchedWord.meaning;
+  }
+
+  return text;
 }
 
 function shuffleOptions<T>(items: T[]): T[] {
@@ -131,6 +154,7 @@ export function buildMultipleChoiceQuiz(
 ): MultipleChoiceQuiz {
   const curriculum = input.curriculum ?? curriculumSeed;
   const optionCount = input.optionCount ?? DEFAULT_OPTION_COUNT;
+  const randomizeOptions = input.randomizeOptions ?? true;
   const words = getCurriculumWords(curriculum);
   const targetWord = words.find((word) => word.id === input.wordId);
 
@@ -158,6 +182,8 @@ export function buildMultipleChoiceQuiz(
       isCorrect: false
     }));
   const jsonDistractors = (targetWord.quiz?.distractors ?? [])
+    .map((text) => resolveDistractorText(text, words, targetWord))
+    .filter((text): text is string => Boolean(text))
     .filter(
       (text, index, items) =>
         text.toLowerCase() !== targetWord.meaning.toLowerCase() &&
@@ -180,7 +206,7 @@ export function buildMultipleChoiceQuiz(
     buildFallbackOption(targetWord, index)
   );
 
-  const options = shuffleOptions([
+  const optionPool = [
     {
       id: targetWord.id,
       text: targetWord.meaning,
@@ -188,7 +214,8 @@ export function buildMultipleChoiceQuiz(
     },
     ...chosenDistractors,
     ...fallbackOptions
-  ]);
+  ];
+  const options = randomizeOptions ? shuffleOptions(optionPool) : optionPool;
 
   return {
     word: targetWord,

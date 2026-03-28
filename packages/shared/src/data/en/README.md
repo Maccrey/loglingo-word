@@ -33,6 +33,9 @@ Target output for every English level:
 - Do not force time to the front when the sentence is more natural with time later.
 - Prefer forms such as `We drink tea every day.` over `every day We drink tea.` when that is the intended learning target.
 - `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in English.
+- `reading` must be included for curriculum words in English learning data.
+- `reading` must use IPA such as `/aɪ/`, `/friːnd/`, `/tiː/`.
+- Do not mix IPA with dictionary-style respellings such as `frend` or `tee`.
 - Use level vocabulary from `cefr-a1.json` as the base for sentence blocks.
 - Grammar helpers such as `to school`, `every day`, or `want to go` may be added when needed, but core content words should stay inside the same CEFR level.
 - App-language translations and highlight structures are generated artifacts, not the authoring target.
@@ -47,6 +50,7 @@ Target output for every English level:
 ### Curriculum Notes
 
 - Include `quiz.distractors` for multiple-choice quiz support.
+- Include `reading` in IPA for every curriculum word that appears in the level.
 - Include `writing` when writing mode should be available.
 - `meaning` may be Korean today, but if multilingual gloss support is added later, keep authoring source material clean and consistent.
 

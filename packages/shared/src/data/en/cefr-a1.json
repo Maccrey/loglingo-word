@@ -7,12 +7,12 @@
     "order": 1,
     "title": "Basic People",
     "words": [
-      { "id": "i", "term": "I", "meaning": "나", "example": "I am a student.", "partOfSpeech": "pronoun", "quiz": { "distractors": ["you", "we", "teacher"] } },
-      { "id": "you", "term": "you", "meaning": "너, 당신", "example": "You are my friend.", "partOfSpeech": "pronoun", "quiz": { "distractors": ["I", "we", "student"] } },
-      { "id": "we", "term": "we", "meaning": "우리", "example": "We study every day.", "partOfSpeech": "pronoun", "quiz": { "distractors": ["I", "you", "teacher"] } },
-      { "id": "friend", "term": "friend", "meaning": "친구", "example": "My friend is kind.", "partOfSpeech": "noun", "quiz": { "distractors": ["teacher", "school", "water"] } },
-      { "id": "teacher", "term": "teacher", "meaning": "선생님", "example": "The teacher is in the classroom.", "partOfSpeech": "noun", "quiz": { "distractors": ["friend", "student", "book"] } },
-      { "id": "student", "term": "student", "meaning": "학생", "example": "The student reads a book.", "partOfSpeech": "noun", "quiz": { "distractors": ["teacher", "friend", "bread"] } }
+      { "id": "i", "term": "I", "meaning": "나", "example": "I am a student.", "reading": "/aɪ/", "partOfSpeech": "pronoun", "quiz": { "distractors": ["you", "we", "teacher"] } },
+      { "id": "you", "term": "you", "meaning": "너, 당신", "example": "You are my friend.", "reading": "/juː/", "partOfSpeech": "pronoun", "quiz": { "distractors": ["I", "we", "student"] } },
+      { "id": "we", "term": "we", "meaning": "우리", "example": "We study every day.", "reading": "/wiː/", "partOfSpeech": "pronoun", "quiz": { "distractors": ["I", "you", "teacher"] } },
+      { "id": "friend", "term": "friend", "meaning": "친구", "example": "My friend is kind.", "reading": "/frend/", "partOfSpeech": "noun", "quiz": { "distractors": ["teacher", "school", "water"] } },
+      { "id": "teacher", "term": "teacher", "meaning": "선생님", "example": "The teacher is in the classroom.", "reading": "/ˈtiːtʃər/", "partOfSpeech": "noun", "quiz": { "distractors": ["friend", "student", "book"] } },
+      { "id": "student", "term": "student", "meaning": "학생", "example": "The student reads a book.", "reading": "/ˈstuːdənt/", "partOfSpeech": "noun", "quiz": { "distractors": ["teacher", "friend", "bread"] } }
     ]
   },
   {
@@ -23,12 +23,12 @@
     "order": 2,
     "title": "Basic Time",
     "words": [
-      { "id": "today", "term": "today", "meaning": "오늘", "example": "Today I go to school.", "partOfSpeech": "adverb", "quiz": { "distractors": ["tomorrow", "every day", "morning"] } },
-      { "id": "tomorrow", "term": "tomorrow", "meaning": "내일", "example": "Tomorrow we meet at the station.", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "night", "every day"] } },
-      { "id": "yesterday", "term": "yesterday", "meaning": "어제", "example": "Yesterday I stayed home.", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "tomorrow", "morning"] } },
-      { "id": "morning", "term": "morning", "meaning": "아침", "example": "In the morning I drink tea.", "partOfSpeech": "noun", "quiz": { "distractors": ["night", "today", "bread"] } },
-      { "id": "night", "term": "night", "meaning": "밤", "example": "At night I read a book.", "partOfSpeech": "noun", "quiz": { "distractors": ["morning", "tomorrow", "water"] } },
-      { "id": "every day", "term": "every day", "meaning": "매일", "example": "We study English every day.", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "tomorrow", "night"] } }
+      { "id": "today", "term": "today", "meaning": "오늘", "example": "Today I go to school.", "reading": "/təˈdeɪ/", "partOfSpeech": "adverb", "quiz": { "distractors": ["tomorrow", "every day", "morning"] } },
+      { "id": "tomorrow", "term": "tomorrow", "meaning": "내일", "example": "Tomorrow we meet at the station.", "reading": "/təˈmɑːroʊ/", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "night", "every day"] } },
+      { "id": "yesterday", "term": "yesterday", "meaning": "어제", "example": "Yesterday I stayed home.", "reading": "/ˈjestərdeɪ/", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "tomorrow", "morning"] } },
+      { "id": "morning", "term": "morning", "meaning": "아침", "example": "In the morning I drink tea.", "reading": "/ˈmɔːrnɪŋ/", "partOfSpeech": "noun", "quiz": { "distractors": ["night", "today", "bread"] } },
+      { "id": "night", "term": "night", "meaning": "밤", "example": "At night I read a book.", "reading": "/naɪt/", "partOfSpeech": "noun", "quiz": { "distractors": ["morning", "tomorrow", "water"] } },
+      { "id": "every day", "term": "every day", "meaning": "매일", "example": "We study English every day.", "reading": "/ˈevri deɪ/", "partOfSpeech": "adverb", "quiz": { "distractors": ["today", "tomorrow", "night"] } }
     ]
   },
   {
@@ -39,10 +39,10 @@
     "order": 3,
     "title": "Basic Places",
     "words": [
-      { "id": "school", "term": "school", "meaning": "학교", "example": "I go to school by bus.", "partOfSpeech": "noun", "quiz": { "distractors": ["station", "home", "water"] } },
-      { "id": "station", "term": "station", "meaning": "역", "example": "We meet at the station.", "partOfSpeech": "noun", "quiz": { "distractors": ["school", "store", "book"] } },
-      { "id": "home", "term": "home", "meaning": "집", "example": "She stays home today.", "partOfSpeech": "noun", "quiz": { "distractors": ["school", "station", "bread"] } },
-      { "id": "store", "term": "store", "meaning": "가게", "example": "I go to the store with my friend.", "partOfSpeech": "noun", "quiz": { "distractors": ["home", "school", "tea"] } }
+      { "id": "school", "term": "school", "meaning": "학교", "example": "I go to school by bus.", "reading": "/skuːl/", "partOfSpeech": "noun", "quiz": { "distractors": ["station", "home", "water"] } },
+      { "id": "station", "term": "station", "meaning": "역", "example": "We meet at the station.", "reading": "/ˈsteɪʃən/", "partOfSpeech": "noun", "quiz": { "distractors": ["school", "store", "book"] } },
+      { "id": "home", "term": "home", "meaning": "집", "example": "She stays home today.", "reading": "/hoʊm/", "partOfSpeech": "noun", "quiz": { "distractors": ["school", "station", "bread"] } },
+      { "id": "store", "term": "store", "meaning": "가게", "example": "I go to the store with my friend.", "reading": "/stɔːr/", "partOfSpeech": "noun", "quiz": { "distractors": ["home", "school", "tea"] } }
     ]
   },
   {
@@ -53,16 +53,16 @@
     "order": 4,
     "title": "Basic Actions",
     "words": [
-      { "id": "go", "term": "go", "meaning": "가다", "example": "I go to school every day.", "partOfSpeech": "verb", "quiz": { "distractors": ["come", "eat", "drink"] } },
-      { "id": "drink", "term": "drink", "meaning": "마시다", "example": "I drink water in the morning.", "partOfSpeech": "verb", "quiz": { "distractors": ["eat", "read", "write"] } },
-      { "id": "eat", "term": "eat", "meaning": "먹다", "example": "We eat bread at home.", "partOfSpeech": "verb", "quiz": { "distractors": ["drink", "buy", "read"] } },
-      { "id": "read", "term": "read", "meaning": "읽다", "example": "The student reads a book.", "partOfSpeech": "verb", "quiz": { "distractors": ["write", "drink", "go"] } },
-      { "id": "write", "term": "write", "meaning": "쓰다", "example": "I write my name here.", "partOfSpeech": "verb", "quiz": { "distractors": ["read", "eat", "go"] } },
-      { "id": "buy", "term": "buy", "meaning": "사다", "example": "I buy bread at the store.", "partOfSpeech": "verb", "quiz": { "distractors": ["eat", "drink", "read"] } },
-      { "id": "water", "term": "water", "meaning": "물", "example": "Water is on the table.", "partOfSpeech": "noun", "quiz": { "distractors": ["tea", "bread", "book"] } },
-      { "id": "tea", "term": "tea", "meaning": "차", "example": "She drinks tea at night.", "partOfSpeech": "noun", "quiz": { "distractors": ["water", "book", "school"] } },
-      { "id": "bread", "term": "bread", "meaning": "빵", "example": "I eat bread in the morning.", "partOfSpeech": "noun", "quiz": { "distractors": ["water", "tea", "station"] } },
-      { "id": "book", "term": "book", "meaning": "책", "example": "The book is on the desk.", "partOfSpeech": "noun", "quiz": { "distractors": ["bread", "water", "home"] } }
+      { "id": "go", "term": "go", "meaning": "가다", "example": "I go to school every day.", "reading": "/ɡoʊ/", "partOfSpeech": "verb", "quiz": { "distractors": ["come", "eat", "drink"] } },
+      { "id": "drink", "term": "drink", "meaning": "마시다", "example": "I drink water in the morning.", "reading": "/drɪŋk/", "partOfSpeech": "verb", "quiz": { "distractors": ["eat", "read", "write"] } },
+      { "id": "eat", "term": "eat", "meaning": "먹다", "example": "We eat bread at home.", "reading": "/iːt/", "partOfSpeech": "verb", "quiz": { "distractors": ["drink", "buy", "read"] } },
+      { "id": "read", "term": "read", "meaning": "읽다", "example": "The student reads a book.", "reading": "/riːd/", "partOfSpeech": "verb", "quiz": { "distractors": ["write", "drink", "go"] } },
+      { "id": "write", "term": "write", "meaning": "쓰다", "example": "I write my name here.", "reading": "/raɪt/", "partOfSpeech": "verb", "quiz": { "distractors": ["read", "eat", "go"] } },
+      { "id": "buy", "term": "buy", "meaning": "사다", "example": "I buy bread at the store.", "reading": "/baɪ/", "partOfSpeech": "verb", "quiz": { "distractors": ["eat", "drink", "read"] } },
+      { "id": "water", "term": "water", "meaning": "물", "example": "Water is on the table.", "reading": "/ˈwɔːtər/", "partOfSpeech": "noun", "quiz": { "distractors": ["tea", "bread", "book"] } },
+      { "id": "tea", "term": "tea", "meaning": "차", "example": "She drinks tea at night.", "reading": "/tiː/", "partOfSpeech": "noun", "quiz": { "distractors": ["water", "book", "school"] } },
+      { "id": "bread", "term": "bread", "meaning": "빵", "example": "I eat bread in the morning.", "reading": "/bred/", "partOfSpeech": "noun", "quiz": { "distractors": ["water", "tea", "station"] } },
+      { "id": "book", "term": "book", "meaning": "책", "example": "The book is on the desk.", "reading": "/bʊk/", "partOfSpeech": "noun", "quiz": { "distractors": ["bread", "water", "home"] } }
     ]
   }
 ]

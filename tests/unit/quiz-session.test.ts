@@ -55,6 +55,19 @@ describe('quiz session state', () => {
     ).toEqual(['고마워요', '실례합니다', '안녕하세요', '안녕히 가세요'].sort());
   });
 
+  it('resolves english json distractors to meanings so option language stays consistent', () => {
+    const initial = createDemoQuizSession({
+      learningLanguage: 'en',
+      learningLevel: 'cefr_a1',
+      randomizeQuestions: false
+    });
+
+    expect(initial.multipleChoiceQuiz.word.term).toBe('I');
+    expect(
+      initial.multipleChoiceQuiz.options.map((option) => option.text)
+    ).toEqual(['나', '너, 당신', '우리', '선생님']);
+  });
+
   it('moves to the next question after a correct answer is acknowledged', () => {
     const initial = createDemoQuizSession({
       learningLanguage: 'ja',
