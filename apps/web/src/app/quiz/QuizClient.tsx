@@ -284,17 +284,6 @@ export default function QuizClient(props: QuizClientProps) {
                           <span>
                             {index + 1}. {pair?.leftText}
                           </span>
-                          {pair?.leftReading ? (
-                            <span
-                              style={{
-                                fontSize: 13,
-                                color: 'var(--text-faded)',
-                                fontWeight: 500
-                              }}
-                            >
-                              {readingLabel(locale)}: {pair.leftReading}
-                            </span>
-                          ) : null}
                         </span>
                       </button>
                     );
