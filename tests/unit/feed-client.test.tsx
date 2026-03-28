@@ -152,4 +152,31 @@ describe('feed ui', () => {
       '현재 피드 카드 공유 화면을 열었습니다.'
     );
   });
+
+  it('adds a comment to a feed card', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FeedClient
+        initialPosts={[
+          createAutoLearningResultPost({
+            id: 'post-comment',
+            userId: 'user-3',
+            earnedPoints: 16,
+            streak: 5,
+            createdAt: '2026-03-26T00:00:00.000Z'
+          })
+        ]}
+      />
+    );
+
+    await user.type(
+      screen.getByRole('textbox', { name: '댓글 입력 post-comment' }),
+      '정말 대단해요.'
+    );
+    await user.click(screen.getByRole('button', { name: '댓글 달기' }));
+
+    expect(screen.getByText('정말 대단해요.')).toBeTruthy();
+    expect(screen.getByText('댓글 1')).toBeTruthy();
+  });
 });

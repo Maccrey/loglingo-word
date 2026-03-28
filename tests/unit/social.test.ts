@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildLearningResultPostBody,
+  createCatGrowthPost,
   createAutoLearningResultPost,
-  createLearningResultPost
+  createFeedComment,
+  createLearningResultPost,
+  createStudyComebackPost,
+  createStudyMilestonePost
 } from '../../services/core/src/social';
 
 describe('learning result post model', () => {
@@ -47,5 +51,50 @@ describe('learning result post model', () => {
     expect(post.body).toBe('오늘도 학습을 이어가며 한 걸음 더 나아갔어요.');
     expect(post.earnedPoints).toBe(0);
     expect(post.streak).toBe(0);
+  });
+
+  it('creates milestone, comeback, and cat growth event posts', () => {
+    const milestone = createStudyMilestonePost({
+      id: 'milestone-1',
+      userId: 'user-1',
+      createdAt: '2026-03-26T00:00:00.000Z',
+      completedCount: 12,
+      earnedPoints: 120,
+      streak: 6
+    });
+    const comeback = createStudyComebackPost({
+      id: 'comeback-1',
+      userId: 'user-1',
+      createdAt: '2026-03-26T00:00:00.000Z',
+      daysAway: 5,
+      streak: 1
+    });
+    const growth = createCatGrowthPost({
+      id: 'cat-growth-1',
+      userId: 'user-1',
+      catName: '로그링고',
+      stage: 'adult',
+      activeDays: 92,
+      createdAt: '2026-03-26T00:00:00.000Z'
+    });
+
+    expect(milestone.type).toBe('study_milestone');
+    expect(comeback.type).toBe('study_comeback');
+    expect(growth.type).toBe('cat_growth');
+    expect(growth.body).toContain('성묘');
+  });
+
+  it('creates validated feed comments', () => {
+    const comment = createFeedComment({
+      id: 'comment-1',
+      postId: 'post-1',
+      userId: 'user-1',
+      userDisplayName: '학습자',
+      body: '좋아요. 계속 해봐요.',
+      createdAt: '2026-03-26T00:00:00.000Z'
+    });
+
+    expect(comment.postId).toBe('post-1');
+    expect(comment.userDisplayName).toBe('학습자');
   });
 });

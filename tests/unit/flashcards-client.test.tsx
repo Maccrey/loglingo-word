@@ -143,7 +143,9 @@ describe('flashcards ui', () => {
         .getByRole('link', { name: '홈 요약 반영 보기' })
         .getAttribute('href')
     ).toBe('/?source=recommendation&points=10&leaderboard=0');
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      fetchMock.mock.calls.some((call) => call[0] === '/api/leaderboard/sync')
+    ).toBe(false);
   });
 
   it('syncs leaderboard score when a focused recommendation session awards leaderboard points', async () => {

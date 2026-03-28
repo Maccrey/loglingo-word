@@ -65,14 +65,31 @@ export const userSettingsSchema = z.object({
 export const learningResultPostSchema = z.object({
   id: z.string().min(1),
   userId: z.string().min(1),
-  type: z.literal('learning_result'),
+  type: z.enum([
+    'learning_result',
+    'study_milestone',
+    'study_comeback',
+    'cat_growth'
+  ]),
+  userDisplayName: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
   body: z.string().min(1),
   earnedPoints: z.number().int().min(0),
   streak: z.number().int().min(0),
   achievedSentence: z.string().min(1).optional(),
+  eventKey: z.string().min(1).optional(),
   likeCount: z.number().int().min(0),
   shareCount: z.number().int().min(0),
   likedByUser: z.boolean(),
+  createdAt: z.string().datetime()
+});
+
+export const feedCommentSchema = z.object({
+  id: z.string().min(1),
+  postId: z.string().min(1),
+  userId: z.string().min(1),
+  userDisplayName: z.string().min(1),
+  body: z.string().min(1),
   createdAt: z.string().datetime()
 });
 
@@ -100,5 +117,6 @@ export type AIRecommendation = z.infer<typeof aiRecommendationSchema>;
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
 export type UserSettings = z.infer<typeof userSettingsSchema>;
 export type LearningResultPost = z.infer<typeof learningResultPostSchema>;
+export type FeedComment = z.infer<typeof feedCommentSchema>;
 export type UserDashboardStats = z.infer<typeof userDashboardStatsSchema>;
 export type UserHomeSummary = z.infer<typeof userHomeSummarySchema>;

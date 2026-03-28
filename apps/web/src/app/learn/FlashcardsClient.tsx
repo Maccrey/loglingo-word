@@ -22,10 +22,20 @@ import {
   saveStoredLearningProgress
 } from '../../lib/learningProgressStorage';
 import { useAppAuth } from '../../lib/useAppAuth';
+import { useCat } from '../../lib/useCat';
+import { publishFeedPost } from '../../lib/feedPublishing';
+import {
+  shouldCreateStudyComebackPost,
+  shouldCreateStudyMilestonePost
+} from '../../lib/feedEvents';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
 import { calculateLeaderboardScore } from '@wordflow/leaderboard';
+import {
+  createStudyComebackPost,
+  createStudyMilestonePost
+} from '@wordflow/core/social';
 
 import {
   createFlashcardSession,
@@ -123,6 +133,7 @@ type FlashcardsClientProps = {
 export default function FlashcardsClient(props: FlashcardsClientProps) {
   const locale = props.locale ?? 'ko';
   const auth = useAppAuth();
+  const { grantLearningReward } = useCat();
   const [storedSettings, setStoredSettings] = useState(() =>
     readStoredSettingsSnapshot()
   );
@@ -359,19 +370,78 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       return;
     }
 
-    if (!auth.isAuthenticated || completionTrackedRef.current) {
+    if (completionTrackedRef.current) {
       return;
     }
 
     completionTrackedRef.current = true;
-    void auth.recordLearningSession({
-      completedCount: Math.max(1, reviewedCount),
-      dailyGoalTarget: storedSettings.sessionQuestionCount
+
+    const learnedAt = new Date().toISOString();
+    const completedCount = Math.max(1, reviewedCount);
+    const earnedPoints = grantLearningReward({
+      wordsMemorized: completedCount
     });
+
+    if (auth.isAuthenticated) {
+      void (async () => {
+        const result = await auth.recordLearningSession({
+          completedCount,
+          learnedAt,
+          dailyGoalTarget: storedSettings.sessionQuestionCount
+        });
+
+        if (!result) {
+          return;
+        }
+
+        const comebackDays = shouldCreateStudyComebackPost({
+          previousSummary: result.previousSummary,
+          learnedAt
+        });
+
+        if (comebackDays) {
+          const eventKey = `study-comeback:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyComebackPost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              daysAway: comebackDays,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+
+        if (
+          shouldCreateStudyMilestonePost({
+            previousSummary: result.previousSummary,
+            nextSummary: result.summary
+          })
+        ) {
+          const eventKey = `study-milestone:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyMilestonePost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              completedCount: result.summary.todayCompleted,
+              earnedPoints,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+      })();
+    }
   }, [
     auth,
-    auth.isAuthenticated,
     completed,
+    grantLearningReward,
     reviewedCount,
     storedSettings.sessionQuestionCount
   ]);

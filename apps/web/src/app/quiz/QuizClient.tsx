@@ -9,6 +9,12 @@ import {
   USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
 import { useAppAuth } from '../../lib/useAppAuth';
+import { useCat } from '../../lib/useCat';
+import { publishFeedPost } from '../../lib/feedPublishing';
+import {
+  shouldCreateStudyComebackPost,
+  shouldCreateStudyMilestonePost
+} from '../../lib/feedEvents';
 
 import {
   advanceQuizQuestion,
@@ -21,6 +27,10 @@ import {
   submitShortAnswer,
   updateShortAnswerInput
 } from './quizSession';
+import {
+  createStudyComebackPost,
+  createStudyMilestonePost
+} from '@wordflow/core/social';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -83,6 +93,7 @@ function readingLabel(locale: AppLocale): string {
 
 export default function QuizClient(props: QuizClientProps) {
   const auth = useAppAuth();
+  const { grantLearningReward } = useCat();
   const [storedSettings, setStoredSettings] = useState(() =>
     createFallbackSettings()
   );
@@ -185,18 +196,78 @@ export default function QuizClient(props: QuizClientProps) {
       return;
     }
 
-    if (!auth.isAuthenticated || completionTrackedRef.current) {
+    if (completionTrackedRef.current) {
       return;
     }
 
     completionTrackedRef.current = true;
-    void auth.recordLearningSession({
-      completedCount: session.baseQuestionWordIds.length,
-      dailyGoalTarget: storedSettings.sessionQuestionCount
+
+    const learnedAt = new Date().toISOString();
+    const completedCount = session.baseQuestionWordIds.length;
+    const earnedPoints = grantLearningReward({
+      reviewsCompleted: 1,
+      wordsMemorized: completedCount
     });
+
+    if (auth.isAuthenticated) {
+      void (async () => {
+        const result = await auth.recordLearningSession({
+          completedCount,
+          learnedAt,
+          dailyGoalTarget: storedSettings.sessionQuestionCount
+        });
+
+        if (!result) {
+          return;
+        }
+
+        const comebackDays = shouldCreateStudyComebackPost({
+          previousSummary: result.previousSummary,
+          learnedAt
+        });
+
+        if (comebackDays) {
+          const eventKey = `study-comeback:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyComebackPost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              daysAway: comebackDays,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+
+        if (
+          shouldCreateStudyMilestonePost({
+            previousSummary: result.previousSummary,
+            nextSummary: result.summary
+          })
+        ) {
+          const eventKey = `study-milestone:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyMilestonePost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              completedCount: result.summary.todayCompleted,
+              earnedPoints,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+      })();
+    }
   }, [
     auth,
-    auth.isAuthenticated,
+    grantLearningReward,
     session.baseQuestionWordIds.length,
     session.completed,
     storedSettings.sessionQuestionCount

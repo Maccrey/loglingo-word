@@ -68,18 +68,29 @@ vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
 }));
 
 vi.mock('../../apps/web/src/lib/firebase-client', () => ({
+  hasFirebaseWebConfig: vi.fn(() => true),
   loadFirebaseCatState: (...args: unknown[]) => loadFirebaseCatStateMock(...args),
   loadFirebasePointLedgerState: (...args: unknown[]) =>
     loadFirebasePointLedgerStateMock(...args)
 }));
 
 function UseCatHarness() {
-  const { cat, handleFeed } = useCat();
+  const { cat, points, handleFeed, grantLearningReward } = useCat();
 
   return (
     <div>
       <span>{cat?.name ?? '없음'}</span>
+      <span>{points}</span>
       <button onClick={() => handleFeed()}>feed</button>
+      <button
+        onClick={() =>
+          grantLearningReward({
+            wordsMemorized: 3
+          })
+        }
+      >
+        reward
+      </button>
     </div>
   );
 }
@@ -313,5 +324,56 @@ describe('useCat', () => {
       ],
       false
     );
+  });
+
+  it('grants learning reward points and syncs them for authenticated users', async () => {
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'reward' }));
+      await Promise.resolve();
+    });
+
+    expect(syncPendingPoints).toHaveBeenCalledWith(
+      'demo-user',
+      [
+        expect.objectContaining({
+          userId: 'demo-user',
+          amount: 30,
+          reason: 'learning_reward'
+        })
+      ]
+    );
+    expect(saveStoredCatLedgers).toHaveBeenCalled();
+    expect(screen.getByText('5030')).toBeTruthy();
+  });
+
+  it('stores learning reward points locally for guests without Firebase sync', async () => {
+    useAppAuthMock.mockReturnValue({
+      authReady: true,
+      isAuthenticated: false,
+      userId: 'demo-user'
+    });
+
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'reward' }));
+      await Promise.resolve();
+    });
+
+    expect(saveStoredCatLedgers).toHaveBeenCalled();
+    expect(syncPendingPoints).not.toHaveBeenCalled();
+    expect(screen.getByText('5030')).toBeTruthy();
   });
 });

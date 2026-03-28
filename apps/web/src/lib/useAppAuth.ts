@@ -232,7 +232,13 @@ export function useAppAuth() {
       learnedAt?: string;
       studyDurationMinutes?: number;
       dailyGoalTarget?: number;
-    }): Promise<UserHomeSummary | null> => {
+    }): Promise<
+      | {
+          previousSummary: UserHomeSummary | null;
+          summary: UserHomeSummary;
+        }
+      | null
+    > => {
       if (state.status !== 'authenticated') {
         return null;
       }

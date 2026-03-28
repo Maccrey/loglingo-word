@@ -30,10 +30,14 @@ import {
 } from 'firebase/firestore';
 
 import {
+  feedCommentSchema,
+  learningResultPostSchema,
   userDashboardStatsSchema,
   userHomeSummarySchema,
   userSettingsSchema,
   vocabProgressSchema,
+  type FeedComment,
+  type LearningResultPost,
   type UserDashboardStats,
   type UserHomeSummary,
   type UserSettings,
@@ -184,6 +188,8 @@ type FirebaseLeaderboardPreview = {
     isCurrentUser: boolean;
   }>;
 };
+
+type FirebaseFeedCommentRecord = FeedComment;
 
 function getFirestoreDb() {
   return getFirestore(getFirebaseClientApp());
@@ -406,7 +412,10 @@ export async function recordFirebaseLearningActivity(
   });
 
   await saveFirebaseHomeSummary(uid, nextSummary);
-  return nextSummary;
+  return {
+    previousSummary: existing,
+    summary: nextSummary
+  };
 }
 
 export async function loadFirebaseCatState(
@@ -524,4 +533,62 @@ export async function loadFirebaseLeaderboardPreview(
 
     throw error;
   }
+}
+
+export async function loadFirebaseFeedPosts(): Promise<LearningResultPost[]> {
+  try {
+    const snapshot = await getDocs(collection(getFirestoreDb(), 'feed_posts'));
+
+    return snapshot.docs
+      .map((item) => learningResultPostSchema.parse(item.data()))
+      .sort(
+        (left, right) =>
+          new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()
+      );
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+export async function saveFirebaseFeedPost(post: LearningResultPost) {
+  await setDoc(
+    doc(getFirestoreDb(), 'feed_posts', post.id),
+    learningResultPostSchema.parse(post),
+    { merge: true }
+  );
+}
+
+export async function loadFirebaseFeedComments(
+  postId: string
+): Promise<FeedComment[]> {
+  try {
+    const snapshot = await getDocs(
+      query(collection(getFirestoreDb(), 'feed_comments'), where('postId', '==', postId))
+    );
+
+    return snapshot.docs
+      .map((item) => feedCommentSchema.parse(item.data() as FirebaseFeedCommentRecord))
+      .sort(
+        (left, right) =>
+          new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime()
+      );
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+export async function saveFirebaseFeedComment(comment: FeedComment) {
+  await setDoc(
+    doc(getFirestoreDb(), 'feed_comments', comment.id),
+    feedCommentSchema.parse(comment),
+    { merge: true }
+  );
 }

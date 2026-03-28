@@ -10,6 +10,12 @@ import {
   USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
 import { useAppAuth } from '../../lib/useAppAuth';
+import { useCat } from '../../lib/useCat';
+import { publishFeedPost } from '../../lib/feedPublishing';
+import {
+  shouldCreateStudyComebackPost,
+  shouldCreateStudyMilestonePost
+} from '../../lib/feedEvents';
 
 import {
   chooseSentenceBlock,
@@ -17,6 +23,10 @@ import {
   moveToNextSentenceStage,
   resetSentenceSession
 } from './sentenceSession';
+import {
+  createStudyComebackPost,
+  createStudyMilestonePost
+} from '@wordflow/core/social';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -114,6 +124,7 @@ function renderGoalSegments(input: {
 
 export default function SentenceClient(props: SentenceClientProps) {
   const auth = useAppAuth();
+  const { grantLearningReward } = useCat();
   const [session, setSession] = useState(() =>
     createDemoSentenceSession({
       appLanguage: createFallbackSettings().appLanguage,
@@ -203,17 +214,77 @@ export default function SentenceClient(props: SentenceClientProps) {
       return;
     }
 
-    if (!auth.isAuthenticated || completionTrackedRef.current) {
+    if (completionTrackedRef.current) {
       return;
     }
 
     completionTrackedRef.current = true;
-    void auth.recordLearningSession({
-      completedCount: 1,
-      studyDurationMinutes: Math.max(1, Math.floor(elapsedSeconds / 60)),
-      dailyGoalTarget: createFallbackSettings().sessionQuestionCount
+
+    const learnedAt = new Date().toISOString();
+    const studyDurationMinutes = Math.max(1, Math.floor(elapsedSeconds / 60));
+    const earnedPoints = grantLearningReward({
+      sentencesPracticed: 1,
+      studyDurationMinutes
     });
-  }, [auth, auth.isAuthenticated, elapsedSeconds, session.completed]);
+
+    if (auth.isAuthenticated) {
+      void (async () => {
+        const result = await auth.recordLearningSession({
+          completedCount: 1,
+          learnedAt,
+          studyDurationMinutes,
+          dailyGoalTarget: createFallbackSettings().sessionQuestionCount
+        });
+
+        if (!result) {
+          return;
+        }
+
+        const comebackDays = shouldCreateStudyComebackPost({
+          previousSummary: result.previousSummary,
+          learnedAt
+        });
+
+        if (comebackDays) {
+          const eventKey = `study-comeback:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyComebackPost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              daysAway: comebackDays,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+
+        if (
+          shouldCreateStudyMilestonePost({
+            previousSummary: result.previousSummary,
+            nextSummary: result.summary
+          })
+        ) {
+          const eventKey = `study-milestone:${auth.userId}:${learnedAt.slice(0, 10)}`;
+          await publishFeedPost({
+            post: createStudyMilestonePost({
+              id: eventKey,
+              userId: auth.userId,
+              createdAt: learnedAt,
+              completedCount: result.summary.todayCompleted,
+              earnedPoints,
+              streak: result.summary.currentStreak,
+              eventKey,
+              ...(auth.displayName ? { userDisplayName: auth.displayName } : {})
+            }),
+            syncRemote: true
+          });
+        }
+      })();
+    }
+  }, [auth, elapsedSeconds, grantLearningReward, session.completed]);
 
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const remainingSeconds = elapsedSeconds % 60;
