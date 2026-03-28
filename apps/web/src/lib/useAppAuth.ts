@@ -146,7 +146,25 @@ export function useAppAuth() {
   }, []);
 
   const signIn = useCallback(async () => {
-    return signInWithGooglePopup();
+    setState((current) => ({
+      ...current,
+      status: 'loading',
+      authReady: false
+    }));
+
+    try {
+      return await signInWithGooglePopup();
+    } catch (error) {
+      setState({
+        status: 'guest',
+        userId: createFallbackSettings().userId,
+        displayName: null,
+        email: null,
+        needsTermsConsent: false,
+        authReady: true
+      });
+      throw error;
+    }
   }, []);
 
   const acceptTerms = useCallback(async () => {
