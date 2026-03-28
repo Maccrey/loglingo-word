@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   cefrA1SentenceAssemblyExercises,
   getSentenceAssemblyExercisePool,
-  jlptN5SentenceAssemblyExercises
+  jlptN5SentenceAssemblyExercises,
+  topik1SentenceAssemblyExercises
 } from '@wordflow/shared/sentence-expansion';
 
 import {
@@ -21,12 +22,19 @@ describe('sentence session state', () => {
     expect(cefrA1SentenceAssemblyExercises).toHaveLength(200);
   });
 
+  it('loads 200 topik 1 sentence exercises from json data', () => {
+    expect(topik1SentenceAssemblyExercises).toHaveLength(200);
+  });
+
   it('returns sentence exercise pools by language and level', () => {
     expect(
       getSentenceAssemblyExercisePool({ language: 'en', level: 'cefr_a1' })
     ).toHaveLength(200);
     expect(
       getSentenceAssemblyExercisePool({ language: 'ja', level: 'jlpt_n5' })
+    ).toHaveLength(200);
+    expect(
+      getSentenceAssemblyExercisePool({ language: 'ko', level: 'topik_1' })
     ).toHaveLength(200);
     expect(getSentenceAssemblyExercisePool({ language: 'en' }).length).toBeGreaterThan(0);
   });

@@ -4,6 +4,7 @@ import {
 } from '@wordflow/shared/curriculum';
 import cefrA1Units from '@wordflow/shared/data/en/cefr-a1.json';
 import jlptN5Units from '@wordflow/shared/data/ja/jlpt-n5.json';
+import topik1Units from '@wordflow/shared/data/ko/topik-1.json';
 import {
   type SupportedLearningLanguage,
   type SupportedLearningLevel,
@@ -15,6 +16,10 @@ const cefrA1Seed: CurriculumUnit[] = cefrA1Units.map((unit) =>
 );
 
 const jlptN5Seed: CurriculumUnit[] = jlptN5Units.map((unit) =>
+  curriculumUnitSchema.parse(unit)
+);
+
+const topik1Seed: CurriculumUnit[] = topik1Units.map((unit) =>
   curriculumUnitSchema.parse(unit)
 );
 
@@ -64,7 +69,8 @@ export const curriculumSeed: CurriculumUnit[] = [
         example: '駅前で会いましょう。'
       }
     ]
-  }
+  },
+  ...topik1Seed
 ];
 
 export function getCurriculumUnits(): CurriculumUnit[] {

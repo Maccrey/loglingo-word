@@ -111,6 +111,47 @@
         "読みたいです。": "want_to_read",
         "買いたいです。": "want_to_buy"
       }
+    },
+    "ko": {
+      "subject": {
+        "나는": "i",
+        "우리는": "we",
+        "친구는": "my_friend",
+        "선생님은": "teacher",
+        "학생은": "student"
+      },
+      "time": {
+        "오늘": "today",
+        "내일": "tomorrow",
+        "매일": "every_day",
+        "아침에": "in_the_morning"
+      },
+      "place": {
+        "학교에": "school",
+        "집에": "home",
+        "가게에": "store"
+      },
+      "object": {
+        "물을": "water",
+        "차를": "tea",
+        "빵을": "bread",
+        "책을": "book",
+        "이름을": "my_name"
+      },
+      "predicate": {
+        "가요.": "go",
+        "가요": "go",
+        "와요.": "come",
+        "와요": "come",
+        "마셔요.": "drink",
+        "마셔요": "drink",
+        "먹어요.": "eat",
+        "먹어요": "eat",
+        "읽어요.": "read",
+        "읽어요": "read",
+        "써요.": "write",
+        "써요": "write"
+      }
     }
   },
   "targetSentencePatterns": {

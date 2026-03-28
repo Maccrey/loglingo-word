@@ -22,14 +22,19 @@ describe('curriculum', () => {
       'japanese-places',
       'japanese-food',
       'japanese-actions',
-      'japanese-travel'
+      'japanese-travel',
+      'topik-1-greetings',
+      'topik-1-people',
+      'topik-1-time-place',
+      'topik-1-food',
+      'topik-1-actions'
     ]);
   });
 
   it('filters curriculum units by level', () => {
     const levelOneUnits = getCurriculumByLevel(1);
 
-    expect(levelOneUnits).toHaveLength(10);
+    expect(levelOneUnits).toHaveLength(15);
     expect(levelOneUnits.every((unit) => unit.level === 1)).toBe(true);
   });
 
@@ -65,5 +70,19 @@ describe('curriculum', () => {
     expect(firstWord?.reading).toBe('こんにちは');
     expect(firstWord?.writing?.answer).toBe('こんにちは');
     expect(firstWord?.writing?.accepted).toContain('こんにちは');
+  });
+
+  it('returns imported korean topik 1 units', () => {
+    const koreanStarter = getCurriculumByStandardLevel('ko', 'topik_1');
+
+    expect(koreanStarter.map((unit) => unit.id)).toEqual([
+      'topik-1-greetings',
+      'topik-1-people',
+      'topik-1-time-place',
+      'topik-1-food',
+      'topik-1-actions'
+    ]);
+    expect(koreanStarter[0]?.words[0]?.reading).toBe('annyeonghaseyo');
+    expect(koreanStarter[0]?.words[0]?.writing?.answer).toBe('안녕하세요');
   });
 });

@@ -1,0 +1,562 @@
+[
+  {
+    "id": "topik-1-greetings",
+    "language": "ko",
+    "standardLevel": "topik_1",
+    "level": 1,
+    "order": 1,
+    "title": "기초 인사",
+    "words": [
+      {
+        "id": "annyeonghaseyo",
+        "term": "안녕하세요",
+        "reading": "annyeonghaseyo",
+        "meaning": "안녕하세요",
+        "example": "안녕하세요, 만나서 반갑습니다.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["감사합니다", "죄송합니다", "안녕히 가세요"]
+        },
+        "writing": {
+          "prompt": "Hello",
+          "answer": "안녕하세요",
+          "accepted": ["안녕하세요"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "gamsahamnida",
+        "term": "감사합니다",
+        "reading": "gamsahamnida",
+        "meaning": "감사합니다",
+        "example": "도와주셔서 감사합니다.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["안녕하세요", "괜찮아요", "미안합니다"]
+        },
+        "writing": {
+          "prompt": "Thank you",
+          "answer": "감사합니다",
+          "accepted": ["감사합니다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "joesonghamnida",
+        "term": "죄송합니다",
+        "reading": "joesonghamnida",
+        "meaning": "죄송합니다",
+        "example": "늦어서 죄송합니다.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["감사합니다", "안녕하세요", "네"]
+        },
+        "writing": {
+          "prompt": "I'm sorry",
+          "answer": "죄송합니다",
+          "accepted": ["죄송합니다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ne",
+        "term": "네",
+        "reading": "ne",
+        "meaning": "네",
+        "example": "네, 알겠습니다.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["아니요", "감사합니다", "오늘"]
+        },
+        "writing": {
+          "prompt": "Yes",
+          "answer": "네",
+          "accepted": ["네"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "aniyo",
+        "term": "아니요",
+        "reading": "aniyo",
+        "meaning": "아니요",
+        "example": "아니요, 괜찮습니다.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["네", "지금", "감사합니다"]
+        },
+        "writing": {
+          "prompt": "No",
+          "answer": "아니요",
+          "accepted": ["아니요"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "annyeonghi-gaseyo",
+        "term": "안녕히 가세요",
+        "reading": "annyeonghi gaseyo",
+        "meaning": "안녕히 가세요",
+        "example": "내일 봐요, 안녕히 가세요.",
+        "partOfSpeech": "interjection",
+        "quiz": {
+          "distractors": ["안녕하세요", "감사합니다", "안녕히 계세요"]
+        },
+        "writing": {
+          "prompt": "Goodbye",
+          "answer": "안녕히 가세요",
+          "accepted": ["안녕히 가세요"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "topik-1-people",
+    "language": "ko",
+    "standardLevel": "topik_1",
+    "level": 1,
+    "order": 2,
+    "title": "사람과 관계",
+    "words": [
+      {
+        "id": "na",
+        "term": "나",
+        "reading": "na",
+        "meaning": "나",
+        "example": "나는 학생입니다.",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": ["친구", "선생님", "우리"]
+        },
+        "writing": {
+          "prompt": "I, me",
+          "answer": "나",
+          "accepted": ["나"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "uri",
+        "term": "우리",
+        "reading": "uri",
+        "meaning": "우리",
+        "example": "우리는 같이 공부합니다.",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": ["나", "친구", "학생"]
+        },
+        "writing": {
+          "prompt": "we, our",
+          "answer": "우리",
+          "accepted": ["우리"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "chingu",
+        "term": "친구",
+        "reading": "chingu",
+        "meaning": "친구",
+        "example": "친구를 만납니다.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["선생님", "학생", "학교"]
+        },
+        "writing": {
+          "prompt": "friend",
+          "answer": "친구",
+          "accepted": ["친구"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "seonsaengnim",
+        "term": "선생님",
+        "reading": "seonsaengnim",
+        "meaning": "선생님",
+        "example": "선생님은 친절합니다.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["친구", "학생", "회사원"]
+        },
+        "writing": {
+          "prompt": "teacher",
+          "answer": "선생님",
+          "accepted": ["선생님"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "haksaeng",
+        "term": "학생",
+        "reading": "haksaeng",
+        "meaning": "학생",
+        "example": "저는 학생입니다.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["선생님", "친구", "가족"]
+        },
+        "writing": {
+          "prompt": "student",
+          "answer": "학생",
+          "accepted": ["학생"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "gajok",
+        "term": "가족",
+        "reading": "gajok",
+        "meaning": "가족",
+        "example": "가족과 같이 살아요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["친구", "선생님", "이름"]
+        },
+        "writing": {
+          "prompt": "family",
+          "answer": "가족",
+          "accepted": ["가족"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "topik-1-time-place",
+    "language": "ko",
+    "standardLevel": "topik_1",
+    "level": 1,
+    "order": 3,
+    "title": "시간과 장소",
+    "words": [
+      {
+        "id": "oneul",
+        "term": "오늘",
+        "reading": "oneul",
+        "meaning": "오늘",
+        "example": "오늘 학교에 갑니다.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": ["내일", "어제", "지금"]
+        },
+        "writing": {
+          "prompt": "today",
+          "answer": "오늘",
+          "accepted": ["오늘"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "naeil",
+        "term": "내일",
+        "reading": "naeil",
+        "meaning": "내일",
+        "example": "내일 친구를 만나요.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": ["오늘", "어제", "아침"]
+        },
+        "writing": {
+          "prompt": "tomorrow",
+          "answer": "내일",
+          "accepted": ["내일"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "jigeum",
+        "term": "지금",
+        "reading": "jigeum",
+        "meaning": "지금",
+        "example": "지금 집에 있어요.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": ["오늘", "아침", "밤"]
+        },
+        "writing": {
+          "prompt": "now",
+          "answer": "지금",
+          "accepted": ["지금"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "hakgyo",
+        "term": "학교",
+        "reading": "hakgyo",
+        "meaning": "학교",
+        "example": "학교에서 한국어를 공부해요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["집", "가게", "회사"]
+        },
+        "writing": {
+          "prompt": "school",
+          "answer": "학교",
+          "accepted": ["학교"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "jip",
+        "term": "집",
+        "reading": "jip",
+        "meaning": "집",
+        "example": "집에 갑니다.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["학교", "회사", "물"]
+        },
+        "writing": {
+          "prompt": "home, house",
+          "answer": "집",
+          "accepted": ["집"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "gage",
+        "term": "가게",
+        "reading": "gage",
+        "meaning": "가게",
+        "example": "가게에서 빵을 사요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["학교", "집", "아침"]
+        },
+        "writing": {
+          "prompt": "store",
+          "answer": "가게",
+          "accepted": ["가게"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "topik-1-food",
+    "language": "ko",
+    "standardLevel": "topik_1",
+    "level": 1,
+    "order": 4,
+    "title": "음식과 사물",
+    "words": [
+      {
+        "id": "mul",
+        "term": "물",
+        "reading": "mul",
+        "meaning": "물",
+        "example": "물을 마십니다.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["빵", "밥", "책"]
+        },
+        "writing": {
+          "prompt": "water",
+          "answer": "물",
+          "accepted": ["물"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ppang",
+        "term": "빵",
+        "reading": "ppang",
+        "meaning": "빵",
+        "example": "아침에 빵을 먹어요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["물", "밥", "차"]
+        },
+        "writing": {
+          "prompt": "bread",
+          "answer": "빵",
+          "accepted": ["빵"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "bap",
+        "term": "밥",
+        "reading": "bap",
+        "meaning": "밥",
+        "example": "저녁에 밥을 먹어요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["빵", "물", "이름"]
+        },
+        "writing": {
+          "prompt": "rice, meal",
+          "answer": "밥",
+          "accepted": ["밥"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "cha",
+        "term": "차",
+        "reading": "cha",
+        "meaning": "차",
+        "example": "차를 한 잔 마셔요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["물", "책", "빵"]
+        },
+        "writing": {
+          "prompt": "tea",
+          "answer": "차",
+          "accepted": ["차"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "chaek",
+        "term": "책",
+        "reading": "chaek",
+        "meaning": "책",
+        "example": "책을 읽어요.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["밥", "물", "학교"]
+        },
+        "writing": {
+          "prompt": "book",
+          "answer": "책",
+          "accepted": ["책"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ireum",
+        "term": "이름",
+        "reading": "ireum",
+        "meaning": "이름",
+        "example": "이름이 뭐예요?",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": ["책", "가족", "학교"]
+        },
+        "writing": {
+          "prompt": "name",
+          "answer": "이름",
+          "accepted": ["이름"],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "topik-1-actions",
+    "language": "ko",
+    "standardLevel": "topik_1",
+    "level": 1,
+    "order": 5,
+    "title": "기초 동작",
+    "words": [
+      {
+        "id": "gada",
+        "term": "가다",
+        "reading": "gada",
+        "meaning": "가다",
+        "example": "학교에 갑니다.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["오다", "먹다", "마시다"]
+        },
+        "writing": {
+          "prompt": "to go",
+          "answer": "가다",
+          "accepted": ["가다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "oda",
+        "term": "오다",
+        "reading": "oda",
+        "meaning": "오다",
+        "example": "친구가 집에 와요.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["가다", "읽다", "사다"]
+        },
+        "writing": {
+          "prompt": "to come",
+          "answer": "오다",
+          "accepted": ["오다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "meokda",
+        "term": "먹다",
+        "reading": "meokda",
+        "meaning": "먹다",
+        "example": "저는 밥을 먹어요.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["마시다", "가다", "읽다"]
+        },
+        "writing": {
+          "prompt": "to eat",
+          "answer": "먹다",
+          "accepted": ["먹다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "masida",
+        "term": "마시다",
+        "reading": "masida",
+        "meaning": "마시다",
+        "example": "물을 마십니다.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["먹다", "읽다", "쓰다"]
+        },
+        "writing": {
+          "prompt": "to drink",
+          "answer": "마시다",
+          "accepted": ["마시다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ilkda",
+        "term": "읽다",
+        "reading": "ilkda",
+        "meaning": "읽다",
+        "example": "책을 읽어요.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["쓰다", "가다", "먹다"]
+        },
+        "writing": {
+          "prompt": "to read",
+          "answer": "읽다",
+          "accepted": ["읽다"],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "sseuda",
+        "term": "쓰다",
+        "reading": "sseuda",
+        "meaning": "쓰다",
+        "example": "이름을 씁니다.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": ["읽다", "마시다", "오다"]
+        },
+        "writing": {
+          "prompt": "to write",
+          "answer": "쓰다",
+          "accepted": ["쓰다"],
+          "script": "mixed"
+        }
+      }
+    ]
+  }
+]

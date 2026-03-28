@@ -116,9 +116,10 @@ function ensureTerminalPunctuation(targetLanguage, segments) {
 
   const punctuated = [...segments];
   const lastIndex = punctuated.length - 1;
-  const lastSegment = punctuated[lastIndex];
+  const lastSegment = punctuated[lastIndex].trimEnd();
 
   if (/[.!?。！？]$/.test(lastSegment)) {
+    punctuated[lastIndex] = lastSegment;
     return punctuated;
   }
 
@@ -213,7 +214,8 @@ async function updateFile(relativePath, sourceLanguage) {
 
 const sentenceExpansionFiles = [
   { path: 'en/cefr-a1-sentence-expansion.json', sourceLanguage: 'en' },
-  { path: 'ja/jlpt-n5-sentence-expansion.json', sourceLanguage: 'ja' }
+  { path: 'ja/jlpt-n5-sentence-expansion.json', sourceLanguage: 'ja' },
+  { path: 'ko/topik-1-sentence-expansion.json', sourceLanguage: 'ko' }
 ];
 
 for (const entry of sentenceExpansionFiles) {
