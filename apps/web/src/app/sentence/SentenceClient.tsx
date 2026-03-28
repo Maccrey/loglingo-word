@@ -79,63 +79,34 @@ type SentenceClientProps = {
   locale?: AppLocale;
 };
 
-function findSharedPrefixLength(previous: string, current: string): number {
-  const maxLength = Math.min(previous.length, current.length);
-  let index = 0;
-
-  while (index < maxLength && previous[index] === current[index]) {
-    index += 1;
-  }
-
-  return index;
-}
-
-function findSharedSuffixLength(
-  previous: string,
-  current: string,
-  prefixLength: number
-): number {
-  const previousRemainder = previous.length - prefixLength;
-  const currentRemainder = current.length - prefixLength;
-  const maxLength = Math.min(previousRemainder, currentRemainder);
-  let index = 0;
-
-  while (
-    index < maxLength &&
-    previous[previous.length - 1 - index] === current[current.length - 1 - index]
-  ) {
-    index += 1;
-  }
-
-  return index;
-}
-
-function renderGoalWithDelta(currentGoal: string, previousGoal?: string) {
-  if (!previousGoal || previousGoal === currentGoal) {
-    return currentGoal;
-  }
-
-  const prefixLength = findSharedPrefixLength(previousGoal, currentGoal);
-  const suffixLength = findSharedSuffixLength(
-    previousGoal,
-    currentGoal,
-    prefixLength
-  );
-  const addedStart = prefixLength;
-  const addedEnd = currentGoal.length - suffixLength;
-  const prefix = currentGoal.slice(0, addedStart);
-  const addition = currentGoal.slice(addedStart, addedEnd);
-  const suffix = currentGoal.slice(addedEnd);
-
-  if (!addition) {
-    return currentGoal;
-  }
+function renderGoalSegments(input: {
+  currentSegments: string[];
+  assembledCount: number;
+  previousSegments?: string[] | undefined;
+}) {
+  const previousSegments = input.previousSegments ?? [];
 
   return (
     <>
-      {prefix}
-      <span style={{ color: '#d32f2f' }}>{addition}</span>
-      {suffix}
+      {input.currentSegments.map((segment, index) => {
+        const isSelected = index < input.assembledCount;
+        const changedFromPrevious = previousSegments[index] !== segment;
+
+        return (
+          <span
+            key={`${index}-${segment}`}
+            style={{
+              color: isSelected
+                ? '#1565c0'
+                : changedFromPrevious
+                  ? '#d32f2f'
+                  : 'var(--text-ink)'
+            }}
+          >
+            {segment}
+          </span>
+        );
+      })}
     </>
   );
 }
@@ -145,7 +116,8 @@ export default function SentenceClient(props: SentenceClientProps) {
     createDemoSentenceSession({
       learningLanguage: createFallbackSettings().learningLanguage,
       learningLevel: createFallbackSettings().learningLevel,
-      randomizeChoices: false
+      randomizeChoices: false,
+      randomizeExercise: false
     })
   );
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
@@ -163,7 +135,8 @@ export default function SentenceClient(props: SentenceClientProps) {
         createDemoSentenceSession({
           learningLanguage: nextSettings.learningLanguage,
           learningLevel: nextSettings.learningLevel,
-          randomizeChoices: true
+          randomizeChoices: true,
+          randomizeExercise: true
         })
       );
     }
@@ -399,10 +372,11 @@ export default function SentenceClient(props: SentenceClientProps) {
                   }}
                 >
                   목표 문장:{' '}
-                  {renderGoalWithDelta(
-                    currentStage.goal,
-                    previousStage?.goal
-                  )}
+                  {renderGoalSegments({
+                    currentSegments: currentStage.goalSegments,
+                    assembledCount: session.assembledBlocks.length,
+                    previousSegments: previousStage?.goalSegments
+                  })}
                 </p>
               </div>
             ) : null}

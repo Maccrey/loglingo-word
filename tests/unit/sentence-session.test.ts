@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { jlptN5SentenceAssemblyExercises } from '@wordflow/shared/sentence-expansion';
 
 import {
   chooseSentenceBlock,
@@ -8,6 +9,10 @@ import {
 } from '../../apps/web/src/app/sentence/sentenceSession';
 
 describe('sentence session state', () => {
+  it('loads 200 jlpt n5 sentence exercises from json data', () => {
+    expect(jlptN5SentenceAssemblyExercises).toHaveLength(200);
+  });
+
   it('shows exactly three candidate blocks for the current turn', () => {
     const initial = createDemoSentenceSession({
       learningLanguage: 'ja',

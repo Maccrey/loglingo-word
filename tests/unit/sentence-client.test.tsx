@@ -3,13 +3,14 @@
 import React from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import SentenceClient from '../../apps/web/src/app/sentence/SentenceClient';
 
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  vi.restoreAllMocks();
 });
 
 describe('sentence builder ui', () => {
@@ -30,12 +31,17 @@ describe('sentence builder ui', () => {
   }
 
   it('loads the jlpt n5 block-order game from stored settings', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     setJapaneseN5();
 
     render(<SentenceClient />);
 
     expect(await screen.findByText('학교 가기 싫은 날')).toBeTruthy();
-    expect(screen.getByText('목표 문장: 나는 간다.')).toBeTruthy();
+    expect(
+      screen.getByText((_, element) =>
+        element?.textContent === '목표 문장: 나는 간다.'
+      )
+    ).toBeTruthy();
     expect(screen.getByText('3개 보기 중 다음에 올 블록을 고르세요.')).toBeTruthy();
     expect(screen.getByText('주어와 동사부터 고르세요.')).toBeTruthy();
     expect(screen.getByRole('button', { name: '私は' })).toBeTruthy();
@@ -44,6 +50,7 @@ describe('sentence builder ui', () => {
   });
 
   it('shows advice when a similar but wrong block is selected', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     const user = userEvent.setup();
     setJapaneseN5();
 
@@ -60,6 +67,7 @@ describe('sentence builder ui', () => {
   });
 
   it('reveals the next correct choice set and moves to the next problem after completion', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     const user = userEvent.setup();
     setJapaneseN5();
 

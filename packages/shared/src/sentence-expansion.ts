@@ -20,6 +20,7 @@ export const sentenceAssemblyStageSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   goal: z.string().min(1),
+  goalSegments: z.array(z.string().min(1)).min(1),
   focus: z.string().min(1),
   selectionAdvice: z.string().min(1),
   completionAdvice: z.string().min(1),

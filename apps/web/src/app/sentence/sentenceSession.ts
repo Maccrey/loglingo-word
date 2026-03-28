@@ -30,6 +30,7 @@ export type SentenceSessionState = {
   assembledBlocks: SentenceAssemblyBlock[];
   availableChoices: SentenceChoice[];
   randomizeChoices: boolean;
+  randomizeExercise: boolean;
   completedStages: Array<{
     stageId: string;
     text: string;
@@ -110,18 +111,32 @@ function getExercisePool(): SentenceAssemblyExercise[] {
 
 function resolveSentenceExercise(
   learningLanguage: SupportedLearningLanguage,
-  learningLevel: SupportedLearningLevel
+  learningLevel: SupportedLearningLevel,
+  randomizeExercise: boolean
 ): SentenceAssemblyExercise {
   const exercises = getExercisePool();
-
-  return (
-    exercises.find(
+  const matchedExercises =
+    exercises.filter(
       (exercise) =>
         exercise.language === learningLanguage && exercise.level === learningLevel
     ) ??
-    exercises.find((exercise) => exercise.language === learningLanguage) ??
-    exercises[0]!
+    [];
+  const languageExercises = exercises.filter(
+    (exercise) => exercise.language === learningLanguage
   );
+  const candidateExercises =
+    matchedExercises.length > 0
+      ? matchedExercises
+      : languageExercises.length > 0
+        ? languageExercises
+        : exercises;
+
+  if (randomizeExercise && candidateExercises.length > 1) {
+    const index = Math.floor(Math.random() * candidateExercises.length);
+    return candidateExercises[index]!;
+  }
+
+  return candidateExercises[0]!;
 }
 
 function buildSelectionAdvice(
@@ -152,7 +167,8 @@ function buildChoiceScore(
 
 function buildInitialState(
   exercise: SentenceAssemblyExercise,
-  randomizeChoices: boolean
+  randomizeChoices: boolean,
+  randomizeExercise: boolean
 ): SentenceSessionState {
   const firstStage = exercise.stages[0]!;
 
@@ -162,6 +178,7 @@ function buildInitialState(
     assembledBlocks: [],
     availableChoices: buildChoicesForCurrentTurn(firstStage, 0, randomizeChoices),
     randomizeChoices,
+    randomizeExercise,
     completedStages: [],
     stageCompleted: false,
     completed: false,
@@ -177,20 +194,38 @@ export function createDemoSentenceSession(input?: {
   learningLanguage?: SupportedLearningLanguage;
   learningLevel?: SupportedLearningLevel;
   randomizeChoices?: boolean;
+  randomizeExercise?: boolean;
 }): SentenceSessionState {
   const learningLanguage = input?.learningLanguage ?? 'en';
   const learningLevel =
     input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
   const randomizeChoices = input?.randomizeChoices ?? false;
-  const exercise = resolveSentenceExercise(learningLanguage, learningLevel);
+  const randomizeExercise = input?.randomizeExercise ?? false;
+  const exercise = resolveSentenceExercise(
+    learningLanguage,
+    learningLevel,
+    randomizeExercise
+  );
 
-  return buildInitialState(exercise, randomizeChoices);
+  return buildInitialState(exercise, randomizeChoices, randomizeExercise);
 }
 
 export function resetSentenceSession(
   state: SentenceSessionState
 ): SentenceSessionState {
-  return buildInitialState(state.exercise, state.randomizeChoices);
+  const nextExercise = state.randomizeExercise
+    ? resolveSentenceExercise(
+        state.exercise.language,
+        state.exercise.level,
+        state.randomizeExercise
+      )
+    : state.exercise;
+
+  return buildInitialState(
+    nextExercise,
+    state.randomizeChoices,
+    state.randomizeExercise
+  );
 }
 
 export function chooseSentenceBlock(
