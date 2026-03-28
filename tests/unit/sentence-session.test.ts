@@ -13,6 +13,21 @@ describe('sentence session state', () => {
     expect(jlptN5SentenceAssemblyExercises).toHaveLength(200);
   });
 
+  it('keeps every choice set unique so the same option is not shown twice', () => {
+    for (const exercise of jlptN5SentenceAssemblyExercises) {
+      for (const stage of exercise.stages) {
+        for (let index = 0; index < stage.correctBlocks.length; index += 1) {
+          const texts = [
+            stage.correctBlocks[index]!.text,
+            ...stage.distractorBlocks.slice(0, 2).map((item) => item.text)
+          ];
+
+          expect(new Set(texts).size).toBe(texts.length);
+        }
+      }
+    }
+  });
+
   it('shows exactly three candidate blocks for the current turn', () => {
     const initial = createDemoSentenceSession({
       learningLanguage: 'ja',

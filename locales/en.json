@@ -61,6 +61,7 @@
   "sentence.input_placeholder": "No blocks selected yet.",
   "sentence.completed": "You finished every stage. Read the completed sentence flow again.",
   "sentence.next_question": "Next Question",
+  "sentence.next_sentence": "Next Sentence",
   "sentence.result": "Advice",
   "sentence.submit": "Submit Block",
   "chat.title": "AI Chat",

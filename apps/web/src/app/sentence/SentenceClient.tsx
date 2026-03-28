@@ -485,6 +485,27 @@ export default function SentenceClient(props: SentenceClientProps) {
                   {t(locale, 'sentence.next_question')}
                 </button>
               ) : null}
+              {session.completed ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSession((current) => resetSentenceSession(current))
+                  }
+                  style={{
+                    border: '1px solid var(--btn-primary-border)',
+                    borderRadius: 999,
+                    padding: '10px 18px',
+                    fontSize: 15,
+                    fontWeight: 700,
+                    background: 'var(--btn-primary-bg)',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    boxShadow: 'var(--shadow-card)'
+                  }}
+                >
+                  {t(locale, 'sentence.next_sentence')}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() =>

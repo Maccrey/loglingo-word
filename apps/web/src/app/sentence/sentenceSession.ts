@@ -73,7 +73,10 @@ function buildChoicesForCurrentTurn(
   const choices = [
     toChoiceFromBlock(nextCorrectBlock),
     ...stage.distractorBlocks.slice(0, 2).map(toChoiceFromDistractor)
-  ];
+  ].filter(
+    (choice, index, items) =>
+      items.findIndex((item) => item.text === choice.text) === index
+  );
 
   if (!randomizeChoices) {
     return choices

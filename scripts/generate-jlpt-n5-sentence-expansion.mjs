@@ -31,6 +31,16 @@ const places = [
   { id: 'shop', block: '店に', goal: '가게에 ' }
 ];
 
+function pickAlternativePlaceBlock(currentBlock, preferredBlock) {
+  const preferred = places.find((place) => place.block === preferredBlock);
+
+  if (preferred && preferred.block !== currentBlock) {
+    return preferred.block;
+  }
+
+  return places.find((place) => place.block !== currentBlock)?.block ?? '駅に';
+}
+
 const objectPatterns = [
   {
     id: 'water-drink',
@@ -113,6 +123,9 @@ const objectPatterns = [
 ];
 
 function createTravelExercise(subject, time, place, order) {
+  const stage2DistractorPlace = pickAlternativePlaceBlock(place.block, '店に');
+  const stage3DistractorPlace = pickAlternativePlaceBlock(place.block, '駅に');
+
   return {
     id: `jlpt-n5-travel-${String(order).padStart(3, '0')}`,
     language: 'ja',
@@ -161,11 +174,8 @@ function createTravelExercise(subject, time, place, order) {
         distractorBlocks: [
           {
             id: `travel-${order}-s2-d1`,
-            text: '店に',
-            advice:
-              place.block === '店に'
-                ? '장소보다 동사 순서를 먼저 보세요.'
-                : '여기서는 다른 장소가 아니라 현재 장소가 맞습니다.'
+            text: stage2DistractorPlace,
+            advice: '여기서는 다른 장소가 아니라 현재 장소가 맞습니다.'
           },
           {
             id: `travel-${order}-s2-d2`,
@@ -196,11 +206,8 @@ function createTravelExercise(subject, time, place, order) {
           },
           {
             id: `travel-${order}-s3-d2`,
-            text: '駅に',
-            advice:
-              place.block === '駅に'
-                ? '장소보다 시간 순서가 먼저입니다.'
-                : '여기서는 다른 장소가 아니라 현재 장소가 맞습니다.'
+            text: stage3DistractorPlace,
+            advice: '여기서는 다른 장소가 아니라 현재 장소가 맞습니다.'
           }
         ]
       },
