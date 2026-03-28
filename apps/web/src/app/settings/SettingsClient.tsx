@@ -27,11 +27,13 @@ import {
   loadStoredSettings,
   saveStoredSettings
 } from '../../lib/settingsStorage';
+import { readStoredLearningProgressSnapshot } from '../../lib/learningProgressStorage';
 import {
-  hasFirebaseWebConfig,
-  initializeFirebaseAnalytics,
-  signInWithGooglePopup
+  initializeFirebaseAnalytics
 } from '../../lib/firebase-client';
+import { useAppAuth } from '../../lib/useAppAuth';
+import { AuthRequiredModal } from '../../components/AuthRequiredModal';
+import { TermsConsentModal } from '../../components/TermsConsentModal';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -127,6 +129,7 @@ export default function SettingsClient(props: SettingsClientProps) {
   >([]);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const auth = useAppAuth();
   const entitlements: UserEntitlement =
     resolveEntitlementsForProducts(purchasedProductIds);
   const learningLevelOptions =
@@ -146,7 +149,13 @@ export default function SettingsClient(props: SettingsClientProps) {
     }
 
     saveStoredSettings(settings);
-  }, [hydrated, settings]);
+    if (auth.isAuthenticated) {
+      void auth.saveLearningState({
+        settings,
+        progress: readStoredLearningProgressSnapshot()
+      });
+    }
+  }, [auth, auth.isAuthenticated, hydrated, settings]);
 
   useEffect(() => {
     void initializeFirebaseAnalytics();
@@ -195,13 +204,8 @@ export default function SettingsClient(props: SettingsClientProps) {
   }
 
   async function startGoogleLogin() {
-    if (!hasFirebaseWebConfig()) {
-      setAuthMessage(t(locale, 'settings.google_login_missing_config'));
-      return;
-    }
-
     try {
-      const result = await signInWithGooglePopup();
+      const result = await auth.signIn();
       const nextUserId = result.user.uid;
       const displayName = result.user.displayName?.trim() || result.user.email?.trim() || nextUserId;
 
@@ -226,6 +230,15 @@ export default function SettingsClient(props: SettingsClientProps) {
 
   return (
     <main style={surfaceStyle}>
+      {auth.isGuest ? (
+        <AuthRequiredModal
+          locale={locale}
+          onLogin={() => void startGoogleLogin()}
+        />
+      ) : null}
+      {auth.isAuthenticated && auth.needsTermsConsent ? (
+        <TermsConsentModal locale={locale} onAccept={() => void auth.acceptTerms()} />
+      ) : null}
       <div style={shellStyle}>
         <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
           <div style={badgeStyle}>{t(locale, 'settings.title')}</div>

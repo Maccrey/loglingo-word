@@ -8,6 +8,9 @@ import type { AIChatMessage } from '@wordflow/ai/chat';
 import StatusMessage from '../components/StatusMessage';
 import { resolveAppErrorMessage } from '../errors';
 import { t, type AppLocale } from '../i18n';
+import { useAppAuth } from '../../lib/useAppAuth';
+import { AuthRequiredModal } from '../../components/AuthRequiredModal';
+import { TermsConsentModal } from '../../components/TermsConsentModal';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -64,6 +67,7 @@ function labelForRole(locale: AppLocale, role: AIChatMessage['role']): string {
 
 export default function ChatClient(props: ChatClientProps) {
   const locale = props.locale ?? 'ko';
+  const auth = useAppAuth();
   const [messages, setMessages] = useState<AIChatMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
@@ -90,7 +94,7 @@ export default function ChatClient(props: ChatClientProps) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: 'demo-user',
+          userId: auth.userId,
           nativeLanguage: locale,
           targetLanguage: 'en',
           userLevel: 'beginner',
@@ -126,6 +130,12 @@ export default function ChatClient(props: ChatClientProps) {
 
   return (
     <main style={surfaceStyle}>
+      {auth.isGuest ? (
+        <AuthRequiredModal locale={locale} onLogin={() => void auth.signIn()} />
+      ) : null}
+      {auth.isAuthenticated && auth.needsTermsConsent ? (
+        <TermsConsentModal locale={locale} onAccept={() => void auth.acceptTerms()} />
+      ) : null}
       <div style={shellStyle}>
         <CollapsiblePageHeader locale={locale}>
           <div style={{ display: 'grid', gap: 14 }}>

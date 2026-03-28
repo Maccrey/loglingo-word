@@ -12,12 +12,67 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import ChatClient from '../../apps/web/src/app/chat/ChatClient';
 
+const useAppAuthMock = vi.fn(() => ({
+  status: 'authenticated',
+  userId: 'demo-user',
+  displayName: '테스트 사용자',
+  email: 'tester@example.com',
+  needsTermsConsent: false,
+  authReady: true,
+  isAuthenticated: true,
+  isGuest: false,
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  acceptTerms: vi.fn(),
+  saveLearningState: vi.fn(async () => true)
+}));
+
+vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
+  useAppAuth: () => useAppAuthMock()
+}));
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  useAppAuthMock.mockReset();
+  useAppAuthMock.mockReturnValue({
+    status: 'authenticated',
+    userId: 'demo-user',
+    displayName: '테스트 사용자',
+    email: 'tester@example.com',
+    needsTermsConsent: false,
+    authReady: true,
+    isAuthenticated: true,
+    isGuest: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    acceptTerms: vi.fn(),
+    saveLearningState: vi.fn(async () => true)
+  });
 });
 
 describe('chat ui', () => {
+  it('shows a login-required modal for guests', () => {
+    useAppAuthMock.mockReturnValue({
+      status: 'guest',
+      userId: 'demo-user',
+      displayName: null,
+      email: null,
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: false,
+      isGuest: true,
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => false)
+    });
+
+    render(<ChatClient />);
+
+    expect(screen.getByRole('dialog').textContent).toContain('로그인이 필요합니다.');
+  });
+
   it('submits a message and renders the returned conversation', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue({
       ok: true,

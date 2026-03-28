@@ -7,6 +7,24 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
 
 import FlashcardsClient from '../../apps/web/src/app/learn/FlashcardsClient';
+const useAppAuthMock = vi.fn(() => ({
+  status: 'authenticated',
+  userId: 'demo-user',
+  displayName: '테스트 사용자',
+  email: 'tester@example.com',
+  needsTermsConsent: false,
+  authReady: true,
+  isAuthenticated: true,
+  isGuest: false,
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  acceptTerms: vi.fn(),
+  saveLearningState: vi.fn(async () => true)
+}));
+
+vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
+  useAppAuth: () => useAppAuthMock()
+}));
 
 afterEach(() => {
   cleanup();
@@ -15,6 +33,21 @@ afterEach(() => {
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  useAppAuthMock.mockReset();
+  useAppAuthMock.mockReturnValue({
+    status: 'authenticated',
+    userId: 'demo-user',
+    displayName: '테스트 사용자',
+    email: 'tester@example.com',
+    needsTermsConsent: false,
+    authReady: true,
+    isAuthenticated: true,
+    isGuest: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    acceptTerms: vi.fn(),
+    saveLearningState: vi.fn(async () => true)
+  });
 });
 
 describe('flashcards ui', () => {
@@ -41,7 +74,32 @@ describe('flashcards ui', () => {
     await user.click(screen.getByRole('button', { name: 'Easy' }));
 
     expect(screen.getByText('you')).toBeTruthy();
-    expect(screen.getByText('카드 2 / 5')).toBeTruthy();
+    expect(screen.getByText('카드 2 / 10')).toBeTruthy();
+  });
+
+  it('does not persist learning progress in guest mode', async () => {
+    const user = userEvent.setup();
+    useAppAuthMock.mockReturnValue({
+      status: 'guest',
+      userId: 'demo-user',
+      displayName: null,
+      email: null,
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: false,
+      isGuest: true,
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => false)
+    });
+
+    render(<FlashcardsClient />);
+
+    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
+    await user.click(screen.getByRole('button', { name: 'Easy' }));
+
+    expect(window.localStorage.getItem('mock_learning_progress')).toBeNull();
   });
 
   it('renders a focused recommendation session when word ids are provided', () => {

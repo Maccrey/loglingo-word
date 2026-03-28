@@ -8,11 +8,29 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const signInWithGooglePopupMock = vi.fn();
 const hasFirebaseWebConfigMock = vi.fn(() => true);
 const initializeFirebaseAnalyticsMock = vi.fn(async () => null);
+const useAppAuthMock = vi.fn(() => ({
+  status: 'authenticated',
+  userId: 'demo-user',
+  displayName: '테스트 사용자',
+  email: 'tester@example.com',
+  needsTermsConsent: false,
+  authReady: true,
+  isAuthenticated: true,
+  isGuest: false,
+  signIn: signInWithGooglePopupMock,
+  signOut: vi.fn(),
+  acceptTerms: vi.fn(),
+  saveLearningState: vi.fn(async () => true)
+}));
 
 vi.mock('../../apps/web/src/lib/firebase-client', () => ({
-  hasFirebaseWebConfig: () => hasFirebaseWebConfigMock(),
   initializeFirebaseAnalytics: () => initializeFirebaseAnalyticsMock(),
-  signInWithGooglePopup: () => signInWithGooglePopupMock()
+  signInWithGooglePopup: () => signInWithGooglePopupMock(),
+  hasFirebaseWebConfig: () => hasFirebaseWebConfigMock()
+}));
+
+vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
+  useAppAuth: () => useAppAuthMock()
 }));
 
 import SettingsClient from '../../apps/web/src/app/settings/SettingsClient';
@@ -26,6 +44,21 @@ afterEach(() => {
   hasFirebaseWebConfigMock.mockReturnValue(true);
   initializeFirebaseAnalyticsMock.mockReset();
   initializeFirebaseAnalyticsMock.mockResolvedValue(null);
+  useAppAuthMock.mockReset();
+  useAppAuthMock.mockReturnValue({
+    status: 'authenticated',
+    userId: 'demo-user',
+    displayName: '테스트 사용자',
+    email: 'tester@example.com',
+    needsTermsConsent: false,
+    authReady: true,
+    isAuthenticated: true,
+    isGuest: false,
+    signIn: signInWithGooglePopupMock,
+    signOut: vi.fn(),
+    acceptTerms: vi.fn(),
+    saveLearningState: vi.fn(async () => true)
+  });
 });
 
 describe('settings ui', () => {
@@ -46,16 +79,26 @@ describe('settings ui', () => {
     );
   });
 
-  it('shows a missing-config message when firebase web settings are unavailable', async () => {
-    const user = userEvent.setup();
-    hasFirebaseWebConfigMock.mockReturnValue(false);
+  it('shows a login-required modal when the user is not authenticated', () => {
+    useAppAuthMock.mockReturnValue({
+      status: 'guest',
+      userId: 'demo-user',
+      displayName: null,
+      email: null,
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: false,
+      isGuest: true,
+      signIn: signInWithGooglePopupMock,
+      signOut: vi.fn(),
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => false)
+    });
 
     render(<SettingsClient />);
 
-    await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
-
-    expect(screen.getByRole('status').textContent).toContain(
-      'Firebase 웹 설정이 없어 구글 로그인을 시작할 수 없습니다.'
+    expect(screen.getByRole('dialog').textContent).toContain(
+      '로그인이 필요합니다.'
     );
   });
 

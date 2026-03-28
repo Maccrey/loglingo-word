@@ -1,8 +1,25 @@
 'use client';
 
 import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence, signInWithPopup } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut,
+  type User
+} from 'firebase/auth';
 import { getAnalytics, isSupported } from 'firebase/analytics';
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc
+} from 'firebase/firestore';
+
+import { userSettingsSchema, vocabProgressSchema, type UserSettings, type VocabProgress } from '@wordflow/shared/types';
 
 type FirebaseWebConfig = {
   apiKey: string;
@@ -94,4 +111,119 @@ export async function signInWithGooglePopup() {
   });
 
   return signInWithPopup(auth, provider);
+}
+
+export function observeFirebaseAuth(
+  callback: (user: User | null) => void
+) {
+  return onAuthStateChanged(getAuth(getFirebaseClientApp()), callback);
+}
+
+export async function signOutFirebaseUser() {
+  await signOut(getAuth(getFirebaseClientApp()));
+}
+
+type FirebaseUserProfile = {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  createdAt: string;
+  lastLoginAt: string;
+  termsAcceptedAt?: string;
+};
+
+type FirebaseLearningState = {
+  userId: string;
+  settings: UserSettings;
+  progress: VocabProgress[];
+  updatedAt: string;
+};
+
+function getFirestoreDb() {
+  return getFirestore(getFirebaseClientApp());
+}
+
+export async function loadFirebaseUserProfile(uid: string): Promise<FirebaseUserProfile | null> {
+  const snapshot = await getDoc(doc(getFirestoreDb(), 'user_profiles', uid));
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  return snapshot.data() as FirebaseUserProfile;
+}
+
+export async function saveFirebaseUserProfile(
+  uid: string,
+  profile: Partial<FirebaseUserProfile>
+) {
+  const existing = await loadFirebaseUserProfile(uid);
+  const now = new Date().toISOString();
+
+  await setDoc(
+    doc(getFirestoreDb(), 'user_profiles', uid),
+    {
+      uid,
+      email: profile.email ?? existing?.email ?? null,
+      displayName: profile.displayName ?? existing?.displayName ?? null,
+      photoURL: profile.photoURL ?? existing?.photoURL ?? null,
+      createdAt: existing?.createdAt ?? now,
+      lastLoginAt: profile.lastLoginAt ?? now,
+      ...(profile.termsAcceptedAt || existing?.termsAcceptedAt
+        ? {
+            termsAcceptedAt:
+              profile.termsAcceptedAt ?? existing?.termsAcceptedAt
+          }
+        : {})
+    },
+    { merge: true }
+  );
+}
+
+export async function loadFirebaseLearningState(
+  uid: string
+): Promise<FirebaseLearningState | null> {
+  const snapshot = await getDoc(doc(getFirestoreDb(), 'user_learning', uid));
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data = snapshot.data() as {
+    userId: string;
+    settings: unknown;
+    progress: unknown[];
+    updatedAt: string;
+  };
+
+  return {
+    userId: data.userId,
+    settings: userSettingsSchema.parse(data.settings),
+    progress: Array.isArray(data.progress)
+      ? data.progress
+          .map((item) => vocabProgressSchema.safeParse(item))
+          .flatMap((result) => (result.success ? [result.data] : []))
+      : [],
+    updatedAt: data.updatedAt
+  };
+}
+
+export async function saveFirebaseLearningState(
+  uid: string,
+  input: {
+    settings: UserSettings;
+    progress: VocabProgress[];
+  }
+) {
+  await setDoc(
+    doc(getFirestoreDb(), 'user_learning', uid),
+    {
+      userId: uid,
+      settings: userSettingsSchema.parse(input.settings),
+      progress: input.progress.map((item) => vocabProgressSchema.parse(item)),
+      updatedAt: new Date().toISOString()
+    },
+    { merge: true }
+  );
 }

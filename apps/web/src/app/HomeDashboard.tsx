@@ -11,10 +11,16 @@ import {
 } from '@wordflow/core/gamification';
 import { buildReviewSelection } from '@wordflow/core/memory';
 import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
-import { type UserDashboardStats } from '@wordflow/shared/types';
+import { type UserDashboardStats, userSettingsSchema } from '@wordflow/shared/types';
 import { t, type AppLocale } from './i18n';
 import CatCard from '../components/CatCard';
 import { useCat } from '../lib/useCat';
+import {
+  readStoredSettingsSnapshot,
+  saveStoredSettings
+} from '../lib/settingsStorage';
+import { useAppAuth } from '../lib/useAppAuth';
+import { TermsConsentModal } from '../components/TermsConsentModal';
 
 type HomeDashboardProps = {
   loading?: boolean;
@@ -252,6 +258,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     loading: false,
     synced: false
   });
+  const [authMessage, setAuthMessage] = useState<string | null>(null);
+  const auth = useAppAuth();
   const catSnapshot = cat ? buildCatStateSnapshot(cat, Date.now(), thresholds) : null;
   const hoursSinceFeed = cat ? (Date.now() - cat.lastFedAt) / (60 * 60 * 1000) : 0;
   const hoursSinceWash = cat ? (Date.now() - cat.lastWashedAt) / (60 * 60 * 1000) : 0;
@@ -387,9 +395,54 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         >
           {t(locale, 'settings.title')}
         </Link>
+        <button
+          type="button"
+          aria-label={t(locale, 'settings.google_login')}
+          onClick={() => void startGoogleLogin()}
+          style={{
+            background: '#fff',
+            border: '1px solid var(--border-pencil)',
+            padding: '8px 16px',
+            borderRadius: 12,
+            color: 'var(--text-ink)',
+            fontWeight: 600,
+            boxShadow: 'var(--shadow-card)',
+            cursor: 'pointer'
+          }}
+        >
+          {t(locale, 'settings.google_login')}
+        </button>
       </div>
+      {authMessage ? (
+        <p role="status" style={{ margin: 0, color: 'var(--text-faded)' }}>
+          {authMessage}
+        </p>
+      ) : null}
     </section>
   );
+
+  async function startGoogleLogin() {
+    try {
+      const result = await auth.signIn();
+      const currentSettings = readStoredSettingsSnapshot();
+      saveStoredSettings(
+        userSettingsSchema.parse({
+          ...currentSettings,
+          userId: result.user.uid,
+          updatedAt: new Date().toISOString()
+        })
+      );
+      setAuthMessage(
+        `${t(locale, 'settings.google_login_success')} ${result.user.displayName?.trim() || result.user.email?.trim() || result.user.uid}`
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : t(locale, 'settings.google_login_error');
+      setAuthMessage(`${t(locale, 'settings.google_login_error')} ${message}`);
+    }
+  }
 
   async function requestRecommendation() {
     setRecommendation((current) => ({
@@ -500,6 +553,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
 
   return (
     <main style={surfaceStyle}>
+      {auth.isAuthenticated && auth.needsTermsConsent ? (
+        <TermsConsentModal locale={locale} onAccept={() => void auth.acceptTerms()} />
+      ) : null}
       <div style={shellStyle}>
         <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
           <div style={badgeStyle}>{t(locale, 'home.title')}</div>

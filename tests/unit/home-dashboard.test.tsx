@@ -11,14 +11,59 @@ vi.mock('../../apps/web/src/lib/useCat', () => ({
   useCat: vi.fn()
 }));
 
+const signInWithGooglePopupMock = vi.fn();
+const hasFirebaseWebConfigMock = vi.fn(() => true);
+
+vi.mock('../../apps/web/src/lib/firebase-client', () => ({
+  hasFirebaseWebConfig: () => hasFirebaseWebConfigMock(),
+  signInWithGooglePopup: () => signInWithGooglePopupMock()
+}));
+const useAppAuthMock = vi.fn(() => ({
+  status: 'guest',
+  userId: 'demo-user',
+  displayName: null,
+  email: null,
+  needsTermsConsent: false,
+  authReady: true,
+  isAuthenticated: false,
+  isGuest: true,
+  signIn: signInWithGooglePopupMock,
+  signOut: vi.fn(),
+  acceptTerms: vi.fn(),
+  saveLearningState: vi.fn(async () => false)
+}));
+
+vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
+  useAppAuth: () => useAppAuthMock()
+}));
+
 const { useCat } = await import('../../apps/web/src/lib/useCat');
 
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
 });
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  signInWithGooglePopupMock.mockReset();
+  hasFirebaseWebConfigMock.mockReset();
+  hasFirebaseWebConfigMock.mockReturnValue(true);
+  useAppAuthMock.mockReset();
+  useAppAuthMock.mockReturnValue({
+    status: 'guest',
+    userId: 'demo-user',
+    displayName: null,
+    email: null,
+    needsTermsConsent: false,
+    authReady: true,
+    isAuthenticated: false,
+    isGuest: true,
+    signIn: signInWithGooglePopupMock,
+    signOut: vi.fn(),
+    acceptTerms: vi.fn(),
+    saveLearningState: vi.fn(async () => false)
+  });
   vi.mocked(useCat).mockReturnValue({
     cat: {
       id: 'cat-1',
@@ -97,6 +142,40 @@ describe('home dashboard', () => {
     );
     expect(screen.getByText('지금 필요한 돌봄')).toBeTruthy();
     expect(screen.getByText('오늘 15분 학습이면 충분해요')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Google로 로그인' })).toBeTruthy();
+  });
+
+  it('supports google sign-in from the home dashboard', async () => {
+    const user = userEvent.setup();
+    useAppAuthMock.mockReturnValue({
+      status: 'guest',
+      userId: 'demo-user',
+      displayName: null,
+      email: null,
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: false,
+      isGuest: true,
+      signIn: signInWithGooglePopupMock,
+      signOut: vi.fn(),
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => false)
+    });
+    signInWithGooglePopupMock.mockResolvedValue({
+      user: {
+        uid: 'firebase-home-user',
+        displayName: '홈 사용자',
+        email: 'home@example.com'
+      }
+    });
+
+    render(<HomeDashboard />);
+
+    await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
+
+    expect(screen.getByRole('status').textContent).toContain(
+      '구글 로그인 완료: 홈 사용자'
+    );
   });
 
   it('renders the cat card and quick start panel in the same feature row', () => {

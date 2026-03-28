@@ -21,6 +21,7 @@ import {
   readStoredLearningProgressSnapshot,
   saveStoredLearningProgress
 } from '../../lib/learningProgressStorage';
+import { useAppAuth } from '../../lib/useAppAuth';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
@@ -121,6 +122,7 @@ type FlashcardsClientProps = {
 
 export default function FlashcardsClient(props: FlashcardsClientProps) {
   const locale = props.locale ?? 'ko';
+  const auth = useAppAuth();
   const [storedSettings, setStoredSettings] = useState(() =>
     readStoredSettingsSnapshot()
   );
@@ -131,7 +133,9 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         : {
             learningLanguage: storedSettings.learningLanguage,
             learningLevel: storedSettings.learningLevel,
-            progressList: readStoredLearningProgressSnapshot(),
+            progressList: auth.isAuthenticated
+              ? readStoredLearningProgressSnapshot()
+              : [],
             limit: storedSettings.sessionQuestionCount
           }
     )
@@ -191,7 +195,9 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         createFlashcardSession({
           learningLanguage: nextSettings.learningLanguage,
           learningLevel: nextSettings.learningLevel,
-          progressList: readStoredLearningProgressSnapshot(),
+          progressList: auth.isAuthenticated
+            ? readStoredLearningProgressSnapshot()
+            : [],
           limit: nextSettings.sessionQuestionCount
         })
       );
@@ -206,7 +212,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         syncFromStoredSettings
       );
     };
-  }, [props.focusWordIds]);
+  }, [auth.isAuthenticated, props.focusWordIds]);
 
   useEffect(() => {
     setWritingInput('');
@@ -220,9 +226,17 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     if (props.focusWordIds && props.focusWordIds.length > 0) {
       return;
     }
+    if (!auth.isAuthenticated) {
+      return;
+    }
 
-    saveStoredLearningProgress(Object.values(session.progressMap));
-  }, [props.focusWordIds, session.progressMap]);
+    const progress = Object.values(session.progressMap);
+    saveStoredLearningProgress(progress);
+    void auth.saveLearningState({
+      settings: readStoredSettingsSnapshot(),
+      progress
+    });
+  }, [auth, auth.isAuthenticated, props.focusWordIds, session.progressMap]);
 
   useEffect(() => {
     if (!completed || (props.focusWordIds && props.focusWordIds.length > 0)) {
