@@ -1,123 +1,308 @@
 import {
-  buildSentenceExercise,
-  compareSentenceAnswer,
-  type SentenceComparisonResult,
-  type SentenceToken
-} from '@wordflow/core/sentence';
-import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
-import {
   getDefaultLearningLevel,
   type SupportedLearningLanguage,
   type SupportedLearningLevel
 } from '@wordflow/shared/learning-preferences';
+import {
+  jlptN5SentenceAssemblyExercises,
+  type SentenceAssemblyBlock,
+  type SentenceAssemblyDistractor,
+  type SentenceAssemblyExercise,
+  type SentenceAssemblyStage
+} from '@wordflow/shared/sentence-expansion';
+
+type SentenceChoice = {
+  id: string;
+  text: string;
+  kind: 'correct' | 'distractor';
+  advice?: string;
+};
 
 export type SentenceFeedback = {
   status: 'idle' | 'success' | 'error';
   message: string;
+  advice?: string;
 };
 
 export type SentenceSessionState = {
-  exercise: ReturnType<typeof buildSentenceExercise>;
-  poolTokens: SentenceToken[];
-  assembledTokens: SentenceToken[];
-  result?: SentenceComparisonResult;
+  exercise: SentenceAssemblyExercise;
+  currentStageIndex: number;
+  assembledBlocks: SentenceAssemblyBlock[];
+  availableChoices: SentenceChoice[];
+  randomizeChoices: boolean;
+  completedStages: Array<{
+    stageId: string;
+    text: string;
+  }>;
+  stageCompleted: boolean;
+  completed: boolean;
   feedback: SentenceFeedback;
 };
 
-export function createDemoSentenceSession(input?: {
-  learningLanguage?: SupportedLearningLanguage;
-  learningLevel?: SupportedLearningLevel;
-}): SentenceSessionState {
-  const learningLanguage = input?.learningLanguage ?? 'en';
-  const learningLevel =
-    input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
-  const curriculum = getCurriculumByStandardLevel(
-    learningLanguage,
-    learningLevel
+function toChoiceFromBlock(block: SentenceAssemblyBlock): SentenceChoice {
+  return {
+    id: block.id,
+    text: block.text,
+    kind: 'correct'
+  };
+}
+
+function toChoiceFromDistractor(
+  block: SentenceAssemblyDistractor
+): SentenceChoice {
+  return {
+    id: block.id,
+    text: block.text,
+    kind: 'distractor',
+    advice: block.advice
+  };
+}
+
+function buildChoicesForCurrentTurn(
+  stage: SentenceAssemblyStage,
+  assembledCount: number,
+  randomizeChoices: boolean
+): SentenceChoice[] {
+  const nextCorrectBlock = stage.correctBlocks[assembledCount];
+
+  if (!nextCorrectBlock) {
+    return [];
+  }
+
+  const choices = [
+    toChoiceFromBlock(nextCorrectBlock),
+    ...stage.distractorBlocks.slice(0, 2).map(toChoiceFromDistractor)
+  ];
+
+  if (!randomizeChoices) {
+    return choices
+      .map((choice, index) => ({
+        choice,
+        index,
+        score: buildChoiceScore(stage.id, assembledCount, choice.id)
+      }))
+      .sort((left, right) => {
+        if (left.score === right.score) {
+          return left.index - right.index;
+        }
+
+        return left.score - right.score;
+      })
+      .map((entry) => entry.choice);
+  }
+
+  const randomizedChoices = [...choices];
+
+  for (let index = randomizedChoices.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [randomizedChoices[index], randomizedChoices[swapIndex]] = [
+      randomizedChoices[swapIndex]!,
+      randomizedChoices[index]!
+    ];
+  }
+
+  return randomizedChoices;
+}
+
+function getExercisePool(): SentenceAssemblyExercise[] {
+  return [...jlptN5SentenceAssemblyExercises];
+}
+
+function resolveSentenceExercise(
+  learningLanguage: SupportedLearningLanguage,
+  learningLevel: SupportedLearningLevel
+): SentenceAssemblyExercise {
+  const exercises = getExercisePool();
+
+  return (
+    exercises.find(
+      (exercise) =>
+        exercise.language === learningLanguage && exercise.level === learningLevel
+    ) ??
+    exercises.find((exercise) => exercise.language === learningLanguage) ??
+    exercises[0]!
   );
-  const targetWord = curriculum[0]?.words[0];
-  const exercise = buildSentenceExercise({
-    wordId: targetWord?.id ?? 'hello',
-    curriculum
-  });
+}
+
+function buildSelectionAdvice(
+  stage: SentenceAssemblyStage,
+  assembledCount: number
+): string {
+  if (stage.correctBlocks.length - assembledCount <= 0) {
+    return stage.completionAdvice;
+  }
+
+  return stage.selectionAdvice;
+}
+
+function buildChoiceScore(
+  stageId: string,
+  assembledCount: number,
+  choiceId: string
+): number {
+  const input = `${stageId}:${assembledCount}:${choiceId}`;
+  let hash = 0;
+
+  for (const char of input) {
+    hash = (hash * 33 + char.charCodeAt(0)) % 1000003;
+  }
+
+  return hash;
+}
+
+function buildInitialState(
+  exercise: SentenceAssemblyExercise,
+  randomizeChoices: boolean
+): SentenceSessionState {
+  const firstStage = exercise.stages[0]!;
 
   return {
     exercise,
-    poolTokens: [...exercise.tokens],
-    assembledTokens: [],
+    currentStageIndex: 0,
+    assembledBlocks: [],
+    availableChoices: buildChoicesForCurrentTurn(firstStage, 0, randomizeChoices),
+    randomizeChoices,
+    completedStages: [],
+    stageCompleted: false,
+    completed: false,
     feedback: {
       status: 'idle',
-      message: '토큰을 순서대로 조합해 문장을 완성하세요.'
+      message: '어떤 블록을 골라야 하는지 먼저 확인하세요.',
+      advice: buildSelectionAdvice(firstStage, 0)
     }
   };
 }
 
-export function moveTokenToAnswer(
-  state: SentenceSessionState,
-  tokenId: string
-): SentenceSessionState {
-  const token = state.poolTokens.find((item) => item.id === tokenId);
+export function createDemoSentenceSession(input?: {
+  learningLanguage?: SupportedLearningLanguage;
+  learningLevel?: SupportedLearningLevel;
+  randomizeChoices?: boolean;
+}): SentenceSessionState {
+  const learningLanguage = input?.learningLanguage ?? 'en';
+  const learningLevel =
+    input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
+  const randomizeChoices = input?.randomizeChoices ?? false;
+  const exercise = resolveSentenceExercise(learningLanguage, learningLevel);
 
-  if (!token) {
-    return state;
-  }
-
-  return {
-    ...state,
-    poolTokens: state.poolTokens.filter((item) => item.id !== tokenId),
-    assembledTokens: [...state.assembledTokens, token]
-  };
-}
-
-export function moveTokenBackToPool(
-  state: SentenceSessionState,
-  tokenId: string
-): SentenceSessionState {
-  const token = state.assembledTokens.find((item) => item.id === tokenId);
-
-  if (!token) {
-    return state;
-  }
-
-  return {
-    ...state,
-    poolTokens: [...state.poolTokens, token],
-    assembledTokens: state.assembledTokens.filter((item) => item.id !== tokenId)
-  };
+  return buildInitialState(exercise, randomizeChoices);
 }
 
 export function resetSentenceSession(
   state: SentenceSessionState
 ): SentenceSessionState {
-  const { result: _result, ...rest } = state;
+  return buildInitialState(state.exercise, state.randomizeChoices);
+}
+
+export function chooseSentenceBlock(
+  state: SentenceSessionState,
+  choiceId: string
+): SentenceSessionState {
+  if (state.completed || state.stageCompleted) {
+    return state;
+  }
+
+  const stage = state.exercise.stages[state.currentStageIndex];
+  const choice = state.availableChoices.find((item) => item.id === choiceId);
+
+  if (!stage || !choice) {
+    return state;
+  }
+
+  const nextCorrectBlock = stage.correctBlocks[state.assembledBlocks.length];
+
+  if (!nextCorrectBlock) {
+    return state;
+  }
+
+  if (choice.kind === 'distractor') {
+    return {
+      ...state,
+      feedback: {
+        status: 'error',
+        message: `${choice.text} 블록은 이 문장에 맞지 않습니다.`,
+        advice: choice.advice ?? stage.selectionAdvice
+      }
+    };
+  }
+
+  const nextAssembledBlocks = [...state.assembledBlocks, nextCorrectBlock];
+  const stageCompleted = nextAssembledBlocks.length === stage.correctBlocks.length;
 
   return {
-    ...rest,
-    poolTokens: [...state.exercise.tokens],
-    assembledTokens: [],
+    ...state,
+    assembledBlocks: nextAssembledBlocks,
+    availableChoices: stageCompleted
+      ? []
+      : buildChoicesForCurrentTurn(
+          stage,
+          nextAssembledBlocks.length,
+          state.randomizeChoices
+        ),
+    stageCompleted,
     feedback: {
-      status: 'idle',
-      message: '토큰을 순서대로 조합해 문장을 완성하세요.'
+      status: 'success',
+      message: stageCompleted
+        ? `${stage.title} 문장을 완성했습니다.`
+        : `${choice.text} 블록이 맞습니다.`,
+      ...(stageCompleted
+        ? {
+            advice: stage.completionAdvice
+          }
+        : {
+            advice: buildSelectionAdvice(stage, nextAssembledBlocks.length)
+          })
     }
   };
 }
 
-export function submitSentenceSession(
+export function moveToNextSentenceStage(
   state: SentenceSessionState
 ): SentenceSessionState {
-  const result = compareSentenceAnswer(
-    state.assembledTokens.map((token) => token.value),
-    state.exercise.answer
-  );
+  if (!state.stageCompleted || state.completed) {
+    return state;
+  }
+
+  const stage = state.exercise.stages[state.currentStageIndex];
+  const nextStageIndex = state.currentStageIndex + 1;
+  const nextStage = state.exercise.stages[nextStageIndex];
+  const completedStages = stage
+    ? [
+        ...state.completedStages,
+        {
+          stageId: stage.id,
+          text: stage.correctBlocks.map((block) => block.text).join(' ')
+        }
+      ]
+    : state.completedStages;
+
+  if (!nextStage) {
+    return {
+      ...state,
+      completedStages,
+      completed: true,
+      stageCompleted: true,
+      feedback: {
+        status: 'success',
+        message: '모든 문자조립훈련 문제를 완료했습니다.'
+      }
+    };
+  }
 
   return {
     ...state,
-    result,
+    currentStageIndex: nextStageIndex,
+    assembledBlocks: [],
+    availableChoices: buildChoicesForCurrentTurn(
+      nextStage,
+      0,
+      state.randomizeChoices
+    ),
+    completedStages,
+    stageCompleted: false,
     feedback: {
-      status: result.isCorrect ? 'success' : 'error',
-      message: result.isCorrect
-        ? '문장 완성 정답입니다.'
-        : '문장 순서를 다시 확인하세요.'
+      status: 'idle',
+      message: '다음 문장에서 어떤 블록이 먼저 필요한지 확인하세요.',
+      advice: buildSelectionAdvice(nextStage, 0)
     }
   };
 }

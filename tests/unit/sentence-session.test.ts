@@ -1,33 +1,101 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  chooseSentenceBlock,
   createDemoSentenceSession,
-  moveTokenToAnswer,
-  resetSentenceSession,
-  submitSentenceSession
+  moveToNextSentenceStage,
+  resetSentenceSession
 } from '../../apps/web/src/app/sentence/sentenceSession';
 
 describe('sentence session state', () => {
-  it('moves a token from the pool to the answer area', () => {
-    const initial = createDemoSentenceSession();
-    const moved = moveTokenToAnswer(initial, initial.poolTokens[0]!.id);
+  it('shows exactly three candidate blocks for the current turn', () => {
+    const initial = createDemoSentenceSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
 
-    expect(moved.poolTokens).toHaveLength(initial.poolTokens.length - 1);
-    expect(moved.assembledTokens).toHaveLength(1);
+    expect(initial.currentStageIndex).toBe(0);
+    expect(initial.availableChoices).toHaveLength(3);
+    expect(initial.availableChoices.map((choice) => choice.text)).toContain('私は');
+    expect(initial.availableChoices.map((choice) => choice.text)).toContain('学校に');
+    expect(initial.availableChoices.map((choice) => choice.text)).toContain('行きたいです。');
+    expect(initial.feedback.advice).toContain('주어와 동사부터 고르세요.');
   });
 
-  it('submits the assembled sentence and resets it', () => {
-    let state = createDemoSentenceSession();
+  it('builds the sentence one correct block at a time', () => {
+    let state = createDemoSentenceSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
 
-    for (const token of state.exercise.tokens) {
-      state = moveTokenToAnswer(state, token.id);
-    }
+    const firstChoice = state.availableChoices.find((choice) => choice.text === '私は');
+    state = chooseSentenceBlock(state, firstChoice!.id);
+    expect(state.assembledBlocks.map((block) => block.text)).toEqual(['私は']);
+    expect(state.availableChoices).toHaveLength(3);
 
-    const submitted = submitSentenceSession(state);
-    const reset = resetSentenceSession(submitted);
+    const secondChoice = state.availableChoices.find(
+      (choice) => choice.text === '行きます。'
+    );
+    state = chooseSentenceBlock(state, secondChoice!.id);
 
-    expect(submitted.feedback.status).toBe('success');
-    expect(reset.assembledTokens).toEqual([]);
-    expect(reset.poolTokens).toHaveLength(reset.exercise.tokens.length);
+    expect(state.feedback.status).toBe('success');
+    expect(state.stageCompleted).toBe(true);
+    expect(state.assembledBlocks.map((block) => block.text)).toEqual([
+      '私は',
+      '行きます。'
+    ]);
+  });
+
+  it('returns advice when a distractor block is selected', () => {
+    const initial = createDemoSentenceSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
+    const distractor = initial.availableChoices.find(
+      (choice) => choice.text === '学校に'
+    );
+    const next = chooseSentenceBlock(initial, distractor!.id);
+
+    expect(next.feedback.status).toBe('error');
+    expect(next.feedback.advice).toContain('장소는 아직 아닙니다.');
+  });
+
+  it('moves to the next problem after a stage is completed', () => {
+    let state = createDemoSentenceSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
+
+    state = chooseSentenceBlock(
+      state,
+      state.availableChoices.find((choice) => choice.text === '私は')!.id
+    );
+    state = chooseSentenceBlock(
+      state,
+      state.availableChoices.find((choice) => choice.text === '行きます。')!.id
+    );
+    state = moveToNextSentenceStage(state);
+
+    expect(state.currentStageIndex).toBe(1);
+    expect(state.completedStages[0]?.text).toBe('私は 行きます。');
+    expect(state.availableChoices).toHaveLength(3);
+    expect(state.availableChoices.map((choice) => choice.text)).toContain('私は');
+  });
+
+  it('resets the full training back to the first problem', () => {
+    let state = createDemoSentenceSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
+
+    state = chooseSentenceBlock(
+      state,
+      state.availableChoices.find((choice) => choice.text === '私は')!.id
+    );
+    state = resetSentenceSession(state);
+
+    expect(state.currentStageIndex).toBe(0);
+    expect(state.assembledBlocks).toEqual([]);
+    expect(state.completedStages).toEqual([]);
   });
 });

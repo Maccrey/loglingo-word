@@ -1,0 +1,196 @@
+[
+  {
+    "id": "jlpt-n5-school-blocks",
+    "language": "ja",
+    "level": "jlpt_n5",
+    "title": "학교 가기 싫은 날",
+    "description": "짧은 문장에서 시작해 블록을 순서대로 누르며 문장을 조금씩 길게 만듭니다.",
+    "stages": [
+      {
+        "id": "stage-1",
+        "title": "1단계",
+        "goal": "나는 간다.",
+        "focus": "주어 + 동사",
+        "selectionAdvice": "주어와 동사부터 고르세요.",
+        "completionAdvice": "기본 문장 완성. 다음은 장소입니다.",
+        "correctBlocks": [
+          { "id": "s1-b1", "text": "私は" },
+          { "id": "s1-b2", "text": "行きます。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s1-d1",
+            "text": "学校に",
+            "advice": "장소는 아직 아닙니다."
+          },
+          {
+            "id": "s1-d2",
+            "text": "行きたいです。",
+            "advice": "희망 표현은 아직 아닙니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-2",
+        "title": "2단계",
+        "goal": "나는 학교에 간다.",
+        "focus": "주어 + 장소 + 동사",
+        "selectionAdvice": "장소 블록을 붙이세요.",
+        "completionAdvice": "장소까지 완성. 다음은 감정입니다.",
+        "correctBlocks": [
+          { "id": "s2-b1", "text": "私は" },
+          { "id": "s2-b2", "text": "学校に" },
+          { "id": "s2-b3", "text": "行きます。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s2-d1",
+            "text": "家に",
+            "advice": "장소는 학교여야 합니다."
+          },
+          {
+            "id": "s2-d2",
+            "text": "行きたくないです。",
+            "advice": "감정 표현은 아직 아닙니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-3",
+        "title": "3단계",
+        "goal": "나는 학교에 가기 싫다.",
+        "focus": "감정 추가",
+        "selectionAdvice": "감정 표현을 고르세요.",
+        "completionAdvice": "감정까지 완성. 다음은 시간입니다.",
+        "correctBlocks": [
+          { "id": "s3-b1", "text": "私は" },
+          { "id": "s3-b2", "text": "学校に" },
+          { "id": "s3-b3", "text": "行きたくないです。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s3-d1",
+            "text": "行きます。",
+            "advice": "여긴 감정 표현이 필요합니다."
+          },
+          {
+            "id": "s3-d2",
+            "text": "昨日は",
+            "advice": "시간보다 감정이 먼저입니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-4",
+        "title": "4단계",
+        "goal": "오늘은 학교에 가기 싫다.",
+        "focus": "시간 추가",
+        "selectionAdvice": "시간 블록을 앞에 두세요.",
+        "completionAdvice": "시간까지 완성. 다음은 이유와 행동입니다.",
+        "correctBlocks": [
+          { "id": "s4-b1", "text": "今日は" },
+          { "id": "s4-b2", "text": "学校に" },
+          { "id": "s4-b3", "text": "行きたくないです。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s4-d1",
+            "text": "毎日",
+            "advice": "여기는 오늘의 상황입니다."
+          },
+          {
+            "id": "s4-d2",
+            "text": "お母さんに",
+            "advice": "엄마에게 말하는 건 아직 아닙니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-5",
+        "title": "5단계",
+        "goal": "오늘은 학교에 가기 싫어서 엄마에게 말한다.",
+        "focus": "이유 + 대상 + 행동",
+        "selectionAdvice": "대상과 행동을 이어 보세요.",
+        "completionAdvice": "행동까지 완성. 다음은 말한 내용입니다.",
+        "correctBlocks": [
+          { "id": "s5-b1", "text": "今日は" },
+          { "id": "s5-b2", "text": "学校に" },
+          { "id": "s5-b3", "text": "行きたくなくて" },
+          { "id": "s5-b4", "text": "お母さんに" },
+          { "id": "s5-b5", "text": "言いました。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s5-d1",
+            "text": "お母さんは",
+            "advice": "엄마는 대상입니다."
+          },
+          {
+            "id": "s5-d2",
+            "text": "行きたいので",
+            "advice": "문맥이 반대입니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-6",
+        "title": "6단계",
+        "goal": "오늘은 학교에 가기 싫어서 엄마에게 열이 있다고 말했다.",
+        "focus": "간접화법",
+        "selectionAdvice": "말한 내용을 붙이세요.",
+        "completionAdvice": "간접화법 완성. 다음은 의도입니다.",
+        "correctBlocks": [
+          { "id": "s6-b1", "text": "今日は" },
+          { "id": "s6-b2", "text": "学校に" },
+          { "id": "s6-b3", "text": "行きたくなくて" },
+          { "id": "s6-b4", "text": "お母さんに" },
+          { "id": "s6-b5", "text": "熱があると" },
+          { "id": "s6-b6", "text": "言いました。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s6-d1",
+            "text": "元気だと",
+            "advice": "의미가 반대입니다."
+          },
+          {
+            "id": "s6-d2",
+            "text": "見ました。",
+            "advice": "보는 동작은 아닙니다."
+          }
+        ]
+      },
+      {
+        "id": "stage-7",
+        "title": "7단계",
+        "goal": "오늘은 학교에 가기 싫어서 엄마에게 열이 있다고 말하고 학교를 쉬려고 했다.",
+        "focus": "의도 표현",
+        "selectionAdvice": "의도 표현을 고르세요.",
+        "completionAdvice": "의도까지 완성. 전체를 읽어 보세요.",
+        "correctBlocks": [
+          { "id": "s7-b1", "text": "今日は" },
+          { "id": "s7-b2", "text": "学校に" },
+          { "id": "s7-b3", "text": "行きたくなくて" },
+          { "id": "s7-b4", "text": "お母さんに" },
+          { "id": "s7-b5", "text": "熱があると" },
+          { "id": "s7-b6", "text": "言って" },
+          { "id": "s7-b7", "text": "学校を" },
+          { "id": "s7-b8", "text": "休もうと" },
+          { "id": "s7-b9", "text": "しました。" }
+        ],
+        "distractorBlocks": [
+          {
+            "id": "s7-d1",
+            "text": "休みました。",
+            "advice": "결과보다 의도가 필요합니다."
+          },
+          {
+            "id": "s7-d2",
+            "text": "学校へ",
+            "advice": "여긴 목적어 구조입니다."
+          }
+        ]
+      }
+    ]
+  }
+]
