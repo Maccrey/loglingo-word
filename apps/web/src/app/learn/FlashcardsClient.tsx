@@ -9,6 +9,7 @@ import {
   getNextLearningLevel
 } from '@wordflow/shared/learning-preferences';
 import { BackButton } from '../../components/BackButton';
+import { CollapsiblePageHeader } from '../../components/CollapsiblePageHeader';
 import { type AppLocale } from '../i18n';
 import {
   readStoredSettingsSnapshot,
@@ -393,58 +394,59 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   return (
     <main style={surfaceStyle}>
       <div style={shellStyle}>
-        <section style={{ ...panelStyle, display: 'grid', gap: 18 }}>
-          <BackButton locale={locale} />
-          <div style={badgeStyle}>Today&apos;s Study</div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: 16,
-              flexWrap: 'wrap',
-              alignItems: 'end'
-            }}
-          >
-            <div style={{ display: 'grid', gap: 8 }}>
-              <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-                Flashcard Sprint
-              </h1>
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: 580,
-                  color: 'var(--text-faded)',
-                  lineHeight: 1.6
-                }}
-              >
-                오늘은 틀린 단어를 먼저 다시 잡고, 복습이 도래한 카드 다음으로
-                새 단어를 이어서 학습합니다.
-              </p>
-            </div>
-
+        <CollapsiblePageHeader locale={locale} expandedMinHeight={204}>
+          <div style={{ display: 'grid', gap: 18 }}>
+            <div style={badgeStyle}>Today&apos;s Study</div>
             <div
               style={{
-                display: 'grid',
-                gap: 6,
-                minWidth: 180,
-                textAlign: 'right'
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 16,
+                flexWrap: 'wrap',
+                alignItems: 'end'
               }}
             >
-              <strong style={{ fontSize: 32 }}>
-                {reviewedCount}/{totalCount}
-              </strong>
-              <span style={{ color: 'var(--text-faded)' }}>완료한 카드 수</span>
-              <span style={{ color: 'var(--text-faded)' }}>
-                오답 큐 {session.wrongWordQueue.length}개
-              </span>
-              {props.focusWordIds && props.focusWordIds.length > 0 ? (
+              <div style={{ display: 'grid', gap: 8 }}>
+                <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+                  Flashcard Sprint
+                </h1>
+                <p
+                  style={{
+                    margin: 0,
+                    maxWidth: 580,
+                    color: 'var(--text-faded)',
+                    lineHeight: 1.6
+                  }}
+                >
+                  오늘은 틀린 단어를 먼저 다시 잡고, 복습이 도래한 카드 다음으로
+                  새 단어를 이어서 학습합니다.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gap: 6,
+                  minWidth: 180,
+                  textAlign: 'right'
+                }}
+              >
+                <strong style={{ fontSize: 32 }}>
+                  {reviewedCount}/{totalCount}
+                </strong>
+                <span style={{ color: 'var(--text-faded)' }}>완료한 카드 수</span>
                 <span style={{ color: 'var(--text-faded)' }}>
-                  추천 단어 {props.focusWordIds.length}개
+                  오답 큐 {session.wrongWordQueue.length}개
                 </span>
-              ) : null}
+                {props.focusWordIds && props.focusWordIds.length > 0 ? (
+                  <span style={{ color: 'var(--text-faded)' }}>
+                    추천 단어 {props.focusWordIds.length}개
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
-        </section>
+        </CollapsiblePageHeader>
 
         <section
           style={{

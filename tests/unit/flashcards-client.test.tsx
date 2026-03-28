@@ -4,6 +4,7 @@ import React from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
 
 import FlashcardsClient from '../../apps/web/src/app/learn/FlashcardsClient';
 
@@ -22,13 +23,13 @@ describe('flashcards ui', () => {
 
     render(<FlashcardsClient />);
 
-    expect(screen.getByText('hello')).toBeTruthy();
-    expect(screen.queryByText('안녕하세요')).toBeNull();
+    expect(screen.getByText('I')).toBeTruthy();
+    expect(screen.queryByText('나')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
 
-    expect(screen.getByText('안녕하세요')).toBeTruthy();
-    expect(screen.getByText('Hello, nice to meet you.')).toBeTruthy();
+    expect(screen.getByText('나')).toBeTruthy();
+    expect(screen.getByText('I am a student.')).toBeTruthy();
   });
 
   it('moves to the next card when a rating button is clicked', async () => {
@@ -39,8 +40,8 @@ describe('flashcards ui', () => {
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
     await user.click(screen.getByRole('button', { name: 'Easy' }));
 
-    expect(screen.getByText('thanks')).toBeTruthy();
-    expect(screen.getByText('카드 2 / 4')).toBeTruthy();
+    expect(screen.getByText('you')).toBeTruthy();
+    expect(screen.getByText('카드 2 / 5')).toBeTruthy();
   });
 
   it('renders a focused recommendation session when word ids are provided', () => {
@@ -93,7 +94,7 @@ describe('flashcards ui', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     render(
-      <FlashcardsClient focusWordIds={['passport', 'reservation', 'subway']} />
+      <FlashcardsClient focusWordIds={['passport', 'reservation', 'teacher']} />
     );
 
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
@@ -103,12 +104,14 @@ describe('flashcards ui', () => {
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
     await user.click(screen.getByRole('button', { name: 'Easy' }));
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/leaderboard/sync',
-      expect.objectContaining({
-        method: 'POST'
-      })
-    );
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/leaderboard/sync',
+        expect.objectContaining({
+          method: 'POST'
+        })
+      );
+    });
     expect(
       screen
         .getByRole('link', { name: '리더보드 반영 보기' })
@@ -198,6 +201,18 @@ describe('flashcards ui', () => {
 
   it('automatically advances to the next level and refreshes the session when 90% of the current level is mastered', async () => {
     const user = userEvent.setup();
+    const a1WordIds = getCurriculumByStandardLevel('en', 'cefr_a1').flatMap(
+      (unit) => unit.words.map((word) => word.id)
+    );
+    const seededProgress = a1WordIds.map((wordId) => ({
+      wordId,
+      correctStreak: ['i', 'you'].includes(wordId) ? 1 : 2,
+      storageStrength: ['i', 'you'].includes(wordId) ? 0.6 : 1.1,
+      retrievalStrength: ['i', 'you'].includes(wordId) ? 0.5 : 0.9,
+      nextReviewAt: ['i', 'you'].includes(wordId)
+        ? '2026-03-24T00:00:00.000Z'
+        : '2026-04-24T00:00:00.000Z'
+    }));
 
     window.localStorage.setItem(
       'mock_user_settings',
@@ -206,7 +221,7 @@ describe('flashcards ui', () => {
         appLanguage: 'ko',
         learningLanguage: 'en',
         learningLevel: 'cefr_a1',
-        sessionQuestionCount: 4,
+        sessionQuestionCount: 2,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-26T00:00:00.000Z'
@@ -214,44 +229,11 @@ describe('flashcards ui', () => {
     );
     window.localStorage.setItem(
       'mock_learning_progress',
-      JSON.stringify([
-        {
-          wordId: 'hello',
-          correctStreak: 1,
-          storageStrength: 0.7,
-          retrievalStrength: 0.6,
-          nextReviewAt: '2026-03-24T00:00:00.000Z'
-        },
-        {
-          wordId: 'thanks',
-          correctStreak: 1,
-          storageStrength: 0.7,
-          retrievalStrength: 0.6,
-          nextReviewAt: '2026-03-24T00:00:00.000Z'
-        },
-        {
-          wordId: 'breakfast',
-          correctStreak: 1,
-          storageStrength: 0.7,
-          retrievalStrength: 0.6,
-          nextReviewAt: '2026-03-24T00:00:00.000Z'
-        },
-        {
-          wordId: 'subway',
-          correctStreak: 2,
-          storageStrength: 1.1,
-          retrievalStrength: 0.9,
-          nextReviewAt: '2026-03-24T00:00:00.000Z'
-        }
-      ])
+      JSON.stringify(seededProgress)
     );
 
     render(<FlashcardsClient />);
 
-    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
-    await user.click(screen.getByRole('button', { name: 'Easy' }));
-    await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
-    await user.click(screen.getByRole('button', { name: 'Easy' }));
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));
     await user.click(screen.getByRole('button', { name: 'Easy' }));
     await user.click(screen.getByRole('button', { name: '카드 뒤집기' }));

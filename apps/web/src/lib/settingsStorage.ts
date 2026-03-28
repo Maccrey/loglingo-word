@@ -25,7 +25,7 @@ export function createFallbackSettings(): UserSettings {
   return createDefaultSettings({
     userId: 'demo-user',
     learningLanguage: 'en',
-    sessionQuestionCount: 5,
+    sessionQuestionCount: 10,
     updatedAt: '2026-03-26T00:00:00.000Z'
   });
 }

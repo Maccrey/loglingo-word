@@ -4,7 +4,10 @@ import {
   advanceQuizQuestion,
   createDemoQuizSession,
   enableQuizAdvance,
+  finishReviewRound,
   selectQuizOption,
+  selectReviewAnswer,
+  selectReviewPrompt,
   submitMultipleChoiceAnswer,
   submitShortAnswer,
   updateShortAnswerInput
@@ -89,5 +92,41 @@ describe('quiz session state', () => {
     expect(firstWrong.feedback.message).toContain('천천히 생각해보세요');
     expect(secondWrong.wrongAttempts).toBe(2);
     expect(secondWrong.feedback.message).toContain('정답은');
+  });
+
+  it('starts a 6-block integrated review round after five correct answers', () => {
+    let state = createDemoQuizSession({
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5',
+      questionCount: 10
+    });
+
+    for (let index = 0; index < 5; index += 1) {
+      state = submitMultipleChoiceAnswer(
+        selectQuizOption(state, state.multipleChoiceQuiz.answerId)
+      );
+      state = advanceQuizQuestion(state, {
+        learningLanguage: 'ja',
+        learningLevel: 'jlpt_n5'
+      });
+    }
+
+    expect(state.reviewRound).toBeTruthy();
+    expect(state.reviewRound?.pairs.length).toBeGreaterThanOrEqual(5);
+
+    const leftWordId = state.reviewRound!.leftWordIds[0]!;
+    state = selectReviewPrompt(state, leftWordId);
+    state = selectReviewAnswer(state, leftWordId);
+
+    expect(state.reviewRound?.matchedWordIds).toContain(leftWordId);
+
+    let next = state;
+    for (const wordId of next.reviewRound!.leftWordIds.slice(1)) {
+      next = selectReviewPrompt(next, wordId);
+      next = selectReviewAnswer(next, wordId);
+    }
+
+    expect(next.reviewRound?.completed).toBe(true);
+    expect(finishReviewRound(next).reviewRound).toBeNull();
   });
 });

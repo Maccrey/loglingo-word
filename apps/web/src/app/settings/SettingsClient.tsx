@@ -111,7 +111,7 @@ export default function SettingsClient(props: SettingsClientProps) {
     createDefaultSettings({
       userId: 'demo-user',
       learningLanguage: 'en',
-      sessionQuestionCount: 5,
+      sessionQuestionCount: 10,
       updatedAt: '2026-03-25T00:00:00.000Z'
     })
   );

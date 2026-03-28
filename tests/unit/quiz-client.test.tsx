@@ -36,13 +36,13 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
+    expect(screen.getByText('읽기: こんにちは')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: '안녕하세요' }));
-    await user.click(screen.getByRole('button', { name: '객관식 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain('정답입니다.');
     expect(
-      screen.getAllByRole('button', { name: '정답' }).length
-    ).toBeGreaterThan(0);
+      screen.queryByRole('button', { name: '객관식 제출' })
+    ).toBeNull();
   });
 
   it('shows typed-answer feedback after submission', async () => {
@@ -63,6 +63,7 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
+    await user.click(screen.getByRole('button', { name: '주관식' }));
     await user.type(screen.getByLabelText('주관식 정답'), 'こんにちは');
     await user.click(screen.getByRole('button', { name: '주관식 제출' }));
 
@@ -88,11 +89,39 @@ describe('quiz ui', () => {
 
     render(<QuizClient />);
 
+    await user.click(screen.getByRole('button', { name: '주관식' }));
     await user.type(screen.getByLabelText('주관식 정답'), 'pass');
     await user.click(screen.getByRole('button', { name: '주관식 제출' }));
 
     expect(screen.getByRole('alert').textContent).toContain(
       '틀렸어요. 천천히 생각해보세요.'
     );
+  });
+
+  it('uses multiple choice as the default mode and switches to short answer', async () => {
+    const user = userEvent.setup();
+
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'ja',
+        learningLevel: 'jlpt_n5',
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+
+    render(<QuizClient />);
+
+    expect(screen.queryByRole('button', { name: '객관식 제출' })).toBeNull();
+    expect(screen.queryByLabelText('주관식 정답')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: '주관식' }));
+
+    expect(screen.getByLabelText('주관식 정답')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '주관식 제출' })).toBeTruthy();
   });
 });

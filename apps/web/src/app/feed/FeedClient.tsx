@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BackButton } from '../../components/BackButton';
+import { CollapsiblePageHeader } from '../../components/CollapsiblePageHeader';
 
 import {
   applyShareQuestReward,
@@ -143,23 +143,24 @@ export default function FeedClient(props: FeedClientProps) {
   return (
     <main style={surfaceStyle}>
       <div style={shellStyle}>
-        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
-          <div style={badgeStyle}>{t(locale, 'feed.title')}</div>
-          <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-            {t(locale, 'feed.heading')}
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              maxWidth: 640,
-              lineHeight: 1.6,
-              color: 'var(--text-faded)'
-            }}
-          >
-            {t(locale, 'feed.description')}
-          </p>
-          <BackButton locale={locale} />
-        </section>
+        <CollapsiblePageHeader locale={locale}>
+          <div style={{ display: 'grid', gap: 14 }}>
+            <div style={badgeStyle}>{t(locale, 'feed.title')}</div>
+            <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+              {t(locale, 'feed.heading')}
+            </h1>
+            <p
+              style={{
+                margin: 0,
+                maxWidth: 640,
+                lineHeight: 1.6,
+                color: 'var(--text-faded)'
+              }}
+            >
+              {t(locale, 'feed.description')}
+            </p>
+          </div>
+        </CollapsiblePageHeader>
 
         <section
           data-testid="feed-card-list"
