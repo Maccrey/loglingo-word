@@ -9,7 +9,6 @@ import {
   calculateRewardPoints,
   updateLearningStreak
 } from '@wordflow/core/gamification';
-import { buildReviewSelection } from '@wordflow/core/memory';
 import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
 import {
   type UserDashboardStats,
@@ -29,8 +28,7 @@ import {
   loadFirebaseCurrentWeekRecommendation,
   loadFirebaseDashboardStats,
   loadFirebaseHomeSummary,
-  loadFirebaseLeaderboardPreview,
-  loadFirebaseLearningState
+  loadFirebaseLeaderboardPreview
 } from '../lib/firebase-client';
 
 type HomeDashboardProps = {
@@ -71,7 +69,7 @@ type HomeFirebaseState = {
   dashboardStats: UserDashboardStats | null;
   homeSummary: UserHomeSummary | null;
   leaderboardPreview: LeaderboardPreview | null;
-  todayStudyCount: number;
+  remainingStudyCount: number;
 };
 
 const surfaceStyle: Record<string, string | number> = {
@@ -140,34 +138,11 @@ function buildDashboardState() {
   );
   const dailyGoal = calculateDailyGoal(7, 10);
   const level = calculateLevelProgress(rewards.ledger.totalPoints + 135);
-  const reviewSelection = buildReviewSelection({
-    now: '2026-03-25T12:00:00.000Z',
-    progress: [
-      {
-        wordId: 'subway',
-        correctStreak: 2,
-        storageStrength: 1.1,
-        retrievalStrength: 1,
-        nextReviewAt: '2026-03-25T08:00:00.000Z'
-      },
-      {
-        wordId: 'passport',
-        correctStreak: 1,
-        storageStrength: 0.5,
-        retrievalStrength: 0.4,
-        nextReviewAt: '2026-03-24T00:00:00.000Z'
-      }
-    ],
-    limit: 4,
-    reviewShare: 0.5
-  });
-
   return {
     points: rewards.ledger.totalPoints,
     streak,
     dailyGoal,
-    level,
-    reviewSelection
+    level
   };
 }
 
@@ -263,7 +238,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     dashboardStats: null,
     homeSummary: null,
     leaderboardPreview: null,
-    todayStudyCount: 0
+    remainingStudyCount: 0
   });
   const thresholds = getCatThresholds(CAT_ENV);
   const pendingPointsValue =
@@ -567,7 +542,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         dashboardStats: null,
         homeSummary: null,
         leaderboardPreview: null,
-        todayStudyCount: 0
+        remainingStudyCount: 0
       });
       setRecommendation({
         words: [],
@@ -588,22 +563,18 @@ export default function HomeDashboard(props: HomeDashboardProps) {
       const [
         dashboardStats,
         homeSummary,
-        learningState,
         weeklyRecommendation,
         weeklyLeaderboardPreview
       ] = await Promise.all([
         loadFirebaseDashboardStats(auth.userId),
         loadFirebaseHomeSummary(auth.userId),
-        loadFirebaseLearningState(auth.userId),
         loadFirebaseCurrentWeekRecommendation(auth.userId, now),
         loadFirebaseLeaderboardPreview(auth.userId, now)
       ]);
-      const reviewSelection = buildReviewSelection({
-        now,
-        progress: learningState?.progress ?? [],
-        limit: 4,
-        reviewShare: 0.5
-      });
+      const remainingStudyCount = Math.max(
+        (homeSummary?.dailyGoalTarget ?? 10) - (homeSummary?.todayCompleted ?? 0),
+        0
+      );
 
       if (cancelled) {
         return;
@@ -614,7 +585,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         dashboardStats,
         homeSummary,
         leaderboardPreview: weeklyLeaderboardPreview,
-        todayStudyCount: reviewSelection.mixedQueue.length
+        remainingStudyCount
       });
       setRecommendation({
         words: weeklyRecommendation?.words ?? [],
@@ -761,7 +732,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           <article style={panelStyle}>
             <div style={badgeStyle}>{t(locale, 'home.summary.today')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              {firebaseHomeState.loading ? '...' : firebaseHomeState.todayStudyCount}
+              {firebaseHomeState.loading ? '...' : firebaseHomeState.remainingStudyCount}
             </h2>
             <p style={{ margin: 0 }}>{t(locale, 'home.summary.today')}</p>
           </article>

@@ -28,6 +28,7 @@ import {
   shouldCreateStudyComebackPost,
   shouldCreateStudyMilestonePost
 } from '../../lib/feedEvents';
+import { useTimedLearningReward } from '../../lib/useTimedLearningReward';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
 import { type StudyRating } from '@wordflow/core/learning';
@@ -133,7 +134,7 @@ type FlashcardsClientProps = {
 export default function FlashcardsClient(props: FlashcardsClientProps) {
   const locale = props.locale ?? 'ko';
   const auth = useAppAuth();
-  const { grantLearningReward } = useCat();
+  const { grantLearningReward, grantLearningPoints } = useCat();
   const [storedSettings, setStoredSettings] = useState(() =>
     readStoredSettingsSnapshot()
   );
@@ -194,6 +195,11 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       ? `/?source=recommendation&points=${recommendationOutcome.reward.points}&leaderboard=${leaderboardDelta}`
       : null;
   const writingExercise = currentCard?.word.writing;
+
+  useTimedLearningReward({
+    active: !completed,
+    grantPoints: grantLearningPoints
+  });
 
   useEffect(() => {
     if (props.focusWordIds && props.focusWordIds.length > 0) {

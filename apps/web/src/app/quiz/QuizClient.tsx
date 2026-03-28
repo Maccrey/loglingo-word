@@ -15,6 +15,7 @@ import {
   shouldCreateStudyComebackPost,
   shouldCreateStudyMilestonePost
 } from '../../lib/feedEvents';
+import { useTimedLearningReward } from '../../lib/useTimedLearningReward';
 
 import {
   advanceQuizQuestion,
@@ -93,7 +94,7 @@ function readingLabel(locale: AppLocale): string {
 
 export default function QuizClient(props: QuizClientProps) {
   const auth = useAppAuth();
-  const { grantLearningReward } = useCat();
+  const { grantLearningReward, grantLearningPoints } = useCat();
   const [storedSettings, setStoredSettings] = useState(() =>
     createFallbackSettings()
   );
@@ -117,6 +118,11 @@ export default function QuizClient(props: QuizClientProps) {
     Boolean(session.reviewRound?.completed) ||
     session.feedback.status === 'success' ||
     (session.feedback.status === 'error' && session.wrongAttempts >= 2);
+
+  useTimedLearningReward({
+    active: !session.completed,
+    grantPoints: grantLearningPoints
+  });
 
   useEffect(() => {
     function syncFromStoredSettings() {

@@ -209,6 +209,7 @@ describe('home dashboard', () => {
     await waitFor(() => {
       expect(screen.getByText('120 pt')).toBeTruthy();
     });
+    expect(screen.getByText('3')).toBeTruthy();
     expect(screen.getAllByText('오늘 할 학습').length).toBeGreaterThan(0);
     expect(screen.getAllByText('연속 학습 streak').length).toBeGreaterThan(0);
     expect(screen.getAllByText('누적 포인트').length).toBeGreaterThan(0);

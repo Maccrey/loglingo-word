@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import './globals.css';
+import ToastProvider from './components/ToastProvider';
 
 type RootLayoutProps = {
   children: ReactNode;
@@ -8,7 +9,9 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }

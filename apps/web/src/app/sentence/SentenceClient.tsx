@@ -16,6 +16,7 @@ import {
   shouldCreateStudyComebackPost,
   shouldCreateStudyMilestonePost
 } from '../../lib/feedEvents';
+import { useTimedLearningReward } from '../../lib/useTimedLearningReward';
 
 import {
   chooseSentenceBlock,
@@ -124,7 +125,7 @@ function renderGoalSegments(input: {
 
 export default function SentenceClient(props: SentenceClientProps) {
   const auth = useAppAuth();
-  const { grantLearningReward } = useCat();
+  const { grantLearningReward, grantLearningPoints } = useCat();
   const [session, setSession] = useState(() =>
     createDemoSentenceSession({
       appLanguage: createFallbackSettings().appLanguage,
@@ -136,7 +137,6 @@ export default function SentenceClient(props: SentenceClientProps) {
   );
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const [exerciseInfoCollapsed, setExerciseInfoCollapsed] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [appLanguage, setAppLanguage] = useState<SupportedAppLanguage>(
     createFallbackSettings().appLanguage
   );
@@ -151,6 +151,10 @@ export default function SentenceClient(props: SentenceClientProps) {
     currentStage?.goalTranslations[appLanguage]?.segmentBlockIndexes ??
     currentStage?.goalSegments.map((_, index) => index) ??
     [];
+  const { elapsedSeconds } = useTimedLearningReward({
+    active: !session.completed,
+    grantPoints: grantLearningPoints
+  });
 
   useEffect(() => {
     function syncFromStoredSettings() {
@@ -199,16 +203,6 @@ export default function SentenceClient(props: SentenceClientProps) {
   }, []);
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setElapsedSeconds((current) => current + 1);
-    }, 1000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!session.completed) {
       completionTrackedRef.current = false;
       return;
@@ -223,8 +217,7 @@ export default function SentenceClient(props: SentenceClientProps) {
     const learnedAt = new Date().toISOString();
     const studyDurationMinutes = Math.max(1, Math.floor(elapsedSeconds / 60));
     const earnedPoints = grantLearningReward({
-      sentencesPracticed: 1,
-      studyDurationMinutes
+      sentencesPracticed: 1
     });
 
     if (auth.isAuthenticated) {

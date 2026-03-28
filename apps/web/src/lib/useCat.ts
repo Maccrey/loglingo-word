@@ -25,6 +25,7 @@ import {
   saveStoredCatLedgers
 } from './catStorage';
 import { publishFeedPost } from './feedPublishing';
+import { buildPointEarnedToast, notifyAppToast } from './toast';
 import { useCatSync } from './useCatSync';
 import { usePointSync } from './usePointSync';
 import { useAppAuth } from './useAppAuth';
@@ -409,8 +410,33 @@ export function useCat() {
 
       persistCatState(updatedCat);
       persistPointLedgers(updatedCat.userId, nextLedgers, [reward.entry]);
+      notifyAppToast(buildPointEarnedToast(reward.grantedPoints ?? reward.entry.amount));
 
       return reward.grantedPoints ?? reward.entry.amount;
+    },
+    [cat, ledgers, persistCatState, persistPointLedgers]
+  );
+
+  const grantLearningPoints = useCallback(
+    (amount: number): number => {
+      if (!cat || amount <= 0) {
+        return 0;
+      }
+
+      const now = Date.now();
+      const updatedCat = calculateGrowthDays(cat, now, LOCAL_APP_ENV as EnvThresholds);
+      const entry = createPointLedgerEntry(updatedCat.userId, amount, 'learning_reward', now);
+      const nextLedgers = [...ledgers, entry];
+
+      setCat(updatedCat);
+      setLedgers(nextLedgers);
+      setPoints(getPointBalance(nextLedgers) + INITIAL_POINTS);
+
+      persistCatState(updatedCat);
+      persistPointLedgers(updatedCat.userId, nextLedgers, [entry]);
+      notifyAppToast(buildPointEarnedToast(amount));
+
+      return amount;
     },
     [cat, ledgers, persistCatState, persistPointLedgers]
   );
@@ -428,6 +454,7 @@ export function useCat() {
     points,
     currentStatus,
     grantLearningReward,
+    grantLearningPoints,
     handleFeed,
     handleWash,
     handlePlay,
