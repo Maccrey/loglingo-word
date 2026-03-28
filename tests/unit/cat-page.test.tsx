@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import React from 'react';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/image', () => ({
@@ -199,6 +199,9 @@ describe('cat detail page', () => {
     render(<CatDetailScreen />);
 
     fireEvent.click(screen.getByRole('button', { name: /치료하기/ }));
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
 
     expect(screen.getByAltText('Cat Large View').getAttribute('src')).toContain(
       'senior_action_medicine.png'

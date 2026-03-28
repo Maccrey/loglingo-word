@@ -20,10 +20,10 @@ describe('cat image mapping', () => {
 
   it('returns action image paths for care overlays', () => {
     expect(getCatImagePath('adult', 'action-feed')).toBe(
-      '/images/cats/action-feed.png'
+      '/images/cats/adult-action-feed.png'
     );
     expect(getCatImagePath('senior', 'action-play')).toBe(
-      '/images/cats/action-play.png'
+      '/images/cats/senior-action-play.png'
     );
     expect(getCatImagePath('adult', 'action-heal')).toBe(
       '/images/cats/adult_action_medicine.png'
@@ -35,7 +35,7 @@ describe('cat image mapping', () => {
 
   it('falls back across stages when a matching image is missing', () => {
     expect(getCatImagePath('legacy', 'action-wash')).toBe(
-      '/images/cats/action-wash.png'
+      '/images/cats/veteran-action-wash.png'
     );
     expect(getCatImagePath('legacy', 'action-medicine')).toBe(
       '/images/cats/veteran_action_medicine.png'

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import React from 'react';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/image', () => ({
@@ -127,9 +127,47 @@ describe('cat card', () => {
     render(<CatCard />);
 
     fireEvent.click(screen.getByRole('button', { name: /치료하기/ }));
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
 
     expect(
       screen.getByAltText('adult cat feeling sick').getAttribute('src')
     ).toContain('adult_action_medicine.png');
+  });
+
+  it('shows the stage-specific feed overlay after feeding', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'adult',
+        status: 'hungry',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 13 * 60 * 60 * 1000,
+        lastWashedAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        activeDays: 90
+      },
+      points: 5000,
+      currentStatus: 'hungry',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true)
+    });
+
+    render(<CatCard />);
+
+    fireEvent.click(screen.getByRole('button', { name: /밥주기/ }));
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
+
+    expect(
+      screen.getByAltText('adult cat feeling hungry').getAttribute('src')
+    ).toContain('adult-action-feed.png');
   });
 });

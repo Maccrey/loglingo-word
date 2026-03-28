@@ -100,6 +100,40 @@ const medicineImagePathByStage: Record<string, string> = {
   legacy: '/images/cats/veteran_action_medicine.png'
 };
 
+const actionImagePathByStage: Record<string, Partial<Record<string, string>>> = {
+  kitten: {
+    'action-feed': '/images/cats/kitten-action-feed.png',
+    'action-play': '/images/cats/kitten-action-play.png',
+    'action-wash': '/images/cats/kitten-action-wash.png'
+  },
+  junior: {
+    'action-feed': '/images/cats/junior-action-feed.png',
+    'action-play': '/images/cats/junior-action-play.png',
+    'action-wash': '/images/cats/junior-action-wash.png'
+  },
+  adult: {
+    'action-feed': '/images/cats/adult-action-feed.png',
+    'action-play': '/images/cats/adult-action-play.png',
+    'action-wash': '/images/cats/adult-action-wash.png'
+  },
+  'middle-age': {
+    'action-feed': '/images/cats/middle-age-action-feed.png',
+    'action-play': '/images/cats/middle-age-action-play.png',
+    'action-wash': '/images/cats/middle-age-action-wash.png'
+  },
+  senior: {
+    'action-feed': '/images/cats/senior-action-feed.png',
+    'action-play': '/images/cats/senior-action-play.png',
+    'action-wash': '/images/cats/senior-action-wash.png'
+  },
+  veteran: {
+    'action-feed': '/images/cats/veteran-action-feed.png',
+    'action-play': '/images/cats/veteran-action-play.png',
+    'action-wash': '/images/cats/veteran-action-wash.png'
+  },
+  legacy: {}
+};
+
 export function normalizeCatImageStage(stage: string): string {
   return stage === 'middleAge' ? 'middle-age' : stage;
 }
@@ -130,12 +164,11 @@ export function getCatImagePath(stage: string, status: string): string {
       );
     }
 
-    if (
-      normalizedStatus === 'action-feed' ||
-      normalizedStatus === 'action-play' ||
-      normalizedStatus === 'action-wash'
-    ) {
-      return `/images/cats/${normalizedStatus}.png`;
+    const stageActionImage =
+      actionImagePathByStage[normalizedStage]?.[normalizedStatus];
+
+    if (stageActionImage) {
+      return stageActionImage;
     }
 
     if (availableStatusImages[normalizedStage]?.includes(normalizedStatus)) {
@@ -153,6 +186,11 @@ export function getCatImagePath(stage: string, status: string): string {
       const fallbackStage = stageFallbackChain[i];
       if (!fallbackStage) {
         continue;
+      }
+      const fallbackActionImage =
+        actionImagePathByStage[fallbackStage]?.[normalizedStatus];
+      if (fallbackActionImage) {
+        return fallbackActionImage;
       }
       if (availableStatusImages[fallbackStage]?.includes(normalizedStatus)) {
         return `/images/cats/${fallbackStage}-${normalizedStatus}.png`;

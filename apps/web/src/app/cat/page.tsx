@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
@@ -130,19 +130,51 @@ export default function CatDetailScreen() {
   const [mounted, setMounted] = useState(false);
   const [actionOverlay, setActionOverlay] = useState<string | null>(null);
   const [displayImagePath, setDisplayImagePath] = useState('/images/cats/kitten-base.png');
+  const [isImageVisible, setIsImageVisible] = useState(true);
+  const overlayTimeoutRef = useRef<number | null>(null);
   const currentImagePath = cat
     ? actionOverlay
       ? getCatImagePath(cat.stage, `action-${actionOverlay}`)
       : getCatImagePath(cat.stage, currentStatus)
     : '/images/cats/kitten-base.png';
+  const IMAGE_FADE_MS = 320;
+  const ACTION_OVERLAY_MS = 3000;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    setDisplayImagePath(currentImagePath);
-  }, [currentImagePath]);
+    if (!mounted) {
+      setDisplayImagePath(currentImagePath);
+      return;
+    }
+
+    if (displayImagePath === currentImagePath) {
+      return;
+    }
+
+    setIsImageVisible(false);
+
+    const transitionTimeout = window.setTimeout(() => {
+      setDisplayImagePath(currentImagePath);
+      window.requestAnimationFrame(() => {
+        setIsImageVisible(true);
+      });
+    }, IMAGE_FADE_MS);
+
+    return () => {
+      window.clearTimeout(transitionTimeout);
+    };
+  }, [currentImagePath, displayImagePath, mounted]);
+
+  useEffect(() => {
+    return () => {
+      if (overlayTimeoutRef.current !== null) {
+        window.clearTimeout(overlayTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!mounted || !cat) {
     return <div style={{ padding: 20 }}>Loading...</div>;
@@ -151,8 +183,14 @@ export default function CatDetailScreen() {
   const handleAction = (actionFn: () => boolean, overlayName: string) => {
     const success = actionFn();
     if (success) {
+      if (overlayTimeoutRef.current !== null) {
+        window.clearTimeout(overlayTimeoutRef.current);
+      }
       setActionOverlay(overlayName);
-      setTimeout(() => setActionOverlay(null), 2000);
+      overlayTimeoutRef.current = window.setTimeout(() => {
+        setActionOverlay(null);
+        overlayTimeoutRef.current = null;
+      }, ACTION_OVERLAY_MS);
     }
   };
 
@@ -201,7 +239,13 @@ export default function CatDetailScreen() {
           alt="Cat Large View"
           width={300}
           height={300}
-          style={{ width: 300, height: 300, objectFit: 'contain' }}
+          style={{
+            width: 300,
+            height: 300,
+            objectFit: 'contain',
+            opacity: isImageVisible ? 1 : 0,
+            transition: `opacity ${IMAGE_FADE_MS}ms ease`
+          }}
           onError={() => {
             if (displayImagePath !== '/images/cats/kitten-base.png') {
               setDisplayImagePath('/images/cats/kitten-base.png');
