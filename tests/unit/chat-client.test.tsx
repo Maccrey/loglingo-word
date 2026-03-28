@@ -24,7 +24,8 @@ const useAppAuthMock = vi.fn(() => ({
   signIn: vi.fn(),
   signOut: vi.fn(),
   acceptTerms: vi.fn(),
-  saveLearningState: vi.fn(async () => true)
+  saveLearningState: vi.fn(async () => true),
+  recordLearningSession: vi.fn(async () => null)
 }));
 
 vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
@@ -47,7 +48,8 @@ afterEach(() => {
     signIn: vi.fn(),
     signOut: vi.fn(),
     acceptTerms: vi.fn(),
-    saveLearningState: vi.fn(async () => true)
+    saveLearningState: vi.fn(async () => true),
+    recordLearningSession: vi.fn(async () => null)
   });
 });
 
@@ -65,7 +67,8 @@ describe('chat ui', () => {
       signIn: vi.fn(),
       signOut: vi.fn(),
       acceptTerms: vi.fn(),
-      saveLearningState: vi.fn(async () => false)
+      saveLearningState: vi.fn(async () => false),
+      recordLearningSession: vi.fn(async () => null)
     });
 
     render(<ChatClient />);

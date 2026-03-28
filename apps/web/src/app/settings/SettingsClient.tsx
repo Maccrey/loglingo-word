@@ -22,7 +22,7 @@ import {
 
 import { resolveAppErrorMessage } from '../errors';
 import { t, type AppLocale } from '../i18n';
-import { BackButton } from '../../components/BackButton';
+import { CollapsiblePageHeader } from '../../components/CollapsiblePageHeader';
 import {
   loadStoredSettings,
   saveStoredSettings
@@ -205,6 +205,12 @@ export default function SettingsClient(props: SettingsClientProps) {
 
   async function startGoogleLogin() {
     try {
+      if (auth.isAuthenticated) {
+        await auth.signOut();
+        setAuthMessage(locale === 'en' ? 'Signed out.' : '로그아웃되었습니다.');
+        return;
+      }
+
       const result = await auth.signIn();
       const nextUserId = result.user.uid;
       const displayName = result.user.displayName?.trim() || result.user.email?.trim() || nextUserId;
@@ -240,13 +246,19 @@ export default function SettingsClient(props: SettingsClientProps) {
         <TermsConsentModal locale={locale} onAccept={() => void auth.acceptTerms()} />
       ) : null}
       <div style={shellStyle}>
-        <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
-          <div style={badgeStyle}>{t(locale, 'settings.title')}</div>
-          <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-            {t(locale, 'settings.heading')}
-          </h1>
-          <BackButton locale={locale} />
-        </section>
+        <CollapsiblePageHeader
+          locale={locale}
+          expandedMinHeight={180}
+          collapsedMinHeight={36}
+          showElapsedTime={false}
+        >
+          <div style={{ display: 'grid', gap: 14 }}>
+            <div style={badgeStyle}>{t(locale, 'settings.title')}</div>
+            <h1 style={{ margin: 0, fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+              {t(locale, 'settings.heading')}
+            </h1>
+          </div>
+        </CollapsiblePageHeader>
 
         <section style={{ ...panelStyle, display: 'grid', gap: 16 }}>
           <label style={{ display: 'grid', gap: 8 }}>
@@ -416,7 +428,13 @@ export default function SettingsClient(props: SettingsClientProps) {
             </p>
             <button
               type="button"
-              aria-label={t(locale, 'settings.google_login')}
+              aria-label={
+                auth.isAuthenticated
+                  ? locale === 'en'
+                    ? 'Sign out'
+                    : '로그아웃'
+                  : t(locale, 'settings.google_login')
+              }
               onClick={() => void startGoogleLogin()}
               style={{
                 width: 'fit-content',
@@ -431,7 +449,11 @@ export default function SettingsClient(props: SettingsClientProps) {
                 boxShadow: 'var(--shadow-card)'
               }}
             >
-              {t(locale, 'settings.google_login')}
+              {auth.isAuthenticated
+                ? locale === 'en'
+                  ? 'Sign out'
+                  : '로그아웃'
+                : t(locale, 'settings.google_login')}
             </button>
             {authMessage ? (
               <p role="status" style={{ margin: 0, color: '#2d7a4d' }}>

@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const signInWithGooglePopupMock = vi.fn();
+const signOutMock = vi.fn(async () => undefined);
 const hasFirebaseWebConfigMock = vi.fn(() => true);
 const initializeFirebaseAnalyticsMock = vi.fn(async () => null);
 const useAppAuthMock = vi.fn(() => ({
@@ -18,9 +19,10 @@ const useAppAuthMock = vi.fn(() => ({
   isAuthenticated: true,
   isGuest: false,
   signIn: signInWithGooglePopupMock,
-  signOut: vi.fn(),
+  signOut: signOutMock,
   acceptTerms: vi.fn(),
-  saveLearningState: vi.fn(async () => true)
+  saveLearningState: vi.fn(async () => true),
+  recordLearningSession: vi.fn(async () => null)
 }));
 
 vi.mock('../../apps/web/src/lib/firebase-client', () => ({
@@ -40,6 +42,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   window.localStorage.clear();
   signInWithGooglePopupMock.mockReset();
+  signOutMock.mockReset();
   hasFirebaseWebConfigMock.mockReset();
   hasFirebaseWebConfigMock.mockReturnValue(true);
   initializeFirebaseAnalyticsMock.mockReset();
@@ -55,9 +58,10 @@ afterEach(() => {
     isAuthenticated: true,
     isGuest: false,
     signIn: signInWithGooglePopupMock,
-    signOut: vi.fn(),
+    signOut: signOutMock,
     acceptTerms: vi.fn(),
-    saveLearningState: vi.fn(async () => true)
+    saveLearningState: vi.fn(async () => true),
+    recordLearningSession: vi.fn(async () => null)
   });
 });
 
@@ -72,7 +76,7 @@ describe('settings ui', () => {
       screen.getByRole('combobox', { name: '한 번에 학습할 문제 수' })
     ).toBeTruthy();
     expect(
-      screen.getByRole('button', { name: 'Google로 로그인' })
+      screen.getByRole('button', { name: '로그아웃' })
     ).toBeTruthy();
     expect(screen.getByRole('button', { name: '알림' }).textContent).toContain(
       '켜짐'
@@ -90,9 +94,10 @@ describe('settings ui', () => {
       isAuthenticated: false,
       isGuest: true,
       signIn: signInWithGooglePopupMock,
-      signOut: vi.fn(),
+      signOut: signOutMock,
       acceptTerms: vi.fn(),
-      saveLearningState: vi.fn(async () => false)
+      saveLearningState: vi.fn(async () => false),
+      recordLearningSession: vi.fn(async () => null)
     });
 
     render(<SettingsClient />);
@@ -104,6 +109,21 @@ describe('settings ui', () => {
 
   it('updates the user after a successful google sign-in', async () => {
     const user = userEvent.setup();
+    useAppAuthMock.mockReturnValue({
+      status: 'guest',
+      userId: 'demo-user',
+      displayName: null,
+      email: null,
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: false,
+      isGuest: true,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => false),
+      recordLearningSession: vi.fn(async () => null)
+    });
     signInWithGooglePopupMock.mockResolvedValue({
       user: {
         uid: 'firebase-user-1',
@@ -114,11 +134,22 @@ describe('settings ui', () => {
 
     render(<SettingsClient />);
 
-    await user.click(screen.getByRole('button', { name: 'Google로 로그인' }));
+    await user.click(screen.getAllByRole('button', { name: 'Google로 로그인' })[1]);
 
     expect(screen.getByRole('status').textContent).toContain(
       '구글 로그인 완료: 테스트 사용자'
     );
+  });
+
+  it('shows a sign-out button and signs out when already authenticated', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    await user.click(screen.getByRole('button', { name: '로그아웃' }));
+
+    expect(signOutMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('status').textContent).toContain('로그아웃되었습니다.');
   });
 
   it('updates the learning level options when the learning language changes', async () => {

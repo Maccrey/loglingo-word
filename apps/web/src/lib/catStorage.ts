@@ -18,9 +18,11 @@ export function loadStoredCat(): Cat | null {
   return JSON.parse(storedCat) as Cat;
 }
 
-export function saveStoredCat(cat: Cat) {
+export function saveStoredCat(cat: Cat, notify = true) {
   window.localStorage.setItem(CAT_STATE_KEY, JSON.stringify(cat));
-  notifyCatStorageUpdated();
+  if (notify) {
+    notifyCatStorageUpdated();
+  }
 }
 
 export function loadStoredCatLedgers(): PointLedger[] {
@@ -33,7 +35,9 @@ export function loadStoredCatLedgers(): PointLedger[] {
   return JSON.parse(storedLedgers) as PointLedger[];
 }
 
-export function saveStoredCatLedgers(ledgers: PointLedger[]) {
+export function saveStoredCatLedgers(ledgers: PointLedger[], notify = true) {
   window.localStorage.setItem(CAT_LEDGER_KEY, JSON.stringify(ledgers));
-  notifyCatStorageUpdated();
+  if (notify) {
+    notifyCatStorageUpdated();
+  }
 }

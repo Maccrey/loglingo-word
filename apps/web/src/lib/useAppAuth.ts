@@ -1,15 +1,22 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { type UserSettings, userSettingsSchema } from '@wordflow/shared/types';
-import { type VocabProgress } from '@wordflow/shared/types';
+import {
+  type UserHomeSummary,
+  type UserSettings,
+  userSettingsSchema,
+  type VocabProgress
+} from '@wordflow/shared/types';
 
 import {
   hasFirebaseWebConfig,
+  loadFirebaseHomeSummary,
   loadFirebaseLearningState,
   loadFirebaseUserProfile,
   observeFirebaseAuth,
+  recordFirebaseLearningActivity,
   saveFirebaseLearningState,
+  saveFirebaseHomeSummary,
   saveFirebaseUserProfile,
   signInWithGooglePopup,
   signOutFirebaseUser
@@ -131,6 +138,17 @@ export function useAppAuth() {
         settings: mergedSettings,
         progress: mergedProgress
       });
+      await saveFirebaseHomeSummary(
+        user.uid,
+        (await loadFirebaseHomeSummary(user.uid)) ?? {
+          userId: user.uid,
+          currentStreak: 0,
+          todayCompleted: 0,
+          studyMinutesToday: 0,
+          dailyGoalTarget: 10,
+          updatedAt: new Date().toISOString()
+        }
+      );
 
       setState({
         status: 'authenticated',
@@ -172,13 +190,24 @@ export function useAppAuth() {
       return;
     }
 
-    await saveFirebaseUserProfile(state.userId, {
-      termsAcceptedAt: new Date().toISOString()
-    });
+    const acceptedAt = new Date().toISOString();
+
     setState((current) => ({
       ...current,
       needsTermsConsent: false
     }));
+
+    try {
+      await saveFirebaseUserProfile(state.userId, {
+        termsAcceptedAt: acceptedAt
+      });
+    } catch (error) {
+      setState((current) => ({
+        ...current,
+        needsTermsConsent: true
+      }));
+      throw error;
+    }
   }, [state.status, state.userId]);
 
   const saveLearningState = useCallback(
@@ -197,6 +226,31 @@ export function useAppAuth() {
     await signOutFirebaseUser();
   }, []);
 
+  const recordLearningSession = useCallback(
+    async (input: {
+      completedCount: number;
+      learnedAt?: string;
+      studyDurationMinutes?: number;
+      dailyGoalTarget?: number;
+    }): Promise<UserHomeSummary | null> => {
+      if (state.status !== 'authenticated') {
+        return null;
+      }
+
+      return recordFirebaseLearningActivity(state.userId, {
+        completedCount: input.completedCount,
+        learnedAt: input.learnedAt ?? new Date().toISOString(),
+        ...(typeof input.studyDurationMinutes === 'number'
+          ? { studyDurationMinutes: input.studyDurationMinutes }
+          : {}),
+        ...(typeof input.dailyGoalTarget === 'number'
+          ? { dailyGoalTarget: input.dailyGoalTarget }
+          : {})
+      });
+    },
+    [state.status, state.userId]
+  );
+
   return {
     ...state,
     isAuthenticated: state.status === 'authenticated',
@@ -204,6 +258,7 @@ export function useAppAuth() {
     signIn,
     signOut: signOutUser,
     acceptTerms,
-    saveLearningState
+    saveLearningState,
+    recordLearningSession
   };
 }

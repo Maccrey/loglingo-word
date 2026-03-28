@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { type SupportedAppLanguage } from '@wordflow/shared/types';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
@@ -9,6 +9,7 @@ import {
   readStoredSettingsSnapshot,
   USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
+import { useAppAuth } from '../../lib/useAppAuth';
 
 import {
   chooseSentenceBlock,
@@ -112,6 +113,7 @@ function renderGoalSegments(input: {
 }
 
 export default function SentenceClient(props: SentenceClientProps) {
+  const auth = useAppAuth();
   const [session, setSession] = useState(() =>
     createDemoSentenceSession({
       appLanguage: createFallbackSettings().appLanguage,
@@ -127,6 +129,7 @@ export default function SentenceClient(props: SentenceClientProps) {
   const [appLanguage, setAppLanguage] = useState<SupportedAppLanguage>(
     createFallbackSettings().appLanguage
   );
+  const completionTrackedRef = useRef(false);
   const locale = props.locale ?? 'ko';
   const currentStage = session.exercise.stages[session.currentStageIndex] ?? null;
   const localizedGoalText =
@@ -193,6 +196,24 @@ export default function SentenceClient(props: SentenceClientProps) {
       window.clearInterval(intervalId);
     };
   }, []);
+
+  useEffect(() => {
+    if (!session.completed) {
+      completionTrackedRef.current = false;
+      return;
+    }
+
+    if (!auth.isAuthenticated || completionTrackedRef.current) {
+      return;
+    }
+
+    completionTrackedRef.current = true;
+    void auth.recordLearningSession({
+      completedCount: 1,
+      studyDurationMinutes: Math.max(1, Math.floor(elapsedSeconds / 60)),
+      dailyGoalTarget: createFallbackSettings().sessionQuestionCount
+    });
+  }, [auth, auth.isAuthenticated, elapsedSeconds, session.completed]);
 
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const remainingSeconds = elapsedSeconds % 60;

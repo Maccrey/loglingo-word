@@ -12,11 +12,27 @@ vi.mock('../../apps/web/src/lib/useCat', () => ({
 }));
 
 const signInWithGooglePopupMock = vi.fn();
+const signOutMock = vi.fn(async () => undefined);
 const hasFirebaseWebConfigMock = vi.fn(() => true);
+const loadFirebaseDashboardStatsMock = vi.fn(async () => null);
+const loadFirebaseHomeSummaryMock = vi.fn(async () => null);
+const loadFirebaseLearningStateMock = vi.fn(async () => null);
+const loadFirebaseCurrentWeekRecommendationMock = vi.fn(async () => null);
+const loadFirebaseLeaderboardPreviewMock = vi.fn(async () => ({
+  weekId: '2026-W13',
+  myRank: null,
+  topEntries: []
+}));
 
 vi.mock('../../apps/web/src/lib/firebase-client', () => ({
   hasFirebaseWebConfig: () => hasFirebaseWebConfigMock(),
-  signInWithGooglePopup: () => signInWithGooglePopupMock()
+  signInWithGooglePopup: () => signInWithGooglePopupMock(),
+  loadFirebaseDashboardStats: () => loadFirebaseDashboardStatsMock(),
+  loadFirebaseHomeSummary: () => loadFirebaseHomeSummaryMock(),
+  loadFirebaseLearningState: () => loadFirebaseLearningStateMock(),
+  loadFirebaseCurrentWeekRecommendation: () =>
+    loadFirebaseCurrentWeekRecommendationMock(),
+  loadFirebaseLeaderboardPreview: () => loadFirebaseLeaderboardPreviewMock()
 }));
 const useAppAuthMock = vi.fn(() => ({
   status: 'guest',
@@ -28,9 +44,10 @@ const useAppAuthMock = vi.fn(() => ({
   isAuthenticated: false,
   isGuest: true,
   signIn: signInWithGooglePopupMock,
-  signOut: vi.fn(),
+  signOut: signOutMock,
   acceptTerms: vi.fn(),
-  saveLearningState: vi.fn(async () => false)
+  saveLearningState: vi.fn(async () => false),
+  recordLearningSession: vi.fn(async () => null)
 }));
 
 vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
@@ -47,8 +64,23 @@ afterEach(() => {
 beforeEach(() => {
   vi.restoreAllMocks();
   signInWithGooglePopupMock.mockReset();
+  signOutMock.mockReset();
   hasFirebaseWebConfigMock.mockReset();
   hasFirebaseWebConfigMock.mockReturnValue(true);
+  loadFirebaseDashboardStatsMock.mockReset();
+  loadFirebaseDashboardStatsMock.mockResolvedValue(null);
+  loadFirebaseHomeSummaryMock.mockReset();
+  loadFirebaseHomeSummaryMock.mockResolvedValue(null);
+  loadFirebaseLearningStateMock.mockReset();
+  loadFirebaseLearningStateMock.mockResolvedValue(null);
+  loadFirebaseCurrentWeekRecommendationMock.mockReset();
+  loadFirebaseCurrentWeekRecommendationMock.mockResolvedValue(null);
+  loadFirebaseLeaderboardPreviewMock.mockReset();
+  loadFirebaseLeaderboardPreviewMock.mockResolvedValue({
+    weekId: '2026-W13',
+    myRank: null,
+    topEntries: []
+  });
   useAppAuthMock.mockReset();
   useAppAuthMock.mockReturnValue({
     status: 'guest',
@@ -60,9 +92,10 @@ beforeEach(() => {
     isAuthenticated: false,
     isGuest: true,
     signIn: signInWithGooglePopupMock,
-    signOut: vi.fn(),
+    signOut: signOutMock,
     acceptTerms: vi.fn(),
-    saveLearningState: vi.fn(async () => false)
+    saveLearningState: vi.fn(async () => false),
+    recordLearningSession: vi.fn(async () => null)
   });
   vi.mocked(useCat).mockReturnValue({
     cat: {
@@ -88,30 +121,94 @@ beforeEach(() => {
 });
 
 describe('home dashboard', () => {
-  it('renders the main summary cards', () => {
+  it('hides summary cards for guests', () => {
+    render(<HomeDashboard />);
+
+    expect(screen.queryByText('연속 학습 streak')).toBeNull();
+    expect(screen.queryByText('주간 AI 추천')).toBeNull();
+    expect(screen.queryByTestId('home-summary-grid')).toBeNull();
+  });
+
+  it('renders the main summary cards for authenticated users', async () => {
+    useAppAuthMock.mockReturnValue({
+      status: 'authenticated',
+      userId: 'firebase-user-1',
+      displayName: '사용자',
+      email: 'user@example.com',
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: true,
+      isGuest: false,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => true),
+      recordLearningSession: vi.fn(async () => null)
+    });
+    loadFirebaseDashboardStatsMock.mockResolvedValue({
+      userId: 'firebase-user-1',
+      totalPoints: 120,
+      leaderboardScore: 4,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+    loadFirebaseHomeSummaryMock.mockResolvedValue({
+      userId: 'firebase-user-1',
+      currentStreak: 5,
+      lastLearnedOn: '2026-03-26',
+      todayCompleted: 7,
+      studyMinutesToday: 20,
+      dailyGoalTarget: 10,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+    loadFirebaseLearningStateMock.mockResolvedValue({
+      userId: 'firebase-user-1',
+      settings: {
+        userId: 'firebase-user-1',
+        appLanguage: 'ko',
+        learningLanguage: 'en',
+        learningLevel: 'cefr_a1',
+        sessionQuestionCount: 10,
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      },
+      progress: [
+        {
+          wordId: 'passport',
+          correctStreak: 1,
+          storageStrength: 0.5,
+          retrievalStrength: 0.4,
+          nextReviewAt: '2026-03-24T00:00:00.000Z'
+        }
+      ],
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+    loadFirebaseLeaderboardPreviewMock.mockResolvedValue({
+      weekId: '2026-W13',
+      myRank: 2,
+      topEntries: [
+        {
+          userId: 'user-2',
+          rank: 1,
+          score: 8,
+          isCurrentUser: false
+        },
+        {
+          userId: 'firebase-user-1',
+          rank: 2,
+          score: 4,
+          isCurrentUser: true
+        }
+      ]
+    });
+
     const { container } = render(
-      <HomeDashboard
-        leaderboardPreview={{
-          weekId: '2026-W13',
-          myRank: 2,
-          topEntries: [
-            {
-              userId: 'user-2',
-              rank: 1,
-              score: 8,
-              isCurrentUser: false
-            },
-            {
-              userId: 'demo-user',
-              rank: 2,
-              score: 4,
-              isCurrentUser: true
-            }
-          ]
-        }}
-      />
+      <HomeDashboard />
     );
 
+    await waitFor(() => {
+      expect(screen.getByText('120 pt')).toBeTruthy();
+    });
     expect(screen.getAllByText('오늘 할 학습').length).toBeGreaterThan(0);
     expect(screen.getAllByText('연속 학습 streak').length).toBeGreaterThan(0);
     expect(screen.getAllByText('누적 포인트').length).toBeGreaterThan(0);
@@ -157,9 +254,10 @@ describe('home dashboard', () => {
       isAuthenticated: false,
       isGuest: true,
       signIn: signInWithGooglePopupMock,
-      signOut: vi.fn(),
+      signOut: signOutMock,
       acceptTerms: vi.fn(),
-      saveLearningState: vi.fn(async () => false)
+      saveLearningState: vi.fn(async () => false),
+      recordLearningSession: vi.fn(async () => null)
     });
     signInWithGooglePopupMock.mockResolvedValue({
       user: {
@@ -176,6 +274,32 @@ describe('home dashboard', () => {
     expect(screen.getByRole('status').textContent).toContain(
       '구글 로그인 완료: 홈 사용자'
     );
+  });
+
+  it('shows a sign-out button for authenticated users and signs out on click', async () => {
+    const user = userEvent.setup();
+    useAppAuthMock.mockReturnValue({
+      status: 'authenticated',
+      userId: 'firebase-home-user',
+      displayName: '홈 사용자',
+      email: 'home@example.com',
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: true,
+      isGuest: false,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => true),
+      recordLearningSession: vi.fn(async () => null)
+    });
+
+    render(<HomeDashboard />);
+
+    await user.click(screen.getByRole('button', { name: '로그아웃' }));
+
+    expect(signOutMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('status').textContent).toContain('로그아웃되었습니다.');
   });
 
   it('renders the cat card and quick start panel in the same feature row', () => {
@@ -212,6 +336,21 @@ describe('home dashboard', () => {
 
   it('requests and renders weekly recommendations', async () => {
     const user = userEvent.setup();
+    useAppAuthMock.mockReturnValue({
+      status: 'authenticated',
+      userId: 'firebase-user-1',
+      displayName: '사용자',
+      email: 'user@example.com',
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: true,
+      isGuest: false,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => true),
+      recordLearningSession: vi.fn(async () => null)
+    });
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => ({
@@ -240,46 +379,78 @@ describe('home dashboard', () => {
     ).toBe('/learn?focus=passport%2Csubway%2Creservation');
   });
 
-  it('applies pending recommendation totals to the home summary', () => {
+  it('applies pending recommendation totals to the home summary', async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,
       json: async () => ({})
     }));
     vi.stubGlobal('fetch', fetchMock);
+    useAppAuthMock.mockReturnValue({
+      status: 'authenticated',
+      userId: 'firebase-user-1',
+      displayName: '사용자',
+      email: 'user@example.com',
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: true,
+      isGuest: false,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => true),
+      recordLearningSession: vi.fn(async () => null)
+    });
+    loadFirebaseDashboardStatsMock.mockResolvedValue({
+      userId: 'firebase-user-1',
+      totalPoints: 45,
+      leaderboardScore: 0,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+    loadFirebaseHomeSummaryMock.mockResolvedValue({
+      userId: 'firebase-user-1',
+      currentStreak: 2,
+      lastLearnedOn: '2026-03-26',
+      todayCompleted: 3,
+      studyMinutesToday: 15,
+      dailyGoalTarget: 10,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+    loadFirebaseLeaderboardPreviewMock.mockResolvedValue({
+      weekId: '2026-W13',
+      myRank: 2,
+      topEntries: [
+        {
+          userId: 'user-2',
+          rank: 1,
+          score: 3,
+          isCurrentUser: false
+        },
+        {
+          userId: 'firebase-user-1',
+          rank: 2,
+          score: 1,
+          isCurrentUser: true
+        }
+      ]
+    });
 
     render(
       <HomeDashboard
         pendingSource="recommendation"
         pendingPoints="10"
         pendingLeaderboardScore="2"
-        leaderboardPreview={{
-          weekId: '2026-W13',
-          myRank: 2,
-          topEntries: [
-            {
-              userId: 'user-2',
-              rank: 1,
-              score: 3,
-              isCurrentUser: false
-            },
-            {
-              userId: 'demo-user',
-              rank: 2,
-              score: 1,
-              isCurrentUser: true
-            }
-          ]
-        }}
       />
     );
 
-    expect(screen.getByText('학습 반영 완료')).toBeTruthy();
-    expect(
-      screen.getByText(/추천 학습 결과가 홈 요약에 반영됐습니다\./)
-    ).toBeTruthy();
-    expect(screen.getByText('55 pt')).toBeTruthy();
-    expect(screen.getByText('2 pt')).toBeTruthy();
-    expect(screen.getByText('이번 주 순위 #1')).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByText('학습 반영 완료')).toBeTruthy();
+      expect(
+        screen.getByText(/추천 학습 결과가 홈 요약에 반영됐습니다\./)
+      ).toBeTruthy();
+      expect(screen.getByText('55 pt')).toBeTruthy();
+      expect(screen.getByText('2 pt')).toBeTruthy();
+      expect(screen.getByText('이번 주 순위 #1')).toBeTruthy();
+    });
     expect(screen.getAllByText('3 pt').length).toBeGreaterThan(0);
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/dashboard/sync',
@@ -289,36 +460,30 @@ describe('home dashboard', () => {
     );
   });
 
-  it('uses persisted dashboard stats as the base summary points', () => {
-    render(
-      <HomeDashboard
-        initialStats={{
-          userId: 'demo-user',
-          totalPoints: 120,
-          leaderboardScore: 4,
-          updatedAt: '2026-03-26T00:00:00.000Z'
-        }}
-      />
-    );
+  it('shows an empty leaderboard preview message for authenticated users with no weekly entry', async () => {
+    useAppAuthMock.mockReturnValue({
+      status: 'authenticated',
+      userId: 'firebase-user-1',
+      displayName: '사용자',
+      email: 'user@example.com',
+      needsTermsConsent: false,
+      authReady: true,
+      isAuthenticated: true,
+      isGuest: false,
+      signIn: signInWithGooglePopupMock,
+      signOut: signOutMock,
+      acceptTerms: vi.fn(),
+      saveLearningState: vi.fn(async () => true),
+      recordLearningSession: vi.fn(async () => null)
+    });
 
-    expect(screen.getByText('120 pt')).toBeTruthy();
-    expect(screen.getByText('4 pt')).toBeTruthy();
-  });
+    render(<HomeDashboard />);
 
-  it('shows an empty leaderboard preview message when no weekly entry exists', () => {
-    render(
-      <HomeDashboard
-        leaderboardPreview={{
-          weekId: '2026-W13',
-          myRank: null,
-          topEntries: []
-        }}
-      />
-    );
-
-    expect(
-      screen.getByText('이번 주 리더보드 기록이 아직 없습니다.')
-    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        screen.getByText('이번 주 리더보드 기록이 아직 없습니다.')
+      ).toBeTruthy();
+    });
   });
 
   it('shows a cat care warning summary in the quick start panel', () => {

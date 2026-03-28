@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { t, type AppLocale } from '../i18n';
 import { CollapsiblePageHeader } from '../../components/CollapsiblePageHeader';
 import {
@@ -8,6 +8,7 @@ import {
   readStoredSettingsSnapshot,
   USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
+import { useAppAuth } from '../../lib/useAppAuth';
 
 import {
   advanceQuizQuestion,
@@ -81,6 +82,7 @@ function readingLabel(locale: AppLocale): string {
 }
 
 export default function QuizClient(props: QuizClientProps) {
+  const auth = useAppAuth();
   const [storedSettings, setStoredSettings] = useState(() =>
     createFallbackSettings()
   );
@@ -93,6 +95,7 @@ export default function QuizClient(props: QuizClientProps) {
     })
   );
   const [mode, setMode] = useState<QuizMode>('multiple');
+  const completionTrackedRef = useRef(false);
   const locale = props.locale ?? 'ko';
   const progressCurrent = session.reviewRound
     ? session.currentQuestionIndex
@@ -174,6 +177,29 @@ export default function QuizClient(props: QuizClientProps) {
     session.reviewRound,
     storedSettings.learningLanguage,
     storedSettings.learningLevel
+  ]);
+
+  useEffect(() => {
+    if (!session.completed) {
+      completionTrackedRef.current = false;
+      return;
+    }
+
+    if (!auth.isAuthenticated || completionTrackedRef.current) {
+      return;
+    }
+
+    completionTrackedRef.current = true;
+    void auth.recordLearningSession({
+      completedCount: session.baseQuestionWordIds.length,
+      dailyGoalTarget: storedSettings.sessionQuestionCount
+    });
+  }, [
+    auth,
+    auth.isAuthenticated,
+    session.baseQuestionWordIds.length,
+    session.completed,
+    storedSettings.sessionQuestionCount
   ]);
 
   return (

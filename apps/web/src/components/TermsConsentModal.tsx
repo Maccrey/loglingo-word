@@ -6,11 +6,26 @@ import { t, type AppLocale } from '../app/i18n';
 
 type TermsConsentModalProps = {
   locale: AppLocale;
-  onAccept: () => void;
+  onAccept: () => Promise<void> | void;
 };
 
 export function TermsConsentModal(props: TermsConsentModalProps) {
   const locale = props.locale;
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  async function handleAccept() {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await props.onAccept();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div
@@ -60,7 +75,8 @@ export function TermsConsentModal(props: TermsConsentModalProps) {
         </div>
         <button
           type="button"
-          onClick={props.onAccept}
+          onClick={() => void handleAccept()}
+          disabled={isSubmitting}
           style={{
             width: 'fit-content',
             border: '1px solid var(--btn-primary-border)',
@@ -69,7 +85,8 @@ export function TermsConsentModal(props: TermsConsentModalProps) {
             background: 'var(--btn-primary-bg)',
             color: '#fff',
             fontWeight: 700,
-            cursor: 'pointer',
+            cursor: isSubmitting ? 'default' : 'pointer',
+            opacity: isSubmitting ? 0.7 : 1,
             boxShadow: 'var(--shadow-card)'
           }}
         >

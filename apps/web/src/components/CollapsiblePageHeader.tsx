@@ -10,6 +10,7 @@ type CollapsiblePageHeaderProps = {
   children: React.ReactNode;
   expandedMinHeight?: number;
   collapsedMinHeight?: number;
+  showElapsedTime?: boolean;
 };
 
 export function CollapsiblePageHeader(props: CollapsiblePageHeaderProps) {
@@ -17,7 +18,8 @@ export function CollapsiblePageHeader(props: CollapsiblePageHeaderProps) {
     locale,
     children,
     expandedMinHeight = 180,
-    collapsedMinHeight = 36
+    collapsedMinHeight = 36,
+    showElapsedTime = true
   } = props;
   const [collapsed, setCollapsed] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -33,6 +35,10 @@ export function CollapsiblePageHeader(props: CollapsiblePageHeaderProps) {
   }, []);
 
   useEffect(() => {
+    if (!showElapsedTime) {
+      return;
+    }
+
     const intervalId = window.setInterval(() => {
       setElapsedSeconds((current) => current + 1);
     }, 1000);
@@ -40,7 +46,7 @@ export function CollapsiblePageHeader(props: CollapsiblePageHeaderProps) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [showElapsedTime]);
 
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const remainingSeconds = elapsedSeconds % 60;
@@ -95,11 +101,12 @@ export function CollapsiblePageHeader(props: CollapsiblePageHeaderProps) {
             fontSize: collapsed ? 12 : 13,
             fontWeight: 700,
             whiteSpace: 'nowrap',
-            opacity: collapsed ? 1 : 0,
+            opacity: collapsed && showElapsedTime ? 1 : 0,
+            visibility: showElapsedTime ? 'visible' : 'hidden',
             transition: 'opacity 0.3s ease'
           }}
         >
-          {elapsedLabel}
+          {showElapsedTime ? elapsedLabel : ''}
         </span>
       </div>
     </section>

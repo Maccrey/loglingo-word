@@ -8,6 +8,14 @@ import type { Cat, PointLedger } from '../../packages/shared/src/cat';
 import { saveStoredCat, saveStoredCatLedgers } from '../../apps/web/src/lib/catStorage';
 import { useCat } from '../../apps/web/src/lib/useCat';
 
+const useAppAuthMock = vi.fn(() => ({
+  authReady: true,
+  isAuthenticated: true,
+  userId: 'demo-user'
+}));
+const loadFirebaseCatStateMock = vi.fn(async () => null);
+const loadFirebasePointLedgerStateMock = vi.fn(async () => null);
+
 vi.mock('../../apps/web/src/lib/useCatSync', () => ({
   useCatSync: () => ({
     syncCat: vi.fn(async () => true),
@@ -28,6 +36,16 @@ vi.mock('../../apps/web/src/lib/usePointSync', () => ({
       error: null
     }
   })
+}));
+
+vi.mock('../../apps/web/src/lib/useAppAuth', () => ({
+  useAppAuth: () => useAppAuthMock()
+}));
+
+vi.mock('../../apps/web/src/lib/firebase-client', () => ({
+  loadFirebaseCatState: (...args: unknown[]) => loadFirebaseCatStateMock(...args),
+  loadFirebasePointLedgerState: (...args: unknown[]) =>
+    loadFirebasePointLedgerStateMock(...args)
 }));
 
 const sickCat: Cat = {
@@ -59,6 +77,16 @@ function UseCatSummary({ name }: { name: string }) {
 
 describe('useCat shared state', () => {
   beforeEach(() => {
+    loadFirebaseCatStateMock.mockReset();
+    loadFirebaseCatStateMock.mockResolvedValue(null);
+    loadFirebasePointLedgerStateMock.mockReset();
+    loadFirebasePointLedgerStateMock.mockResolvedValue(null);
+    useAppAuthMock.mockReset();
+    useAppAuthMock.mockReturnValue({
+      authReady: true,
+      isAuthenticated: true,
+      userId: 'demo-user'
+    });
     window.localStorage.clear();
     const now = new Date('2026-03-27T00:00:00.000Z').getTime();
     vi.useFakeTimers();
@@ -87,6 +115,10 @@ describe('useCat shared state', () => {
       </>
     );
 
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
     expect(screen.getByText('left:sick')).toBeTruthy();
     expect(screen.getByText('right:sick')).toBeTruthy();
 

@@ -23,6 +23,11 @@ import {
 } from './catStorage';
 import { useCatSync } from './useCatSync';
 import { usePointSync } from './usePointSync';
+import { useAppAuth } from './useAppAuth';
+import {
+  loadFirebaseCatState,
+  loadFirebasePointLedgerState
+} from './firebase-client';
 
 // Provide some default dummy env if we don't have access to the actual env
 const MOCK_ENV: Partial<EnvThresholds> = {
@@ -67,64 +72,117 @@ export function useCat() {
   const [ledgers, setLedgers] = useState<PointLedger[]>([]);
   const { syncCat } = useCatSync();
   const { syncPendingPoints } = usePointSync();
+  const auth = useAppAuth();
+
+  const buildInitialCat = useCallback((userId: string): Cat => {
+    const now = Date.now();
+
+    return {
+      id: 'mock-cat-1',
+      userId,
+      name: DEFAULT_CAT_NAME,
+      stage: 'kitten',
+      status: 'healthy',
+      createdAt: now,
+      updatedAt: now,
+      lastFedAt: now,
+      lastWashedAt: now,
+      lastPlayedAt: now,
+      activeDays: 0
+    };
+  }, []);
 
   const persistCatState = useCallback(
     (nextCat: Cat) => {
-      saveStoredCat(nextCat);
-      void syncCat(nextCat.userId, nextCat);
+      if (auth.isAuthenticated) {
+        saveStoredCat(nextCat);
+        void syncCat(auth.userId, {
+          ...nextCat,
+          userId: auth.userId
+        });
+      }
     },
-    [syncCat]
+    [auth.isAuthenticated, auth.userId, syncCat]
   );
 
   const persistPointLedgers = useCallback(
     (userId: string, nextLedgers: PointLedger[], pendingLedgers: PointLedger[] = nextLedgers) => {
-      saveStoredCatLedgers(nextLedgers);
-      void syncPendingPoints(userId, pendingLedgers);
+      if (auth.isAuthenticated) {
+        saveStoredCatLedgers(nextLedgers);
+        void syncPendingPoints(
+          auth.userId,
+          pendingLedgers.map((ledger) => ({
+            ...ledger,
+            userId: auth.userId
+          }))
+        );
+      }
     },
-    [syncPendingPoints]
+    [auth.isAuthenticated, auth.userId, syncPendingPoints]
   );
 
   const hydrateFromStorage = useCallback(() => {
-    try {
-      const persistedCat = loadStoredCat();
-      const storedCat = migrateStoredCatName(persistedCat);
-      const storedLedgers = loadStoredCatLedgers();
+    if (!auth.authReady) {
+      return;
+    }
 
-      if (storedCat) {
-        setCat(storedCat);
-        if (persistedCat?.name !== storedCat.name) {
-          saveStoredCat(storedCat);
+    void (async () => {
+      try {
+        const persistedCat = loadStoredCat();
+        const storedCat = migrateStoredCatName(persistedCat);
+        const storedLedgers = loadStoredCatLedgers();
+
+        if (auth.isAuthenticated) {
+          const [remoteCatState, remotePointState] = await Promise.all([
+            loadFirebaseCatState(auth.userId),
+            loadFirebasePointLedgerState(auth.userId)
+          ]);
+          const nextCat = remoteCatState?.cat
+            ? remoteCatState.cat
+            : storedCat
+              ? { ...storedCat, userId: auth.userId }
+              : buildInitialCat(auth.userId);
+          const nextLedgers =
+            remotePointState?.ledgers && remotePointState.ledgers.length > 0
+              ? remotePointState.ledgers
+              : storedLedgers.map((ledger) => ({
+                  ...ledger,
+                  userId: auth.userId
+                }));
+
+          setCat(nextCat);
+          setLedgers(nextLedgers);
+          setPoints(getPointBalance(nextLedgers) + INITIAL_POINTS);
+          saveStoredCat(nextCat, false);
+          saveStoredCatLedgers(nextLedgers, false);
+
+          if (!remoteCatState) {
+            void syncCat(auth.userId, nextCat);
+          }
+
+          if (!remotePointState && nextLedgers.length > 0) {
+            void syncPendingPoints(auth.userId, nextLedgers);
+          }
+
+          return;
         }
-      } else {
-        const now = Date.now();
-        const initialCat: Cat = {
-          id: 'mock-cat-1',
-          userId: 'demo-user',
-          name: DEFAULT_CAT_NAME,
-          stage: 'kitten',
-          status: 'healthy',
-          createdAt: now,
-          updatedAt: now,
-          lastFedAt: now,
-          lastWashedAt: now,
-          lastPlayedAt: now,
-          activeDays: 0
-        };
-        setCat(initialCat);
-        saveStoredCat(initialCat);
-      }
 
-      if (storedLedgers.length > 0) {
-        setLedgers(storedLedgers);
-        setPoints(getPointBalance(storedLedgers) + INITIAL_POINTS);
-      } else {
+        const initialCat = buildInitialCat('demo-user');
+        setCat(initialCat);
         setLedgers([]);
         setPoints(INITIAL_POINTS);
+      } catch (e) {
+        console.error('Failed to parse cat state', e);
       }
-    } catch (e) {
-      console.error('Failed to parse cat state', e);
-    }
-  }, []);
+    })();
+  }, [
+    auth.authReady,
+    auth.isAuthenticated,
+    auth.userId,
+    buildInitialCat,
+    syncCat,
+    syncPendingPoints
+  ]);
 
   // 1. Load from localStorage
   useEffect(() => {

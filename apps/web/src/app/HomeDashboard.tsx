@@ -11,7 +11,11 @@ import {
 } from '@wordflow/core/gamification';
 import { buildReviewSelection } from '@wordflow/core/memory';
 import { buildCatStateSnapshot, getCatThresholds, type EnvThresholds } from '@wordflow/shared/cat';
-import { type UserDashboardStats, userSettingsSchema } from '@wordflow/shared/types';
+import {
+  type UserDashboardStats,
+  type UserHomeSummary,
+  userSettingsSchema
+} from '@wordflow/shared/types';
 import { t, type AppLocale } from './i18n';
 import CatCard from '../components/CatCard';
 import { useCat } from '../lib/useCat';
@@ -21,6 +25,13 @@ import {
 } from '../lib/settingsStorage';
 import { useAppAuth } from '../lib/useAppAuth';
 import { TermsConsentModal } from '../components/TermsConsentModal';
+import {
+  loadFirebaseCurrentWeekRecommendation,
+  loadFirebaseDashboardStats,
+  loadFirebaseHomeSummary,
+  loadFirebaseLeaderboardPreview,
+  loadFirebaseLearningState
+} from '../lib/firebase-client';
 
 type HomeDashboardProps = {
   loading?: boolean;
@@ -55,6 +66,13 @@ type SyncState = {
 };
 
 type LeaderboardPreview = NonNullable<HomeDashboardProps['leaderboardPreview']>;
+type HomeFirebaseState = {
+  loading: boolean;
+  dashboardStats: UserDashboardStats | null;
+  homeSummary: UserHomeSummary | null;
+  leaderboardPreview: LeaderboardPreview | null;
+  todayStudyCount: number;
+};
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -164,18 +182,19 @@ function parsePositiveInteger(value?: string): number {
 
 function buildOptimisticLeaderboardPreview(
   preview: LeaderboardPreview | null,
-  scoreDelta: number
+  scoreDelta: number,
+  userId: string
 ): LeaderboardPreview | null {
   if (!preview || scoreDelta === 0) {
     return preview;
   }
 
   const hasCurrentUser = preview.topEntries.some(
-    (entry) => entry.userId === 'demo-user'
+    (entry) => entry.userId === userId
   );
   const nextEntries = hasCurrentUser
     ? preview.topEntries.map((entry) =>
-        entry.userId === 'demo-user'
+        entry.userId === userId
           ? {
               ...entry,
               score: entry.score + scoreDelta
@@ -185,7 +204,7 @@ function buildOptimisticLeaderboardPreview(
     : [
         ...preview.topEntries,
         {
-          userId: 'demo-user',
+          userId,
           rank: preview.myRank ?? preview.topEntries.length + 1,
           score: scoreDelta,
           isCurrentUser: true
@@ -207,7 +226,7 @@ function buildOptimisticLeaderboardPreview(
     }));
 
   const currentUserEntry =
-    rankedEntries.find((entry) => entry.userId === 'demo-user') ?? null;
+    rankedEntries.find((entry) => entry.userId === userId) ?? null;
 
   return {
     weekId: preview.weekId,
@@ -228,28 +247,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   } = props;
   const dashboard = buildDashboardState();
   const settingsHref = locale === 'en' ? '/settings?locale=en' : '/settings';
+  const auth = useAppAuth();
   const { cat } = useCat();
-  const thresholds = getCatThresholds(CAT_ENV);
-  const pendingPointsValue =
-    pendingSource === 'recommendation'
-      ? parsePositiveInteger(pendingPoints)
-      : 0;
-  const pendingLeaderboardValue =
-    pendingSource === 'recommendation'
-      ? parsePositiveInteger(pendingLeaderboardScore)
-      : 0;
-  const basePoints = initialStats?.totalPoints ?? dashboard.points;
-  const baseLeaderboardScore = initialStats?.leaderboardScore ?? 0;
-  const totalPoints = basePoints + pendingPointsValue;
-  const totalLeaderboardScore = baseLeaderboardScore + pendingLeaderboardValue;
-  const totalLevel = calculateLevelProgress(totalPoints + 135);
-  const optimisticLeaderboardPreview =
-    pendingSource === 'recommendation'
-      ? buildOptimisticLeaderboardPreview(
-          leaderboardPreview,
-          pendingLeaderboardValue
-        )
-      : leaderboardPreview;
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
     loading: false
@@ -259,7 +258,43 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     synced: false
   });
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const auth = useAppAuth();
+  const [firebaseHomeState, setFirebaseHomeState] = useState<HomeFirebaseState>({
+    loading: false,
+    dashboardStats: null,
+    homeSummary: null,
+    leaderboardPreview: null,
+    todayStudyCount: 0
+  });
+  const thresholds = getCatThresholds(CAT_ENV);
+  const pendingPointsValue =
+    pendingSource === 'recommendation'
+      ? parsePositiveInteger(pendingPoints)
+      : 0;
+  const pendingLeaderboardValue =
+    pendingSource === 'recommendation'
+      ? parsePositiveInteger(pendingLeaderboardScore)
+      : 0;
+  const basePoints = auth.isAuthenticated
+    ? firebaseHomeState.dashboardStats?.totalPoints ?? 0
+    : initialStats?.totalPoints ?? dashboard.points;
+  const baseLeaderboardScore = auth.isAuthenticated
+    ? firebaseHomeState.dashboardStats?.leaderboardScore ?? 0
+    : initialStats?.leaderboardScore ?? 0;
+  const totalPoints = basePoints + pendingPointsValue;
+  const totalLeaderboardScore = baseLeaderboardScore + pendingLeaderboardValue;
+  const totalLevel = calculateLevelProgress(totalPoints + 135);
+  const optimisticLeaderboardPreview =
+    pendingSource === 'recommendation'
+      ? buildOptimisticLeaderboardPreview(
+          auth.isAuthenticated
+            ? firebaseHomeState.leaderboardPreview
+            : leaderboardPreview,
+          pendingLeaderboardValue,
+          auth.userId
+        )
+      : auth.isAuthenticated
+        ? firebaseHomeState.leaderboardPreview
+        : leaderboardPreview;
   const catSnapshot = cat ? buildCatStateSnapshot(cat, Date.now(), thresholds) : null;
   const hoursSinceFeed = cat ? (Date.now() - cat.lastFedAt) / (60 * 60 * 1000) : 0;
   const hoursSinceWash = cat ? (Date.now() - cat.lastWashedAt) / (60 * 60 * 1000) : 0;
@@ -276,6 +311,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           hoursSincePlay,
           thresholds
         });
+  const firebaseDailyGoal = calculateDailyGoal(
+    firebaseHomeState.homeSummary?.todayCompleted ?? 0,
+    firebaseHomeState.homeSummary?.dailyGoalTarget ?? 10
+  );
 
   const quickStartPanel = (
     <section
@@ -397,7 +436,13 @@ export default function HomeDashboard(props: HomeDashboardProps) {
         </Link>
         <button
           type="button"
-          aria-label={t(locale, 'settings.google_login')}
+          aria-label={
+            auth.isAuthenticated
+              ? locale === 'en'
+                ? 'Sign out'
+                : '로그아웃'
+              : t(locale, 'settings.google_login')
+          }
           onClick={() => void startGoogleLogin()}
           style={{
             background: '#fff',
@@ -410,7 +455,11 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             cursor: 'pointer'
           }}
         >
-          {t(locale, 'settings.google_login')}
+          {auth.isAuthenticated
+            ? locale === 'en'
+              ? 'Sign out'
+              : '로그아웃'
+            : t(locale, 'settings.google_login')}
         </button>
       </div>
       {authMessage ? (
@@ -423,6 +472,12 @@ export default function HomeDashboard(props: HomeDashboardProps) {
 
   async function startGoogleLogin() {
     try {
+      if (auth.isAuthenticated) {
+        await auth.signOut();
+        setAuthMessage(locale === 'en' ? 'Signed out.' : '로그아웃되었습니다.');
+        return;
+      }
+
       const result = await auth.signIn();
       const currentSettings = readStoredSettingsSnapshot();
       saveStoredSettings(
@@ -445,6 +500,10 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   }
 
   async function requestRecommendation() {
+    if (!auth.isAuthenticated) {
+      return;
+    }
+
     setRecommendation((current) => ({
       ...current,
       loading: true
@@ -457,7 +516,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: 'demo-user',
+          userId: auth.userId,
           nativeLanguage: locale,
           targetLanguage: locale === 'ko' ? 'en' : 'ko',
           now: '2026-03-26T00:00:00.000Z',
@@ -498,7 +557,87 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   }
 
   useEffect(() => {
+    if (!auth.authReady) {
+      return;
+    }
+
+    if (!auth.isAuthenticated) {
+      setFirebaseHomeState({
+        loading: false,
+        dashboardStats: null,
+        homeSummary: null,
+        leaderboardPreview: null,
+        todayStudyCount: 0
+      });
+      setRecommendation({
+        words: [],
+        loading: false
+      });
+      return;
+    }
+
+    let cancelled = false;
+
+    async function hydrateFirebaseHome() {
+      setFirebaseHomeState((current) => ({
+        ...current,
+        loading: true
+      }));
+
+      const now = new Date().toISOString();
+      const [
+        dashboardStats,
+        homeSummary,
+        learningState,
+        weeklyRecommendation,
+        weeklyLeaderboardPreview
+      ] = await Promise.all([
+        loadFirebaseDashboardStats(auth.userId),
+        loadFirebaseHomeSummary(auth.userId),
+        loadFirebaseLearningState(auth.userId),
+        loadFirebaseCurrentWeekRecommendation(auth.userId, now),
+        loadFirebaseLeaderboardPreview(auth.userId, now)
+      ]);
+      const reviewSelection = buildReviewSelection({
+        now,
+        progress: learningState?.progress ?? [],
+        limit: 4,
+        reviewShare: 0.5
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      setFirebaseHomeState({
+        loading: false,
+        dashboardStats,
+        homeSummary,
+        leaderboardPreview: weeklyLeaderboardPreview,
+        todayStudyCount: reviewSelection.mixedQueue.length
+      });
+      setRecommendation({
+        words: weeklyRecommendation?.words ?? [],
+        loading: false,
+        ...(weeklyRecommendation?.requestedAt
+          ? { requestedAt: weeklyRecommendation.requestedAt }
+          : {}),
+        ...(weeklyRecommendation?.weekId
+          ? { weekId: weeklyRecommendation.weekId }
+          : {})
+      });
+    }
+
+    void hydrateFirebaseHome();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [auth.authReady, auth.isAuthenticated, auth.userId]);
+
+  useEffect(() => {
     if (
+      !auth.isAuthenticated ||
       pendingSource !== 'recommendation' ||
       syncState.synced ||
       syncState.loading ||
@@ -522,7 +661,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            userId: 'demo-user',
+            userId: auth.userId,
             pointsDelta: pendingPointsValue,
             leaderboardDelta: pendingLeaderboardValue,
             updatedAt: '2026-03-26T00:00:00.000Z'
@@ -544,6 +683,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
       cancelled = true;
     };
   }, [
+    auth.isAuthenticated,
+    auth.userId,
     pendingLeaderboardValue,
     pendingPointsValue,
     pendingSource,
@@ -590,7 +731,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           {quickStartPanel}
         </section>
 
-        {pendingSource === 'recommendation' &&
+        {auth.isAuthenticated &&
+        pendingSource === 'recommendation' &&
         (pendingPointsValue > 0 || pendingLeaderboardValue > 0) ? (
           <section style={{ ...panelStyle, display: 'grid', gap: 8 }}>
             <div style={badgeStyle}>{t(locale, 'home.sync.title')}</div>
@@ -606,6 +748,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           </section>
         ) : null}
 
+        {auth.isAuthenticated ? (
         <section
           className="home-summary-grid"
           data-testid="home-summary-grid"
@@ -618,7 +761,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           <article style={panelStyle}>
             <div style={badgeStyle}>{t(locale, 'home.summary.today')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              {dashboard.reviewSelection.mixedQueue.length}
+              {firebaseHomeState.loading ? '...' : firebaseHomeState.todayStudyCount}
             </h2>
             <p style={{ margin: 0 }}>{t(locale, 'home.summary.today')}</p>
           </article>
@@ -626,7 +769,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           <article style={panelStyle}>
             <div style={badgeStyle}>{t(locale, 'home.summary.streak')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              {dashboard.streak.currentStreak}일
+              {firebaseHomeState.loading
+                ? '...'
+                : `${firebaseHomeState.homeSummary?.currentStreak ?? 0}일`}
             </h2>
             <p style={{ margin: 0 }}>{t(locale, 'home.summary.streak')}</p>
           </article>
@@ -725,7 +870,9 @@ export default function HomeDashboard(props: HomeDashboardProps) {
           >
             <div style={badgeStyle}>{t(locale, 'home.goal')}</div>
             <h2 style={{ margin: '16px 0 8px', fontSize: 34 }}>
-              {dashboard.dailyGoal.completed}/{dashboard.dailyGoal.target}
+              {firebaseHomeState.loading
+                ? '...'
+                : `${firebaseHomeState.homeSummary?.todayCompleted ?? 0}/${firebaseHomeState.homeSummary?.dailyGoalTarget ?? 10}`}
             </h2>
             <div
               aria-label="daily-goal-progress"
@@ -738,21 +885,23 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             >
               <div
                 style={{
-                  width: `${dashboard.dailyGoal.progressPercent}%`,
+                  width: `${firebaseDailyGoal.progressPercent}%`,
                   height: '100%',
                   background: 'var(--accent-green)'
                 }}
               />
             </div>
             <p style={{ margin: '12px 0 0' }}>
-              {dashboard.dailyGoal.progressPercent}% ·{' '}
-              {dashboard.dailyGoal.isComplete
+              {firebaseDailyGoal.progressPercent}% ·{' '}
+              {firebaseDailyGoal.isComplete
                 ? t(locale, 'home.goal.complete')
                 : t(locale, 'home.goal.in_progress')}
             </p>
           </article>
         </section>
+        ) : null}
 
+        {auth.isAuthenticated ? (
         <section style={{ ...panelStyle, display: 'grid', gap: 14 }}>
           <div style={badgeStyle}>{t(locale, 'home.recommendation.title')}</div>
           <h2 style={{ margin: 0 }}>
@@ -831,6 +980,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
             </p>
           )}
         </section>
+        ) : null}
 
       </div>
     </main>

@@ -1,6 +1,12 @@
 'use client';
 
-import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
+import {
+  FirebaseError,
+  getApp,
+  getApps,
+  initializeApp,
+  type FirebaseApp
+} from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -13,13 +19,29 @@ import {
 } from 'firebase/auth';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
-  setDoc
+  query,
+  setDoc,
+  where
 } from 'firebase/firestore';
 
-import { userSettingsSchema, vocabProgressSchema, type UserSettings, type VocabProgress } from '@wordflow/shared/types';
+import {
+  userDashboardStatsSchema,
+  userHomeSummarySchema,
+  userSettingsSchema,
+  vocabProgressSchema,
+  type UserDashboardStats,
+  type UserHomeSummary,
+  type UserSettings,
+  type VocabProgress
+} from '@wordflow/shared/types';
+import type { Cat, PointLedger } from '@wordflow/shared/cat';
+import { updateLearningStreak } from '@wordflow/core/gamification';
+import { canRequestWeeklyRecommendation } from '@wordflow/ai/recommendation';
 
 type FirebaseWebConfig = {
   apiKey: string;
@@ -140,18 +162,66 @@ type FirebaseLearningState = {
   updatedAt: string;
 };
 
+type FirebaseCatState = {
+  userId: string;
+  cat: Cat;
+  syncedAt: string;
+};
+
+type FirebasePointLedgerState = {
+  userId: string;
+  ledgers: PointLedger[];
+  syncedAt: string;
+};
+
+type FirebaseLeaderboardPreview = {
+  weekId: string;
+  myRank: number | null;
+  topEntries: Array<{
+    userId: string;
+    rank: number;
+    score: number;
+    isCurrentUser: boolean;
+  }>;
+};
+
 function getFirestoreDb() {
   return getFirestore(getFirebaseClientApp());
 }
 
-export async function loadFirebaseUserProfile(uid: string): Promise<FirebaseUserProfile | null> {
-  const snapshot = await getDoc(doc(getFirestoreDb(), 'user_profiles', uid));
-
-  if (!snapshot.exists()) {
-    return null;
+function isRecoverableFirestoreReadError(error: unknown): boolean {
+  if (!(error instanceof FirebaseError)) {
+    return false;
   }
 
-  return snapshot.data() as FirebaseUserProfile;
+  const normalizedCode = error.code.includes('/')
+    ? error.code.split('/')[1] ?? error.code
+    : error.code;
+
+  return [
+    'unavailable',
+    'failed-precondition',
+    'offline',
+    'deadline-exceeded'
+  ].includes(normalizedCode);
+}
+
+export async function loadFirebaseUserProfile(uid: string): Promise<FirebaseUserProfile | null> {
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'user_profiles', uid));
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return snapshot.data() as FirebaseUserProfile;
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 export async function saveFirebaseUserProfile(
@@ -184,29 +254,37 @@ export async function saveFirebaseUserProfile(
 export async function loadFirebaseLearningState(
   uid: string
 ): Promise<FirebaseLearningState | null> {
-  const snapshot = await getDoc(doc(getFirestoreDb(), 'user_learning', uid));
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'user_learning', uid));
 
-  if (!snapshot.exists()) {
-    return null;
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    const data = snapshot.data() as {
+      userId: string;
+      settings: unknown;
+      progress: unknown[];
+      updatedAt: string;
+    };
+
+    return {
+      userId: data.userId,
+      settings: userSettingsSchema.parse(data.settings),
+      progress: Array.isArray(data.progress)
+        ? data.progress
+            .map((item) => vocabProgressSchema.safeParse(item))
+            .flatMap((result) => (result.success ? [result.data] : []))
+        : [],
+      updatedAt: data.updatedAt
+    };
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
   }
-
-  const data = snapshot.data() as {
-    userId: string;
-    settings: unknown;
-    progress: unknown[];
-    updatedAt: string;
-  };
-
-  return {
-    userId: data.userId,
-    settings: userSettingsSchema.parse(data.settings),
-    progress: Array.isArray(data.progress)
-      ? data.progress
-          .map((item) => vocabProgressSchema.safeParse(item))
-          .flatMap((result) => (result.success ? [result.data] : []))
-      : [],
-    updatedAt: data.updatedAt
-  };
 }
 
 export async function saveFirebaseLearningState(
@@ -226,4 +304,224 @@ export async function saveFirebaseLearningState(
     },
     { merge: true }
   );
+}
+
+export async function loadFirebaseDashboardStats(
+  uid: string
+): Promise<UserDashboardStats | null> {
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'dashboard_stats', uid));
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return userDashboardStatsSchema.parse(snapshot.data());
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function saveFirebaseDashboardStats(
+  uid: string,
+  stats: UserDashboardStats
+) {
+  await setDoc(
+    doc(getFirestoreDb(), 'dashboard_stats', uid),
+    userDashboardStatsSchema.parse(stats),
+    { merge: true }
+  );
+}
+
+export async function loadFirebaseHomeSummary(
+  uid: string
+): Promise<UserHomeSummary | null> {
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'home_summaries', uid));
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return userHomeSummarySchema.parse(snapshot.data());
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function saveFirebaseHomeSummary(
+  uid: string,
+  summary: UserHomeSummary
+) {
+  await setDoc(
+    doc(getFirestoreDb(), 'home_summaries', uid),
+    userHomeSummarySchema.parse(summary),
+    { merge: true }
+  );
+}
+
+export async function recordFirebaseLearningActivity(
+  uid: string,
+  input: {
+    learnedAt: string;
+    completedCount: number;
+    studyDurationMinutes?: number;
+    dailyGoalTarget?: number;
+  }
+) {
+  const existing = await loadFirebaseHomeSummary(uid);
+  const learnedDay = input.learnedAt.slice(0, 10);
+  const previousDay = existing?.updatedAt?.slice(0, 10);
+  const isSameDay = previousDay === learnedDay;
+  const streak = updateLearningStreak(
+    {
+      currentStreak: existing?.currentStreak ?? 0,
+      ...(existing?.lastLearnedOn
+        ? { lastLearnedOn: existing.lastLearnedOn }
+        : {})
+    },
+    input.learnedAt
+  );
+
+  const nextSummary = userHomeSummarySchema.parse({
+    userId: uid,
+    currentStreak: streak.currentStreak,
+    ...(streak.lastLearnedOn ? { lastLearnedOn: streak.lastLearnedOn } : {}),
+    todayCompleted:
+      (isSameDay ? existing?.todayCompleted ?? 0 : 0) +
+      Math.max(0, Math.floor(input.completedCount)),
+    studyMinutesToday:
+      (isSameDay ? existing?.studyMinutesToday ?? 0 : 0) +
+      Math.max(0, Math.floor(input.studyDurationMinutes ?? 0)),
+    dailyGoalTarget: input.dailyGoalTarget ?? existing?.dailyGoalTarget ?? 10,
+    updatedAt: input.learnedAt
+  });
+
+  await saveFirebaseHomeSummary(uid, nextSummary);
+  return nextSummary;
+}
+
+export async function loadFirebaseCatState(
+  uid: string
+): Promise<FirebaseCatState | null> {
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'cats', uid));
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return snapshot.data() as FirebaseCatState;
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function loadFirebasePointLedgerState(
+  uid: string
+): Promise<FirebasePointLedgerState | null> {
+  try {
+    const snapshot = await getDoc(doc(getFirestoreDb(), 'point_ledgers', uid));
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return snapshot.data() as FirebasePointLedgerState;
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function loadFirebaseCurrentWeekRecommendation(
+  uid: string,
+  now = new Date().toISOString()
+) {
+  const weekId = canRequestWeeklyRecommendation(now).currentWeekId;
+  try {
+    const snapshot = await getDoc(
+      doc(getFirestoreDb(), 'ai_recommendations', `${uid}:${weekId}`)
+    );
+
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return snapshot.data() as {
+      userId: string;
+      weekId: string;
+      words: string[];
+      requestedAt: string;
+    };
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function loadFirebaseLeaderboardPreview(
+  uid: string,
+  now = new Date().toISOString()
+): Promise<FirebaseLeaderboardPreview | null> {
+  const weekId = canRequestWeeklyRecommendation(now).currentWeekId;
+  try {
+    const snapshot = await getDocs(
+      query(collection(getFirestoreDb(), 'leaderboards'), where('weekId', '==', weekId))
+    );
+    const entries = snapshot.docs
+      .map((item) => item.data() as { userId: string; score: number; rank: number })
+      .sort((left, right) => {
+        if (left.score === right.score) {
+          return left.userId.localeCompare(right.userId);
+        }
+
+        return right.score - left.score;
+      })
+      .map((entry, index) => ({
+        ...entry,
+        rank: index + 1
+      }));
+
+    const myEntry = entries.find((entry) => entry.userId === uid) ?? null;
+
+    return {
+      weekId,
+      myRank: myEntry?.rank ?? null,
+      topEntries: entries.slice(0, 3).map((entry) => ({
+        userId: entry.userId,
+        rank: entry.rank,
+        score: entry.score,
+        isCurrentUser: entry.userId === uid
+      }))
+    };
+  } catch (error) {
+    if (isRecoverableFirestoreReadError(error)) {
+      return {
+        weekId,
+        myRank: null,
+        topEntries: []
+      };
+    }
+
+    throw error;
+  }
 }

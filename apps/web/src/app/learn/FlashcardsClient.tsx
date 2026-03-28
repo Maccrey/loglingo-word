@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { updateSettings } from '@wordflow/core/settings';
 import { getCurriculumByStandardLevel } from '@wordflow/core/curriculum';
 import {
@@ -155,6 +155,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     loading: false,
     synced: false
   });
+  const completionTrackedRef = useRef(false);
 
   const currentCard = getCurrentCard(session);
   const reviewedCount = session.logs.length;
@@ -350,6 +351,29 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     leaderboardSyncState.loading,
     leaderboardSyncState.synced,
     props.focusWordIds
+  ]);
+
+  useEffect(() => {
+    if (!completed) {
+      completionTrackedRef.current = false;
+      return;
+    }
+
+    if (!auth.isAuthenticated || completionTrackedRef.current) {
+      return;
+    }
+
+    completionTrackedRef.current = true;
+    void auth.recordLearningSession({
+      completedCount: Math.max(1, reviewedCount),
+      dailyGoalTarget: storedSettings.sessionQuestionCount
+    });
+  }, [
+    auth,
+    auth.isAuthenticated,
+    completed,
+    reviewedCount,
+    storedSettings.sessionQuestionCount
   ]);
 
   function submitWritingAnswer() {
