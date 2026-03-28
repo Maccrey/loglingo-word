@@ -141,16 +141,28 @@
       "predicate": {
         "가요.": "go",
         "가요": "go",
+        "가고 싶어요.": "want_to_go",
+        "가고 싶어요": "want_to_go",
         "와요.": "come",
         "와요": "come",
+        "오고 싶어요.": "want_to_come",
+        "오고 싶어요": "want_to_come",
         "마셔요.": "drink",
         "마셔요": "drink",
+        "마시고 싶어요.": "want_to_drink",
+        "마시고 싶어요": "want_to_drink",
         "먹어요.": "eat",
         "먹어요": "eat",
+        "먹고 싶어요.": "want_to_eat",
+        "먹고 싶어요": "want_to_eat",
         "읽어요.": "read",
         "읽어요": "read",
+        "읽고 싶어요.": "want_to_read",
+        "읽고 싶어요": "want_to_read",
         "써요.": "write",
-        "써요": "write"
+        "써요": "write",
+        "쓰고 싶어요.": "want_to_write",
+        "쓰고 싶어요": "want_to_write"
       }
     }
   },
@@ -293,7 +305,7 @@
         "i": "私は",
         "you": "あなたは",
         "we": "私たちは",
-        "my_friend": "友だちは",
+        "my_friend": "私の友達は",
         "teacher": "先生は",
         "student": "学生は"
       },

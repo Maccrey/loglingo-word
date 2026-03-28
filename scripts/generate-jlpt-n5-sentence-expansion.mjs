@@ -31,16 +31,6 @@ const places = [
   { id: 'shop', block: '店に', goal: '가게에 ' }
 ];
 
-function pickAlternativePlaceBlock(currentBlock, preferredBlock) {
-  const preferred = places.find((place) => place.block === preferredBlock);
-
-  if (preferred && preferred.block !== currentBlock) {
-    return preferred.block;
-  }
-
-  return places.find((place) => place.block !== currentBlock)?.block ?? '駅に';
-}
-
 const objectPatterns = [
   {
     id: 'water-drink',
@@ -135,6 +125,26 @@ const objectPatterns = [
   }
 ];
 
+function pickAlternativePlaceBlock(currentBlock, preferredBlock) {
+  const preferred = places.find((place) => place.block === preferredBlock);
+
+  if (preferred && preferred.block !== currentBlock) {
+    return preferred.block;
+  }
+
+  return places.find((place) => place.block !== currentBlock)?.block ?? '駅に';
+}
+
+function pickAlternativeTime(currentBlock, preferredBlock) {
+  const preferred = times.find((time) => time.block === preferredBlock);
+
+  if (preferred && preferred.block !== currentBlock) {
+    return preferred;
+  }
+
+  return times.find((time) => time.block !== currentBlock) ?? times[0];
+}
+
 function isNaturalTravelCombination(time, place) {
   if (place.id === 'home') {
     return ['today', 'tomorrow', 'night'].includes(time.id);
@@ -143,39 +153,10 @@ function isNaturalTravelCombination(time, place) {
   return true;
 }
 
-function normalizeJapaneseTimeBlock(text) {
-  const replacements = {
-    '今日は': '今日',
-    '明日は': '明日',
-    '昨日は': '昨日',
-    '朝は': '朝',
-    '夜は': '夜',
-    '今は': '今'
-  };
-
-  return replacements[text] ?? text;
-}
-
-function normalizeBaseExercise(exercise) {
-  return {
-    ...exercise,
-    stages: exercise.stages.map((stage) => ({
-      ...stage,
-      correctBlocks: stage.correctBlocks.map((block) => ({
-        ...block,
-        text: normalizeJapaneseTimeBlock(block.text)
-      })),
-      distractorBlocks: stage.distractorBlocks.map((block) => ({
-        ...block,
-        text: normalizeJapaneseTimeBlock(block.text)
-      }))
-    }))
-  };
-}
-
 function createTravelExercise(subject, time, place, order) {
   const stage2DistractorPlace = pickAlternativePlaceBlock(place.block, '店に');
   const stage3DistractorPlace = pickAlternativePlaceBlock(place.block, '駅に');
+  const alternateTime = pickAlternativeTime(time.block, '毎日');
 
   return {
     id: `jlpt-n5-travel-${String(order).padStart(3, '0')}`,
@@ -216,7 +197,7 @@ function createTravelExercise(subject, time, place, order) {
         goalSegments: [subject.goal, place.goal, '간다.'],
         focus: '주어 + 장소 + 동사',
         selectionAdvice: '장소 블록을 붙이세요.',
-        completionAdvice: '장소까지 완성. 다음은 시간입니다.',
+        completionAdvice: '장소까지 완성. 다음은 희망 표현입니다.',
         correctBlocks: [
           { id: `travel-${order}-s2-b1`, text: subject.block },
           { id: `travel-${order}-s2-b2`, text: place.block },
@@ -238,22 +219,21 @@ function createTravelExercise(subject, time, place, order) {
       {
         id: `travel-${order}-stage-3`,
         title: '3단계',
-        goal: `${time.goal}${subject.goal}${place.goal}간다.`,
-        goalSegments: [time.goal, subject.goal, place.goal, '간다.'],
-        focus: '시간 + 주어 + 장소 + 동사',
-        selectionAdvice: '문장 맨 앞에 시간 블록을 두세요.',
-        completionAdvice: '시간까지 완성. 다음은 희망 표현입니다.',
+        goal: `${subject.goal}${place.goal}가고 싶다.`,
+        goalSegments: [subject.goal, place.goal, '가고 싶다.'],
+        focus: '주어 + 장소 + 희망 표현',
+        selectionAdvice: '장소 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
         correctBlocks: [
-          { id: `travel-${order}-s3-b1`, text: time.block },
-          { id: `travel-${order}-s3-b2`, text: subject.block },
-          { id: `travel-${order}-s3-b3`, text: place.block },
-          { id: `travel-${order}-s3-b4`, text: '行きます。' }
+          { id: `travel-${order}-s3-b1`, text: subject.block },
+          { id: `travel-${order}-s3-b2`, text: place.block },
+          { id: `travel-${order}-s3-b3`, text: '行きたいです。' }
         ],
         distractorBlocks: [
           {
             id: `travel-${order}-s3-d1`,
-            text: '今',
-            advice: '여기서는 설정된 시간 표현이 먼저입니다.'
+            text: '行きます。',
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
             id: `travel-${order}-s3-d2`,
@@ -265,27 +245,108 @@ function createTravelExercise(subject, time, place, order) {
       {
         id: `travel-${order}-stage-4`,
         title: '4단계',
-        goal: `${time.goal}${subject.goal}${place.goal}가고 싶다.`,
-        goalSegments: [time.goal, subject.goal, place.goal, '가고 싶다.'],
-        focus: '희망 표현',
-        selectionAdvice: '마지막은 희망 표현을 고르세요.',
-        completionAdvice: '희망 표현까지 완성했습니다.',
+        goal: `${time.goal}${subject.goal}${place.goal}간다.`,
+        goalSegments: [time.goal, subject.goal, place.goal, '간다.'],
+        focus: '시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '문장 맨 앞에 시간 블록을 두세요.',
+        completionAdvice: '시간까지 완성. 같은 문장을 희망 표현으로도 만들어보세요.',
         correctBlocks: [
           { id: `travel-${order}-s4-b1`, text: time.block },
           { id: `travel-${order}-s4-b2`, text: subject.block },
           { id: `travel-${order}-s4-b3`, text: place.block },
-          { id: `travel-${order}-s4-b4`, text: '行きたいです。' }
+          { id: `travel-${order}-s4-b4`, text: '行きます。' }
         ],
         distractorBlocks: [
           {
             id: `travel-${order}-s4-d1`,
+            text: '今',
+            advice: '여기서는 설정된 시간 표현이 먼저입니다.'
+          },
+          {
+            id: `travel-${order}-s4-d2`,
+            text: '行きたいです。',
+            advice: '여기서는 먼저 기본 동작 문장을 완성합니다.'
+          }
+        ]
+      },
+      {
+        id: `travel-${order}-stage-5`,
+        title: '5단계',
+        goal: `${time.goal}${subject.goal}${place.goal}가고 싶다.`,
+        goalSegments: [time.goal, subject.goal, place.goal, '가고 싶다.'],
+        focus: '시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '마지막은 희망 표현을 고르세요.',
+        completionAdvice: '한 가지 시간 표현은 끝났습니다. 다른 시간으로 다시 연습하세요.',
+        correctBlocks: [
+          { id: `travel-${order}-s5-b1`, text: time.block },
+          { id: `travel-${order}-s5-b2`, text: subject.block },
+          { id: `travel-${order}-s5-b3`, text: place.block },
+          { id: `travel-${order}-s5-b4`, text: '行きたいです。' }
+        ],
+        distractorBlocks: [
+          {
+            id: `travel-${order}-s5-d1`,
             text: '行きます。',
             advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
-            id: `travel-${order}-s4-d2`,
+            id: `travel-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: '지금 단계에서는 현재 목표 시간 표현을 유지하세요.'
+          }
+        ]
+      },
+      {
+        id: `travel-${order}-stage-6`,
+        title: '6단계',
+        goal: `${alternateTime.goal}${subject.goal}${place.goal}간다.`,
+        goalSegments: [alternateTime.goal, subject.goal, place.goal, '간다.'],
+        focus: '다른 시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '새로운 시간 표현으로 같은 문장을 다시 만드세요.',
+        completionAdvice: '새 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `travel-${order}-s6-b1`, text: alternateTime.block },
+          { id: `travel-${order}-s6-b2`, text: subject.block },
+          { id: `travel-${order}-s6-b3`, text: place.block },
+          { id: `travel-${order}-s6-b4`, text: '行きます。' }
+        ],
+        distractorBlocks: [
+          {
+            id: `travel-${order}-s6-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `travel-${order}-s6-d2`,
+            text: '行きたいです。',
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: `travel-${order}-stage-7`,
+        title: '7단계',
+        goal: `${alternateTime.goal}${subject.goal}${place.goal}가고 싶다.`,
+        goalSegments: [alternateTime.goal, subject.goal, place.goal, '가고 싶다.'],
+        focus: '다른 시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: `travel-${order}-s7-b1`, text: alternateTime.block },
+          { id: `travel-${order}-s7-b2`, text: subject.block },
+          { id: `travel-${order}-s7-b3`, text: place.block },
+          { id: `travel-${order}-s7-b4`, text: '行きたいです。' }
+        ],
+        distractorBlocks: [
+          {
+            id: `travel-${order}-s7-d1`,
             text: '来たいです。',
             advice: '여기서는 오다가 아니라 가고 싶다가 맞습니다.'
+          },
+          {
+            id: `travel-${order}-s7-d2`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
           }
         ]
       }
@@ -294,12 +355,15 @@ function createTravelExercise(subject, time, place, order) {
 }
 
 function createObjectExercise(subject, time, pattern, order) {
+  const alternateTime = pickAlternativeTime(time.block, '毎日');
+
   return {
     id: `jlpt-n5-object-${String(order).padStart(3, '0')}`,
     language: 'ja',
     level: 'jlpt_n5',
     title: `${pattern.objectGoal.trim()} 표현 연습 ${String(order).padStart(3, '0')}`,
-    description: '대상과 동사를 이어 기본문부터 희망 표현까지 단계적으로 조립합니다.',
+    description:
+      '대상과 동사를 이어 기본문부터 희망 표현까지 단계적으로 조립합니다.',
     stages: [
       {
         id: `object-${order}-stage-1`,
@@ -333,7 +397,7 @@ function createObjectExercise(subject, time, pattern, order) {
         goalSegments: [subject.goal, pattern.objectGoal, pattern.verbGoal],
         focus: '주어 + 대상 + 동사',
         selectionAdvice: '대상 블록을 붙이세요.',
-        completionAdvice: '대상까지 완성. 다음은 시간입니다.',
+        completionAdvice: '대상까지 완성. 다음은 희망 표현입니다.',
         correctBlocks: [
           { id: `object-${order}-s2-b1`, text: subject.block },
           { id: `object-${order}-s2-b2`, text: pattern.objectBlock },
@@ -355,22 +419,21 @@ function createObjectExercise(subject, time, pattern, order) {
       {
         id: `object-${order}-stage-3`,
         title: '3단계',
-        goal: `${time.goal}${subject.goal}${pattern.objectGoal}${pattern.verbGoal}`,
-        goalSegments: [time.goal, subject.goal, pattern.objectGoal, pattern.verbGoal],
-        focus: '시간 + 주어 + 대상 + 동사',
-        selectionAdvice: '문장 맨 앞에 시간 블록을 두세요.',
-        completionAdvice: '시간까지 완성. 다음은 희망 표현입니다.',
+        goal: `${subject.goal}${pattern.objectGoal}${pattern.desireGoal}`,
+        goalSegments: [subject.goal, pattern.objectGoal, pattern.desireGoal],
+        focus: '주어 + 대상 + 희망 표현',
+        selectionAdvice: '대상 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
         correctBlocks: [
-          { id: `object-${order}-s3-b1`, text: time.block },
-          { id: `object-${order}-s3-b2`, text: subject.block },
-          { id: `object-${order}-s3-b3`, text: pattern.objectBlock },
-          { id: `object-${order}-s3-b4`, text: pattern.verbBlock }
+          { id: `object-${order}-s3-b1`, text: subject.block },
+          { id: `object-${order}-s3-b2`, text: pattern.objectBlock },
+          { id: `object-${order}-s3-b3`, text: pattern.desireBlock }
         ],
         distractorBlocks: [
           {
             id: `object-${order}-s3-d1`,
-            text: '今',
-            advice: '여기서는 설정된 시간 표현이 먼저입니다.'
+            text: pattern.verbBlock,
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
             id: `object-${order}-s3-d2`,
@@ -382,28 +445,255 @@ function createObjectExercise(subject, time, pattern, order) {
       {
         id: `object-${order}-stage-4`,
         title: '4단계',
-        goal: `${time.goal}${subject.goal}${pattern.objectGoal}${pattern.desireGoal}`,
-        goalSegments: [time.goal, subject.goal, pattern.objectGoal, pattern.desireGoal],
-        focus: '희망 표현',
-        selectionAdvice: '마지막은 희망 표현을 고르세요.',
-        completionAdvice: '희망 표현까지 완성했습니다.',
+        goal: `${time.goal}${subject.goal}${pattern.objectGoal}${pattern.verbGoal}`,
+        goalSegments: [time.goal, subject.goal, pattern.objectGoal, pattern.verbGoal],
+        focus: '시간 + 주어 + 대상 + 동사',
+        selectionAdvice: '문장 맨 앞에 시간 블록을 두세요.',
+        completionAdvice: '시간까지 완성. 같은 문장을 희망 표현으로도 만들어보세요.',
         correctBlocks: [
           { id: `object-${order}-s4-b1`, text: time.block },
           { id: `object-${order}-s4-b2`, text: subject.block },
           { id: `object-${order}-s4-b3`, text: pattern.objectBlock },
-          { id: `object-${order}-s4-b4`, text: pattern.desireBlock }
+          { id: `object-${order}-s4-b4`, text: pattern.verbBlock }
         ],
         distractorBlocks: [
           {
             id: `object-${order}-s4-d1`,
+            text: '今',
+            advice: '여기서는 설정된 시간 표현이 먼저입니다.'
+          },
+          {
+            id: `object-${order}-s4-d2`,
+            text: pattern.desireBlock,
+            advice: '여기서는 먼저 기본 동작 문장을 완성합니다.'
+          }
+        ]
+      },
+      {
+        id: `object-${order}-stage-5`,
+        title: '5단계',
+        goal: `${time.goal}${subject.goal}${pattern.objectGoal}${pattern.desireGoal}`,
+        goalSegments: [time.goal, subject.goal, pattern.objectGoal, pattern.desireGoal],
+        focus: '시간 + 주어 + 대상 + 희망 표현',
+        selectionAdvice: '마지막은 희망 표현을 고르세요.',
+        completionAdvice: '한 가지 시간 표현은 끝났습니다. 다른 시간으로 다시 연습하세요.',
+        correctBlocks: [
+          { id: `object-${order}-s5-b1`, text: time.block },
+          { id: `object-${order}-s5-b2`, text: subject.block },
+          { id: `object-${order}-s5-b3`, text: pattern.objectBlock },
+          { id: `object-${order}-s5-b4`, text: pattern.desireBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `object-${order}-s5-d1`,
             text: pattern.verbBlock,
             advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
-            id: `object-${order}-s4-d2`,
-            text: pattern.distractorObjectBlock,
-            advice: pattern.distractorObjectAdvice
+            id: `object-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: '지금 단계에서는 현재 목표 시간 표현을 유지하세요.'
           }
+        ]
+      },
+      {
+        id: `object-${order}-stage-6`,
+        title: '6단계',
+        goal: `${alternateTime.goal}${subject.goal}${pattern.objectGoal}${pattern.verbGoal}`,
+        goalSegments: [alternateTime.goal, subject.goal, pattern.objectGoal, pattern.verbGoal],
+        focus: '다른 시간 + 주어 + 대상 + 동사',
+        selectionAdvice: '새로운 시간 표현으로 같은 문장을 다시 만드세요.',
+        completionAdvice: '새 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `object-${order}-s6-b1`, text: alternateTime.block },
+          { id: `object-${order}-s6-b2`, text: subject.block },
+          { id: `object-${order}-s6-b3`, text: pattern.objectBlock },
+          { id: `object-${order}-s6-b4`, text: pattern.verbBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `object-${order}-s6-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `object-${order}-s6-d2`,
+            text: pattern.desireBlock,
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: `object-${order}-stage-7`,
+        title: '7단계',
+        goal: `${alternateTime.goal}${subject.goal}${pattern.objectGoal}${pattern.desireGoal}`,
+        goalSegments: [alternateTime.goal, subject.goal, pattern.objectGoal, pattern.desireGoal],
+        focus: '다른 시간 + 주어 + 대상 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: `object-${order}-s7-b1`, text: alternateTime.block },
+          { id: `object-${order}-s7-b2`, text: subject.block },
+          { id: `object-${order}-s7-b3`, text: pattern.objectBlock },
+          { id: `object-${order}-s7-b4`, text: pattern.desireBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `object-${order}-s7-d1`,
+            text: pattern.verbBlock,
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
+          },
+          {
+            id: `object-${order}-s7-d2`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+function createBaseExercise() {
+  const subject = subjects[0];
+  const place = places[0];
+  const primaryTime = times[0];
+  const alternateTime = times[4];
+
+  return {
+    id: 'jlpt-n5-school-blocks',
+    language: 'ja',
+    level: 'jlpt_n5',
+    title: '학교 가기 싫은 날',
+    description: '짧은 문장에서 시작해 블록을 순서대로 누르며 문장을 조금씩 길게 만듭니다.',
+    stages: [
+      {
+        id: 'stage-1',
+        title: '1단계',
+        goal: '나는 간다.',
+        goalSegments: ['나는 ', '간다.'],
+        focus: '주어 + 동사',
+        selectionAdvice: '주어와 동사부터 고르세요.',
+        completionAdvice: '기본 문장 완성. 다음은 장소입니다.',
+        correctBlocks: [
+          { id: 's1-b1', text: subject.block },
+          { id: 's1-b2', text: '行きます。' }
+        ],
+        distractorBlocks: [
+          { id: 's1-d1', text: place.block, advice: '장소는 아직 아닙니다.' },
+          { id: 's1-d2', text: '行きたいです。', advice: '희망 표현은 아직 아닙니다.' }
+        ]
+      },
+      {
+        id: 'stage-2',
+        title: '2단계',
+        goal: '나는 학교에 간다.',
+        goalSegments: ['나는 ', '학교에 ', '간다.'],
+        focus: '주어 + 장소 + 동사',
+        selectionAdvice: '장소 블록을 붙이세요.',
+        completionAdvice: '장소까지 완성. 다음은 희망 표현입니다.',
+        correctBlocks: [
+          { id: 's2-b1', text: subject.block },
+          { id: 's2-b2', text: place.block },
+          { id: 's2-b3', text: '行きます。' }
+        ],
+        distractorBlocks: [
+          { id: 's2-d1', text: '駅に', advice: '장소는 학교여야 합니다.' },
+          { id: 's2-d2', text: '行きたいです。', advice: '희망 표현은 아직 아닙니다.' }
+        ]
+      },
+      {
+        id: 'stage-3',
+        title: '3단계',
+        goal: '나는 학교에 가고 싶다.',
+        goalSegments: ['나는 ', '학교에 ', '가고 싶다.'],
+        focus: '주어 + 장소 + 희망 표현',
+        selectionAdvice: '장소 뒤에 희망 표현을 고르세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
+        correctBlocks: [
+          { id: 's3-b1', text: subject.block },
+          { id: 's3-b2', text: place.block },
+          { id: 's3-b3', text: '行きたいです。' }
+        ],
+        distractorBlocks: [
+          { id: 's3-d1', text: '行きます。', advice: '여기서는 희망 표현이 필요합니다.' },
+          { id: 's3-d2', text: '店に', advice: '장소는 학교여야 합니다.' }
+        ]
+      },
+      {
+        id: 'stage-4',
+        title: '4단계',
+        goal: '오늘은 나는 학교에 간다.',
+        goalSegments: ['오늘은 ', '나는 ', '학교에 ', '간다.'],
+        focus: '시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '문장 맨 앞에 시간 블록을 두세요.',
+        completionAdvice: '시간까지 포함한 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: 's4-b1', text: primaryTime.block },
+          { id: 's4-b2', text: subject.block },
+          { id: 's4-b3', text: place.block },
+          { id: 's4-b4', text: '行きます。' }
+        ],
+        distractorBlocks: [
+          { id: 's4-d1', text: '今', advice: '여기서는 오늘이 맞습니다.' },
+          { id: 's4-d2', text: '行きたいです。', advice: '여기서는 먼저 기본 문장을 만듭니다.' }
+        ]
+      },
+      {
+        id: 'stage-5',
+        title: '5단계',
+        goal: '오늘은 나는 학교에 가고 싶다.',
+        goalSegments: ['오늘은 ', '나는 ', '학교에 ', '가고 싶다.'],
+        focus: '시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '마지막은 희망 표현을 고르세요.',
+        completionAdvice: '한 가지 시간 표현으로 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: 's5-b1', text: primaryTime.block },
+          { id: 's5-b2', text: subject.block },
+          { id: 's5-b3', text: place.block },
+          { id: 's5-b4', text: '行きたいです。' }
+        ],
+        distractorBlocks: [
+          { id: 's5-d1', text: '行きます。', advice: '여기서는 희망 표현이 필요합니다.' },
+          { id: 's5-d2', text: alternateTime.block, advice: '이번 단계는 오늘 표현을 유지하세요.' }
+        ]
+      },
+      {
+        id: 'stage-6',
+        title: '6단계',
+        goal: '매일 나는 학교에 간다.',
+        goalSegments: ['매일 ', '나는 ', '학교에 ', '간다.'],
+        focus: '다른 시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '이번에는 다른 시간 표현으로 기본 문장을 만드세요.',
+        completionAdvice: '새로운 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: 's6-b1', text: alternateTime.block },
+          { id: 's6-b2', text: subject.block },
+          { id: 's6-b3', text: place.block },
+          { id: 's6-b4', text: '行きます。' }
+        ],
+        distractorBlocks: [
+          { id: 's6-d1', text: primaryTime.block, advice: '이번에는 매일 표현을 써야 합니다.' },
+          { id: 's6-d2', text: '行きたいです。', advice: '여기서는 먼저 기본 문장을 만듭니다.' }
+        ]
+      },
+      {
+        id: 'stage-7',
+        title: '7단계',
+        goal: '매일 나는 학교에 가고 싶다.',
+        goalSegments: ['매일 ', '나는 ', '학교에 ', '가고 싶다.'],
+        focus: '다른 시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: 's7-b1', text: alternateTime.block },
+          { id: 's7-b2', text: subject.block },
+          { id: 's7-b3', text: place.block },
+          { id: 's7-b4', text: '行きたいです。' }
+        ],
+        distractorBlocks: [
+          { id: 's7-d1', text: '行きます。', advice: '여기서는 희망 표현이 필요합니다.' },
+          { id: 's7-d2', text: primaryTime.block, advice: '이번에는 매일 표현을 써야 합니다.' }
         ]
       }
     ]
@@ -412,9 +702,7 @@ function createObjectExercise(subject, time, pattern, order) {
 
 async function main() {
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  const currentSeed = JSON.parse(await fs.readFile(outputPath, 'utf8'));
-  const baseExercise = normalizeBaseExercise(currentSeed[0]);
-  const exercises = [baseExercise];
+  const exercises = [createBaseExercise()];
 
   let order = 1;
 

@@ -8,6 +8,8 @@ import type { Cat, PointLedger } from '../../packages/shared/src/cat';
 import { saveStoredCat, saveStoredCatLedgers } from '../../apps/web/src/lib/catStorage';
 import { useCat } from '../../apps/web/src/lib/useCat';
 
+const syncCatMock = vi.fn(async () => true);
+const syncPendingPointsMock = vi.fn(async () => true);
 const useAppAuthMock = vi.fn(() => ({
   authReady: true,
   isAuthenticated: true,
@@ -18,7 +20,7 @@ const loadFirebasePointLedgerStateMock = vi.fn(async () => null);
 
 vi.mock('../../apps/web/src/lib/useCatSync', () => ({
   useCatSync: () => ({
-    syncCat: vi.fn(async () => true),
+    syncCat: syncCatMock,
     syncState: {
       loading: false,
       syncedAt: null,
@@ -29,7 +31,7 @@ vi.mock('../../apps/web/src/lib/useCatSync', () => ({
 
 vi.mock('../../apps/web/src/lib/usePointSync', () => ({
   usePointSync: () => ({
-    syncPendingPoints: vi.fn(async () => true),
+    syncPendingPoints: syncPendingPointsMock,
     syncState: {
       loading: false,
       syncedAt: null,
@@ -77,6 +79,8 @@ function UseCatSummary({ name }: { name: string }) {
 
 describe('useCat shared state', () => {
   beforeEach(() => {
+    syncCatMock.mockClear();
+    syncPendingPointsMock.mockClear();
     loadFirebaseCatStateMock.mockReset();
     loadFirebaseCatStateMock.mockResolvedValue(null);
     loadFirebasePointLedgerStateMock.mockReset();

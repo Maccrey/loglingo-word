@@ -94,29 +94,35 @@ export function useCat() {
 
   const persistCatState = useCallback(
     (nextCat: Cat) => {
-      if (auth.isAuthenticated) {
-        saveStoredCat(nextCat);
-        void syncCat(auth.userId, {
-          ...nextCat,
-          userId: auth.userId
-        });
+      saveStoredCat(nextCat);
+
+      if (!auth.isAuthenticated) {
+        return;
       }
+
+      void syncCat(auth.userId, {
+        ...nextCat,
+        userId: auth.userId
+      });
     },
     [auth.isAuthenticated, auth.userId, syncCat]
   );
 
   const persistPointLedgers = useCallback(
     (userId: string, nextLedgers: PointLedger[], pendingLedgers: PointLedger[] = nextLedgers) => {
-      if (auth.isAuthenticated) {
-        saveStoredCatLedgers(nextLedgers);
-        void syncPendingPoints(
-          auth.userId,
-          pendingLedgers.map((ledger) => ({
-            ...ledger,
-            userId: auth.userId
-          }))
-        );
+      saveStoredCatLedgers(nextLedgers);
+
+      if (!auth.isAuthenticated) {
+        return;
       }
+
+      void syncPendingPoints(
+        auth.userId,
+        pendingLedgers.map((ledger) => ({
+          ...ledger,
+          userId: auth.userId
+        }))
+      );
     },
     [auth.isAuthenticated, auth.userId, syncPendingPoints]
   );
@@ -167,10 +173,20 @@ export function useCat() {
           return;
         }
 
-        const initialCat = buildInitialCat('demo-user');
+        const initialCat = storedCat ?? buildInitialCat('demo-user');
+        const nextLedgers = storedLedgers;
+
         setCat(initialCat);
-        setLedgers([]);
-        setPoints(INITIAL_POINTS);
+        setLedgers(nextLedgers);
+        setPoints(getPointBalance(nextLedgers) + INITIAL_POINTS);
+
+        if (!storedCat) {
+          saveStoredCat(initialCat, false);
+        }
+
+        if (storedLedgers.length === 0) {
+          saveStoredCatLedgers([], false);
+        }
       } catch (e) {
         console.error('Failed to parse cat state', e);
       }

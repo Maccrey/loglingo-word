@@ -40,7 +40,6 @@ const objectPatterns = [
     verbBlock: 'drink.',
     verbGoal: 'drink.',
     desireBlock: 'want to drink',
-    desireGoal: 'want to drink water.',
     distractorObjectBlock: 'tea',
     distractorObjectAdvice: 'Use the target drink for this sentence.',
     distractorVerbBlock: 'eat',
@@ -54,7 +53,6 @@ const objectPatterns = [
     verbBlock: 'drink.',
     verbGoal: 'drink.',
     desireBlock: 'want to drink',
-    desireGoal: 'want to drink tea.',
     distractorObjectBlock: 'water',
     distractorObjectAdvice: 'Use the target drink for this sentence.',
     distractorVerbBlock: 'eat',
@@ -68,8 +66,7 @@ const objectPatterns = [
     verbBlock: 'eat.',
     verbGoal: 'eat.',
     desireBlock: 'want to eat',
-    desireGoal: 'want to eat bread.',
-    distractorObjectBlock: 'book',
+    distractorObjectBlock: 'a book',
     distractorObjectAdvice: 'Use the target food for this sentence.',
     distractorVerbBlock: 'read',
     distractorVerbAdvice: 'This sentence needs eat, not read.'
@@ -82,7 +79,6 @@ const objectPatterns = [
     verbBlock: 'read.',
     verbGoal: 'read.',
     desireBlock: 'want to read',
-    desireGoal: 'want to read a book.',
     distractorObjectBlock: 'bread',
     distractorObjectAdvice: 'Use the target object for this sentence.',
     distractorVerbBlock: 'eat',
@@ -96,7 +92,6 @@ const objectPatterns = [
     verbBlock: 'write.',
     verbGoal: 'write.',
     desireBlock: 'want to write',
-    desireGoal: 'want to write my name.',
     distractorObjectBlock: 'a book',
     distractorObjectAdvice: 'Use the target object for this sentence.',
     distractorVerbBlock: 'read',
@@ -110,7 +105,6 @@ const objectPatterns = [
     verbBlock: 'buy.',
     verbGoal: 'buy.',
     desireBlock: 'want to buy',
-    desireGoal: 'want to buy bread.',
     distractorObjectBlock: 'water',
     distractorObjectAdvice: 'Use the target item for this sentence.',
     distractorVerbBlock: 'drink',
@@ -136,16 +130,28 @@ function pickAlternativePlace(currentBlock, preferredBlock) {
   return places.find((item) => item.block !== currentBlock)?.block ?? 'to school';
 }
 
+function pickAlternativeTime(currentBlock, preferredBlock) {
+  const preferred = times.find((item) => item.block === preferredBlock);
+
+  if (preferred && preferred.block !== currentBlock) {
+    return preferred;
+  }
+
+  return times.find((item) => item.block !== currentBlock) ?? times[0];
+}
+
 function createTravelExercise(subject, time, place, order) {
   const altStage2Place = pickAlternativePlace(place.block, 'to the store');
   const altStage3Place = pickAlternativePlace(place.block, 'to the station');
+  const alternateTime = pickAlternativeTime(time.block, 'every day');
 
   return {
     id: `cefr-a1-travel-${String(order).padStart(3, '0')}`,
     language: 'en',
     level: 'cefr_a1',
     title: `Go Practice ${String(order).padStart(3, '0')}`,
-    description: 'Build a simple English sentence step by step with time, place, and want to.',
+    description:
+      'Build a simple English sentence step by step with time, place, and want to.',
     stages: [
       {
         id: `cefr-travel-${order}-stage-1`,
@@ -160,8 +166,16 @@ function createTravelExercise(subject, time, place, order) {
           { id: `cefr-travel-${order}-s1-b2`, text: 'go.' }
         ],
         distractorBlocks: [
-          { id: `cefr-travel-${order}-s1-d1`, text: place.block, advice: 'The place comes later.' },
-          { id: `cefr-travel-${order}-s1-d2`, text: 'come.', advice: 'Use go, not come.' }
+          {
+            id: `cefr-travel-${order}-s1-d1`,
+            text: place.block,
+            advice: 'The place comes later.'
+          },
+          {
+            id: `cefr-travel-${order}-s1-d2`,
+            text: 'come.',
+            advice: 'Use go, not come.'
+          }
         ]
       },
       {
@@ -171,53 +185,169 @@ function createTravelExercise(subject, time, place, order) {
         goalSegments: [subject.goal, 'go ', punctuate(place.block)],
         focus: 'subject + verb + place',
         selectionAdvice: 'Add the verb, then the place.',
-        completionAdvice: 'Place done. Add time next.',
+        completionAdvice: 'Place done. Show the same idea with want to next.',
         correctBlocks: [
           { id: `cefr-travel-${order}-s2-b1`, text: subject.block },
           { id: `cefr-travel-${order}-s2-b2`, text: 'go' },
           { id: `cefr-travel-${order}-s2-b3`, text: punctuate(place.block) }
         ],
         distractorBlocks: [
-          { id: `cefr-travel-${order}-s2-d1`, text: punctuate(altStage2Place), advice: 'Use the target place for this sentence.' },
-          { id: `cefr-travel-${order}-s2-d2`, text: 'come', advice: 'Use go, not come.' }
+          {
+            id: `cefr-travel-${order}-s2-d1`,
+            text: punctuate(altStage2Place),
+            advice: 'Use the target place for this sentence.'
+          },
+          {
+            id: `cefr-travel-${order}-s2-d2`,
+            text: 'come',
+            advice: 'Use go, not come.'
+          }
         ]
       },
       {
         id: `cefr-travel-${order}-stage-3`,
         title: 'Step 3',
-        goal: `${subject.goal}go ${place.goal.trim()} ${time.goal.trim()}.`,
-        goalSegments: [subject.goal, 'go ', `${place.goal}${time.goal.trim()}.`],
-        focus: 'subject + verb + place + time',
-        selectionAdvice: 'Add the time expression last.',
-        completionAdvice: 'Time done. Add want to next.',
+        goal: `${subject.goal}want to go ${place.goal.trim()}.`,
+        goalSegments: [subject.goal, 'want to go ', punctuate(place.block)],
+        focus: 'subject + want to go + place',
+        selectionAdvice: 'Use want to go before the place.',
+        completionAdvice: 'Desire done. Add time next.',
         correctBlocks: [
           { id: `cefr-travel-${order}-s3-b1`, text: subject.block },
-          { id: `cefr-travel-${order}-s3-b2`, text: 'go' },
-          { id: `cefr-travel-${order}-s3-b3`, text: punctuate(place.block) },
-          { id: `cefr-travel-${order}-s3-b4`, text: time.block }
+          { id: `cefr-travel-${order}-s3-b2`, text: 'want to go' },
+          { id: `cefr-travel-${order}-s3-b3`, text: punctuate(place.block) }
         ],
         distractorBlocks: [
-          { id: `cefr-travel-${order}-s3-d1`, text: 'now', advice: 'Use the target time expression here.' },
-          { id: `cefr-travel-${order}-s3-d2`, text: punctuate(altStage3Place), advice: 'Use the target place for this sentence.' }
+          {
+            id: `cefr-travel-${order}-s3-d1`,
+            text: 'go',
+            advice: 'Use want to go for this step.'
+          },
+          {
+            id: `cefr-travel-${order}-s3-d2`,
+            text: punctuate(altStage3Place),
+            advice: 'Use the target place for this sentence.'
+          }
         ]
       },
       {
         id: `cefr-travel-${order}-stage-4`,
         title: 'Step 4',
-        goal: `${subject.goal}want to go ${place.goal.trim()} ${time.goal.trim()}.`,
-        goalSegments: [subject.goal, 'want to go ', `${place.goal}${time.goal.trim()}.`],
-        focus: 'want to',
-        selectionAdvice: 'Finish with want to go.',
-        completionAdvice: 'This sentence is complete.',
+        goal: `${subject.goal}go ${place.goal.trim()} ${time.goal.trim()}.`,
+        goalSegments: [subject.goal, 'go ', `${place.goal}${time.goal.trim()}.`],
+        focus: 'subject + verb + place + time',
+        selectionAdvice: 'Add the time expression last.',
+        completionAdvice: 'Time done. Build the desire sentence next.',
         correctBlocks: [
           { id: `cefr-travel-${order}-s4-b1`, text: subject.block },
-          { id: `cefr-travel-${order}-s4-b2`, text: 'want to go' },
+          { id: `cefr-travel-${order}-s4-b2`, text: 'go' },
           { id: `cefr-travel-${order}-s4-b3`, text: punctuate(place.block) },
           { id: `cefr-travel-${order}-s4-b4`, text: time.block }
         ],
         distractorBlocks: [
-          { id: `cefr-travel-${order}-s4-d1`, text: 'go', advice: 'Use want to go for this step.' },
-          { id: `cefr-travel-${order}-s4-d2`, text: 'want to come', advice: 'Use go, not come.' }
+          {
+            id: `cefr-travel-${order}-s4-d1`,
+            text: 'now',
+            advice: 'Use the target time expression here.'
+          },
+          {
+            id: `cefr-travel-${order}-s4-d2`,
+            text: 'come',
+            advice: 'Use go, not come.'
+          }
+        ]
+      },
+      {
+        id: `cefr-travel-${order}-stage-5`,
+        title: 'Step 5',
+        goal: `${subject.goal}want to go ${place.goal.trim()} ${time.goal.trim()}.`,
+        goalSegments: [
+          subject.goal,
+          'want to go ',
+          `${place.goal}${time.goal.trim()}.`
+        ],
+        focus: 'subject + want to go + place + time',
+        selectionAdvice: 'Finish with want to go and keep the time last.',
+        completionAdvice: 'One full travel sentence is done. Try a new time next.',
+        correctBlocks: [
+          { id: `cefr-travel-${order}-s5-b1`, text: subject.block },
+          { id: `cefr-travel-${order}-s5-b2`, text: 'want to go' },
+          { id: `cefr-travel-${order}-s5-b3`, text: punctuate(place.block) },
+          { id: `cefr-travel-${order}-s5-b4`, text: time.block }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-travel-${order}-s5-d1`,
+            text: 'want to come',
+            advice: 'Use go, not come.'
+          },
+          {
+            id: `cefr-travel-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: 'Use the current target time first.'
+          }
+        ]
+      },
+      {
+        id: `cefr-travel-${order}-stage-6`,
+        title: 'Step 6',
+        goal: `${subject.goal}go ${place.goal.trim()} ${alternateTime.goal.trim()}.`,
+        goalSegments: [
+          subject.goal,
+          'go ',
+          `${place.goal}${alternateTime.goal.trim()}.`
+        ],
+        focus: 'same pattern with a new time',
+        selectionAdvice: 'Keep the sentence order and swap in the new time.',
+        completionAdvice: 'The new time works too. Finish with want to go again.',
+        correctBlocks: [
+          { id: `cefr-travel-${order}-s6-b1`, text: subject.block },
+          { id: `cefr-travel-${order}-s6-b2`, text: 'go' },
+          { id: `cefr-travel-${order}-s6-b3`, text: punctuate(place.block) },
+          { id: `cefr-travel-${order}-s6-b4`, text: alternateTime.block }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-travel-${order}-s6-d1`,
+            text: time.block,
+            advice: 'Use the new time for this step.'
+          },
+          {
+            id: `cefr-travel-${order}-s6-d2`,
+            text: 'come',
+            advice: 'Use go, not come.'
+          }
+        ]
+      },
+      {
+        id: `cefr-travel-${order}-stage-7`,
+        title: 'Step 7',
+        goal: `${subject.goal}want to go ${place.goal.trim()} ${alternateTime.goal.trim()}.`,
+        goalSegments: [
+          subject.goal,
+          'want to go ',
+          `${place.goal}${alternateTime.goal.trim()}.`
+        ],
+        focus: 'review with a new time',
+        selectionAdvice: 'Combine want to go with the new time.',
+        completionAdvice: 'This seven-step exercise is complete.',
+        correctBlocks: [
+          { id: `cefr-travel-${order}-s7-b1`, text: subject.block },
+          { id: `cefr-travel-${order}-s7-b2`, text: 'want to go' },
+          { id: `cefr-travel-${order}-s7-b3`, text: punctuate(place.block) },
+          { id: `cefr-travel-${order}-s7-b4`, text: alternateTime.block }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-travel-${order}-s7-d1`,
+            text: time.block,
+            advice: 'Use the new time for this step.'
+          },
+          {
+            id: `cefr-travel-${order}-s7-d2`,
+            text: 'want to come',
+            advice: 'Use go, not come.'
+          }
         ]
       }
     ]
@@ -225,12 +355,15 @@ function createTravelExercise(subject, time, place, order) {
 }
 
 function createObjectExercise(subject, time, pattern, order) {
+  const alternateTime = pickAlternativeTime(time.block, 'every day');
+
   return {
     id: `cefr-a1-object-${String(order).padStart(3, '0')}`,
     language: 'en',
     level: 'cefr_a1',
     title: `Object Practice ${String(order).padStart(3, '0')}`,
-    description: 'Build a simple English sentence with an object and a basic action.',
+    description:
+      'Build a simple English sentence with an object and a basic action.',
     stages: [
       {
         id: `cefr-object-${order}-stage-1`,
@@ -245,8 +378,16 @@ function createObjectExercise(subject, time, pattern, order) {
           { id: `cefr-object-${order}-s1-b2`, text: pattern.verbBlock }
         ],
         distractorBlocks: [
-          { id: `cefr-object-${order}-s1-d1`, text: pattern.objectBlock, advice: 'The object comes later.' },
-          { id: `cefr-object-${order}-s1-d2`, text: pattern.desireBlock, advice: 'Want to comes later.' }
+          {
+            id: `cefr-object-${order}-s1-d1`,
+            text: pattern.objectBlock,
+            advice: 'The object comes later.'
+          },
+          {
+            id: `cefr-object-${order}-s1-d2`,
+            text: pattern.desireBlock,
+            advice: 'Want to comes later.'
+          }
         ]
       },
       {
@@ -256,20 +397,54 @@ function createObjectExercise(subject, time, pattern, order) {
         goalSegments: [subject.goal, `${pattern.actionBlock} `, pattern.objectGoal],
         focus: 'subject + verb + object',
         selectionAdvice: 'Add the verb, then the object.',
-        completionAdvice: 'Object done. Add time next.',
+        completionAdvice: 'Object done. Show the same idea with want to next.',
         correctBlocks: [
           { id: `cefr-object-${order}-s2-b1`, text: subject.block },
           { id: `cefr-object-${order}-s2-b2`, text: pattern.actionBlock },
           { id: `cefr-object-${order}-s2-b3`, text: pattern.objectGoal }
         ],
         distractorBlocks: [
-          { id: `cefr-object-${order}-s2-d1`, text: punctuate(pattern.distractorObjectBlock), advice: pattern.distractorObjectAdvice },
-          { id: `cefr-object-${order}-s2-d2`, text: pattern.distractorVerbBlock, advice: pattern.distractorVerbAdvice }
+          {
+            id: `cefr-object-${order}-s2-d1`,
+            text: punctuate(pattern.distractorObjectBlock),
+            advice: pattern.distractorObjectAdvice
+          },
+          {
+            id: `cefr-object-${order}-s2-d2`,
+            text: pattern.distractorVerbBlock,
+            advice: pattern.distractorVerbAdvice
+          }
         ]
       },
       {
         id: `cefr-object-${order}-stage-3`,
         title: 'Step 3',
+        goal: `${subject.goal}${pattern.desireBlock} ${pattern.objectGoal}`,
+        goalSegments: [subject.goal, `${pattern.desireBlock} `, pattern.objectGoal],
+        focus: 'subject + want to + object',
+        selectionAdvice: 'Use want to before the object.',
+        completionAdvice: 'Desire done. Add time next.',
+        correctBlocks: [
+          { id: `cefr-object-${order}-s3-b1`, text: subject.block },
+          { id: `cefr-object-${order}-s3-b2`, text: pattern.desireBlock },
+          { id: `cefr-object-${order}-s3-b3`, text: pattern.objectGoal }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-object-${order}-s3-d1`,
+            text: pattern.actionBlock,
+            advice: 'Use want to for this step.'
+          },
+          {
+            id: `cefr-object-${order}-s3-d2`,
+            text: punctuate(pattern.distractorObjectBlock),
+            advice: pattern.distractorObjectAdvice
+          }
+        ]
+      },
+      {
+        id: `cefr-object-${order}-stage-4`,
+        title: 'Step 4',
         goal: `${subject.goal}${pattern.actionBlock} ${pattern.objectGoal.slice(0, -1)} ${time.goal.trim()}.`,
         goalSegments: [
           subject.goal,
@@ -279,21 +454,29 @@ function createObjectExercise(subject, time, pattern, order) {
         ],
         focus: 'subject + verb + object + time',
         selectionAdvice: 'Add the time expression last.',
-        completionAdvice: 'Time done. Add want to next.',
+        completionAdvice: 'Time done. Build the desire sentence next.',
         correctBlocks: [
-          { id: `cefr-object-${order}-s3-b1`, text: subject.block },
-          { id: `cefr-object-${order}-s3-b2`, text: pattern.actionBlock },
-          { id: `cefr-object-${order}-s3-b3`, text: pattern.objectGoal },
-          { id: `cefr-object-${order}-s3-b4`, text: time.block }
+          { id: `cefr-object-${order}-s4-b1`, text: subject.block },
+          { id: `cefr-object-${order}-s4-b2`, text: pattern.actionBlock },
+          { id: `cefr-object-${order}-s4-b3`, text: pattern.objectGoal },
+          { id: `cefr-object-${order}-s4-b4`, text: time.block }
         ],
         distractorBlocks: [
-          { id: `cefr-object-${order}-s3-d1`, text: 'now', advice: 'Use the target time expression here.' },
-          { id: `cefr-object-${order}-s3-d2`, text: punctuate(pattern.distractorObjectBlock), advice: pattern.distractorObjectAdvice }
+          {
+            id: `cefr-object-${order}-s4-d1`,
+            text: 'now',
+            advice: 'Use the target time expression here.'
+          },
+          {
+            id: `cefr-object-${order}-s4-d2`,
+            text: punctuate(pattern.distractorObjectBlock),
+            advice: pattern.distractorObjectAdvice
+          }
         ]
       },
       {
-        id: `cefr-object-${order}-stage-4`,
-        title: 'Step 4',
+        id: `cefr-object-${order}-stage-5`,
+        title: 'Step 5',
         goal: `${subject.goal}${pattern.desireBlock} ${pattern.objectGoal.slice(0, -1)} ${time.goal.trim()}.`,
         goalSegments: [
           subject.goal,
@@ -301,18 +484,90 @@ function createObjectExercise(subject, time, pattern, order) {
           `${pattern.objectGoal.slice(0, -1)} `,
           `${time.goal.trim()}.`
         ],
-        focus: 'want to',
-        selectionAdvice: 'Finish with want to.',
-        completionAdvice: 'This sentence is complete.',
+        focus: 'subject + want to + object + time',
+        selectionAdvice: 'Finish with want to and keep the time last.',
+        completionAdvice: 'One full object sentence is done. Try a new time next.',
         correctBlocks: [
-          { id: `cefr-object-${order}-s4-b1`, text: subject.block },
-          { id: `cefr-object-${order}-s4-b2`, text: pattern.desireBlock },
-          { id: `cefr-object-${order}-s4-b3`, text: pattern.objectGoal },
-          { id: `cefr-object-${order}-s4-b4`, text: time.block }
+          { id: `cefr-object-${order}-s5-b1`, text: subject.block },
+          { id: `cefr-object-${order}-s5-b2`, text: pattern.desireBlock },
+          { id: `cefr-object-${order}-s5-b3`, text: pattern.objectGoal },
+          { id: `cefr-object-${order}-s5-b4`, text: time.block }
         ],
         distractorBlocks: [
-          { id: `cefr-object-${order}-s4-d1`, text: pattern.actionBlock, advice: 'Use want to for this step.' },
-          { id: `cefr-object-${order}-s4-d2`, text: punctuate(pattern.distractorObjectBlock), advice: pattern.distractorObjectAdvice }
+          {
+            id: `cefr-object-${order}-s5-d1`,
+            text: alternateTime.block,
+            advice: 'Use the current target time first.'
+          },
+          {
+            id: `cefr-object-${order}-s5-d2`,
+            text: pattern.actionBlock,
+            advice: 'Use want to for this step.'
+          }
+        ]
+      },
+      {
+        id: `cefr-object-${order}-stage-6`,
+        title: 'Step 6',
+        goal: `${subject.goal}${pattern.actionBlock} ${pattern.objectGoal.slice(0, -1)} ${alternateTime.goal.trim()}.`,
+        goalSegments: [
+          subject.goal,
+          `${pattern.actionBlock} `,
+          `${pattern.objectGoal.slice(0, -1)} `,
+          `${alternateTime.goal.trim()}.`
+        ],
+        focus: 'same pattern with a new time',
+        selectionAdvice: 'Keep the object sentence and swap in the new time.',
+        completionAdvice: 'The new time works too. Finish with want to next.',
+        correctBlocks: [
+          { id: `cefr-object-${order}-s6-b1`, text: subject.block },
+          { id: `cefr-object-${order}-s6-b2`, text: pattern.actionBlock },
+          { id: `cefr-object-${order}-s6-b3`, text: pattern.objectGoal },
+          { id: `cefr-object-${order}-s6-b4`, text: alternateTime.block }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-object-${order}-s6-d1`,
+            text: time.block,
+            advice: 'Use the new time for this step.'
+          },
+          {
+            id: `cefr-object-${order}-s6-d2`,
+            text: punctuate(pattern.distractorObjectBlock),
+            advice: pattern.distractorObjectAdvice
+          }
+        ]
+      },
+      {
+        id: `cefr-object-${order}-stage-7`,
+        title: 'Step 7',
+        goal: `${subject.goal}${pattern.desireBlock} ${pattern.objectGoal.slice(0, -1)} ${alternateTime.goal.trim()}.`,
+        goalSegments: [
+          subject.goal,
+          `${pattern.desireBlock} `,
+          `${pattern.objectGoal.slice(0, -1)} `,
+          `${alternateTime.goal.trim()}.`
+        ],
+        focus: 'review with a new time',
+        selectionAdvice: 'Combine want to with the new time.',
+        completionAdvice: 'This seven-step exercise is complete.',
+        correctBlocks: [
+          { id: `cefr-object-${order}-s7-b1`, text: subject.block },
+          { id: `cefr-object-${order}-s7-b2`, text: pattern.desireBlock },
+          { id: `cefr-object-${order}-s7-b3`, text: pattern.objectGoal },
+          { id: `cefr-object-${order}-s7-b4`, text: alternateTime.block }
+        ],
+        distractorBlocks: [
+          {
+            id: `cefr-object-${order}-s7-d1`,
+            text: time.block,
+            advice: 'Use the new time for this step.'
+          },
+          {
+            id: `cefr-object-${order}-s7-d2`,
+            text: pattern.actionBlock,
+            advice: 'Use want to for this step.'
+          }
         ]
       }
     ]
@@ -357,7 +612,7 @@ function normalizeEnglishFourBlockStage(stage) {
     ...stage,
     goal: normalizedGoal,
     goalSegments: normalizedSegments,
-    focus: `subject + verb + ${focusTail} + time`,
+    focus: `${focusTail.includes('object') ? 'subject + verb + object + time' : 'subject + verb + place + time'}`,
     selectionAdvice: 'Add the time expression last.',
     correctBlocks: reorderedBlocks
   };

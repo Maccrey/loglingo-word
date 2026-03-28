@@ -189,7 +189,7 @@ describe('useCat', () => {
     );
   });
 
-  it('ignores stored guest progress and starts from the initial cat state when logged out', async () => {
+  it('loads stored guest progress from local storage when logged out', async () => {
     const { loadStoredCat, loadStoredCatLedgers } = await import('../../apps/web/src/lib/catStorage');
     vi.mocked(loadStoredCat).mockReturnValueOnce({
       ...mockCat,
@@ -213,9 +213,105 @@ describe('useCat', () => {
 
     render(<UseCatHarness />);
 
-    expect(screen.getByText('로그링고')).toBeTruthy();
-    expect(screen.queryByText('저장된 고양이')).toBeNull();
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText('저장된 고양이')).toBeTruthy();
+    expect(screen.queryByText('로그링고')).toBeNull();
     expect(saveStoredCat).not.toHaveBeenCalled();
     expect(saveStoredCatLedgers).not.toHaveBeenCalled();
+    expect(syncCat).not.toHaveBeenCalled();
+    expect(syncPendingPoints).not.toHaveBeenCalled();
+  });
+
+  it('persists guest care actions to local storage without syncing to Firebase', async () => {
+    useAppAuthMock.mockReturnValue({
+      authReady: true,
+      isAuthenticated: false,
+      userId: 'demo-user'
+    });
+
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'feed' }));
+      await Promise.resolve();
+    });
+
+    expect(saveStoredCat).toHaveBeenCalled();
+    expect(saveStoredCatLedgers).toHaveBeenCalled();
+    expect(syncCat).not.toHaveBeenCalled();
+    expect(syncPendingPoints).not.toHaveBeenCalled();
+  });
+
+  it('promotes stored guest progress to Firebase after login when no remote state exists', async () => {
+    const storedGuestCat = {
+      ...mockCat,
+      userId: 'demo-user',
+      name: '게스트 고양이',
+      activeDays: 5
+    };
+    const storedGuestLedgers = [
+      {
+        id: 'ledger-1',
+        userId: 'demo-user',
+        amount: -100,
+        reason: 'cat_care_feed',
+        createdAt: 1
+      }
+    ];
+    const { loadStoredCat, loadStoredCatLedgers } = await import('../../apps/web/src/lib/catStorage');
+    vi.mocked(loadStoredCat).mockReturnValueOnce(storedGuestCat);
+    vi.mocked(loadStoredCatLedgers).mockReturnValueOnce(storedGuestLedgers);
+
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText('게스트 고양이')).toBeTruthy();
+    expect(syncCat).toHaveBeenCalledWith(
+      'demo-user',
+      expect.objectContaining({
+        name: '게스트 고양이',
+        activeDays: 5,
+        userId: 'demo-user'
+      })
+    );
+    expect(syncPendingPoints).toHaveBeenCalledWith(
+      'demo-user',
+      [
+        expect.objectContaining({
+          amount: -100,
+          reason: 'cat_care_feed',
+          userId: 'demo-user'
+        })
+      ]
+    );
+    expect(saveStoredCat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: '게스트 고양이'
+      }),
+      false
+    );
+    expect(saveStoredCatLedgers).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          amount: -100,
+          reason: 'cat_care_feed',
+          userId: 'demo-user'
+        })
+      ],
+      false
+    );
   });
 });

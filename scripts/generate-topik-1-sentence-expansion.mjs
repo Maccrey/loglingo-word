@@ -36,6 +36,7 @@ const objectPatterns = [
     objectBlock: '물을',
     objectTitle: '물',
     verbBlock: '마셔요.',
+    desireBlock: '마시고 싶어요.',
     verbTitle: '마시기',
     altObject: '차를',
     altObjectAdvice: '여기서는 차보다 물이 맞습니다.',
@@ -47,6 +48,7 @@ const objectPatterns = [
     objectBlock: '차를',
     objectTitle: '차',
     verbBlock: '마셔요.',
+    desireBlock: '마시고 싶어요.',
     verbTitle: '마시기',
     altObject: '물을',
     altObjectAdvice: '여기서는 물보다 차가 맞습니다.',
@@ -58,6 +60,7 @@ const objectPatterns = [
     objectBlock: '빵을',
     objectTitle: '빵',
     verbBlock: '먹어요.',
+    desireBlock: '먹고 싶어요.',
     verbTitle: '먹기',
     altObject: '책을',
     altObjectAdvice: '여기서는 책이 아니라 빵이 맞습니다.',
@@ -69,6 +72,7 @@ const objectPatterns = [
     objectBlock: '책을',
     objectTitle: '책',
     verbBlock: '읽어요.',
+    desireBlock: '읽고 싶어요.',
     verbTitle: '읽기',
     altObject: '빵을',
     altObjectAdvice: '여기서는 빵이 아니라 책이 맞습니다.',
@@ -80,6 +84,7 @@ const objectPatterns = [
     objectBlock: '이름을',
     objectTitle: '이름',
     verbBlock: '써요.',
+    desireBlock: '쓰고 싶어요.',
     verbTitle: '쓰기',
     altObject: '책을',
     altObjectAdvice: '여기서는 책이 아니라 이름이 맞습니다.',
@@ -109,8 +114,19 @@ function makeId(prefix, order, stage) {
   return `${prefix}-${order}-stage-${stage}`;
 }
 
+function pickAlternativeTime(currentBlock, preferredBlock) {
+  const preferred = times.find((time) => time.block === preferredBlock);
+
+  if (preferred && preferred.block !== currentBlock) {
+    return preferred;
+  }
+
+  return times.find((time) => time.block !== currentBlock) ?? times[0];
+}
+
 function createTravelExercise(subject, time, place, order) {
   const altPlace = places.find((item) => item.block !== place.block)?.block ?? '집에';
+  const alternateTime = pickAlternativeTime(time.block, '매일');
 
   return {
     id: `topik-1-travel-${String(order).padStart(3, '0')}`,
@@ -151,7 +167,7 @@ function createTravelExercise(subject, time, place, order) {
         goalSegments: [`${subject.block} `, `${place.block} `, '가요.'],
         focus: '주어 + 장소 + 동사',
         selectionAdvice: '장소를 넣어 문장을 넓히세요.',
-        completionAdvice: '장소까지 붙였습니다.',
+        completionAdvice: '장소까지 붙였습니다. 다음은 희망 표현입니다.',
         correctBlocks: [
           { id: `topik-travel-${order}-s2-b1`, text: subject.block },
           { id: `topik-travel-${order}-s2-b2`, text: place.block },
@@ -173,27 +189,134 @@ function createTravelExercise(subject, time, place, order) {
       {
         id: makeId('topik-travel', order, 3),
         title: '3단계',
-        goal: `${time.block} ${subject.block} ${place.block} 가요.`,
-        goalSegments: [`${time.block} `, `${subject.block} `, `${place.block} `, '가요.'],
-        focus: '시간 + 주어 + 장소 + 동사',
-        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
-        completionAdvice: '시간까지 포함한 문장을 완성했습니다.',
+        goal: `${subject.block} ${place.block} 가고 싶어요.`,
+        goalSegments: [`${subject.block} `, `${place.block} `, '가고 싶어요.'],
+        focus: '주어 + 장소 + 희망 표현',
+        selectionAdvice: '장소 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
         correctBlocks: [
-          { id: `topik-travel-${order}-s3-b1`, text: time.block },
-          { id: `topik-travel-${order}-s3-b2`, text: subject.block },
-          { id: `topik-travel-${order}-s3-b3`, text: place.block },
-          { id: `topik-travel-${order}-s3-b4`, text: '가요.' }
+          { id: `topik-travel-${order}-s3-b1`, text: subject.block },
+          { id: `topik-travel-${order}-s3-b2`, text: place.block },
+          { id: `topik-travel-${order}-s3-b3`, text: '가고 싶어요.' }
         ],
         distractorBlocks: [
           {
             id: `topik-travel-${order}-s3-d1`,
-            text: '지금',
-            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+            text: '가요.',
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
             id: `topik-travel-${order}-s3-d2`,
             text: altPlace,
             advice: '장소를 바꾸면 목표 문장이 달라집니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-travel', order, 4),
+        title: '4단계',
+        goal: `${time.block} ${subject.block} ${place.block} 가요.`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${place.block} `, '가요.'],
+        focus: '시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
+        completionAdvice: '시간까지 포함한 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-travel-${order}-s4-b1`, text: time.block },
+          { id: `topik-travel-${order}-s4-b2`, text: subject.block },
+          { id: `topik-travel-${order}-s4-b3`, text: place.block },
+          { id: `topik-travel-${order}-s4-b4`, text: '가요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-travel-${order}-s4-d1`,
+            text: '지금',
+            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-travel-${order}-s4-d2`,
+            text: '가고 싶어요.',
+            advice: '여기서는 먼저 기본 동작 문장을 완성합니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-travel', order, 5),
+        title: '5단계',
+        goal: `${time.block} ${subject.block} ${place.block} 가고 싶어요.`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${place.block} `, '가고 싶어요.'],
+        focus: '시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '마지막은 희망 표현을 고르세요.',
+        completionAdvice: '한 가지 시간 표현으로 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-travel-${order}-s5-b1`, text: time.block },
+          { id: `topik-travel-${order}-s5-b2`, text: subject.block },
+          { id: `topik-travel-${order}-s5-b3`, text: place.block },
+          { id: `topik-travel-${order}-s5-b4`, text: '가고 싶어요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-travel-${order}-s5-d1`,
+            text: '가요.',
+            advice: '여기서는 희망 표현이 필요합니다.'
+          },
+          {
+            id: `topik-travel-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: '지금 단계에서는 현재 목표 시간 표현을 유지하세요.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-travel', order, 6),
+        title: '6단계',
+        goal: `${alternateTime.block} ${subject.block} ${place.block} 가요.`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${place.block} `, '가요.'],
+        focus: '다른 시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '새로운 시간 표현으로 같은 문장을 다시 만드세요.',
+        completionAdvice: '새 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-travel-${order}-s6-b1`, text: alternateTime.block },
+          { id: `topik-travel-${order}-s6-b2`, text: subject.block },
+          { id: `topik-travel-${order}-s6-b3`, text: place.block },
+          { id: `topik-travel-${order}-s6-b4`, text: '가요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-travel-${order}-s6-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-travel-${order}-s6-d2`,
+            text: '가고 싶어요.',
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-travel', order, 7),
+        title: '7단계',
+        goal: `${alternateTime.block} ${subject.block} ${place.block} 가고 싶어요.`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${place.block} `, '가고 싶어요.'],
+        focus: '다른 시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: `topik-travel-${order}-s7-b1`, text: alternateTime.block },
+          { id: `topik-travel-${order}-s7-b2`, text: subject.block },
+          { id: `topik-travel-${order}-s7-b3`, text: place.block },
+          { id: `topik-travel-${order}-s7-b4`, text: '가고 싶어요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-travel-${order}-s7-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-travel-${order}-s7-d2`,
+            text: '가요.',
+            advice: '여기서는 희망 표현이 필요합니다.'
           }
         ]
       }
@@ -202,6 +325,8 @@ function createTravelExercise(subject, time, place, order) {
 }
 
 function createObjectExercise(subject, time, pattern, order) {
+  const alternateTime = pickAlternativeTime(time.block, '매일');
+
   return {
     id: `topik-1-object-${String(order).padStart(3, '0')}`,
     language: 'ko',
@@ -229,8 +354,8 @@ function createObjectExercise(subject, time, pattern, order) {
           },
           {
             id: `topik-object-${order}-s1-d2`,
-            text: pattern.altVerb,
-            advice: pattern.altVerbAdvice
+            text: pattern.desireBlock,
+            advice: '희망 표현은 아직 아닙니다.'
           }
         ]
       },
@@ -241,7 +366,7 @@ function createObjectExercise(subject, time, pattern, order) {
         goalSegments: [`${subject.block} `, `${pattern.objectBlock} `, pattern.verbBlock],
         focus: '주어 + 목적어 + 동사',
         selectionAdvice: '목적어를 붙여 문장을 완성하세요.',
-        completionAdvice: '목적어까지 포함했습니다.',
+        completionAdvice: '목적어까지 포함했습니다. 다음은 희망 표현입니다.',
         correctBlocks: [
           { id: `topik-object-${order}-s2-b1`, text: subject.block },
           { id: `topik-object-${order}-s2-b2`, text: pattern.objectBlock },
@@ -263,27 +388,134 @@ function createObjectExercise(subject, time, pattern, order) {
       {
         id: makeId('topik-object', order, 3),
         title: '3단계',
-        goal: `${time.block} ${subject.block} ${pattern.objectBlock} ${pattern.verbBlock}`,
-        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.objectBlock} `, pattern.verbBlock],
-        focus: '시간 + 주어 + 목적어 + 동사',
-        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
-        completionAdvice: '시간까지 포함한 문장을 완성했습니다.',
+        goal: `${subject.block} ${pattern.objectBlock} ${pattern.desireBlock}`,
+        goalSegments: [`${subject.block} `, `${pattern.objectBlock} `, pattern.desireBlock],
+        focus: '주어 + 목적어 + 희망 표현',
+        selectionAdvice: '목적어 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
         correctBlocks: [
-          { id: `topik-object-${order}-s3-b1`, text: time.block },
-          { id: `topik-object-${order}-s3-b2`, text: subject.block },
-          { id: `topik-object-${order}-s3-b3`, text: pattern.objectBlock },
-          { id: `topik-object-${order}-s3-b4`, text: pattern.verbBlock }
+          { id: `topik-object-${order}-s3-b1`, text: subject.block },
+          { id: `topik-object-${order}-s3-b2`, text: pattern.objectBlock },
+          { id: `topik-object-${order}-s3-b3`, text: pattern.desireBlock }
         ],
         distractorBlocks: [
           {
             id: `topik-object-${order}-s3-d1`,
-            text: '지금',
-            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+            text: pattern.verbBlock,
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
             id: `topik-object-${order}-s3-d2`,
             text: pattern.altObject,
             advice: pattern.altObjectAdvice
+          }
+        ]
+      },
+      {
+        id: makeId('topik-object', order, 4),
+        title: '4단계',
+        goal: `${time.block} ${subject.block} ${pattern.objectBlock} ${pattern.verbBlock}`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.objectBlock} `, pattern.verbBlock],
+        focus: '시간 + 주어 + 목적어 + 동사',
+        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
+        completionAdvice: '시간까지 포함한 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-object-${order}-s4-b1`, text: time.block },
+          { id: `topik-object-${order}-s4-b2`, text: subject.block },
+          { id: `topik-object-${order}-s4-b3`, text: pattern.objectBlock },
+          { id: `topik-object-${order}-s4-b4`, text: pattern.verbBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-object-${order}-s4-d1`,
+            text: '지금',
+            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-object-${order}-s4-d2`,
+            text: pattern.desireBlock,
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-object', order, 5),
+        title: '5단계',
+        goal: `${time.block} ${subject.block} ${pattern.objectBlock} ${pattern.desireBlock}`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.objectBlock} `, pattern.desireBlock],
+        focus: '시간 + 주어 + 목적어 + 희망 표현',
+        selectionAdvice: '목적어 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '한 가지 시간 표현으로 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-object-${order}-s5-b1`, text: time.block },
+          { id: `topik-object-${order}-s5-b2`, text: subject.block },
+          { id: `topik-object-${order}-s5-b3`, text: pattern.objectBlock },
+          { id: `topik-object-${order}-s5-b4`, text: pattern.desireBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-object-${order}-s5-d1`,
+            text: pattern.verbBlock,
+            advice: '여기서는 희망 표현이 필요합니다.'
+          },
+          {
+            id: `topik-object-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: '지금 단계에서는 현재 목표 시간 표현을 유지하세요.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-object', order, 6),
+        title: '6단계',
+        goal: `${alternateTime.block} ${subject.block} ${pattern.objectBlock} ${pattern.verbBlock}`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${pattern.objectBlock} `, pattern.verbBlock],
+        focus: '다른 시간 + 주어 + 목적어 + 동사',
+        selectionAdvice: '새로운 시간 표현으로 같은 문장을 다시 만드세요.',
+        completionAdvice: '새 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-object-${order}-s6-b1`, text: alternateTime.block },
+          { id: `topik-object-${order}-s6-b2`, text: subject.block },
+          { id: `topik-object-${order}-s6-b3`, text: pattern.objectBlock },
+          { id: `topik-object-${order}-s6-b4`, text: pattern.verbBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-object-${order}-s6-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-object-${order}-s6-d2`,
+            text: pattern.desireBlock,
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-object', order, 7),
+        title: '7단계',
+        goal: `${alternateTime.block} ${subject.block} ${pattern.objectBlock} ${pattern.desireBlock}`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${pattern.objectBlock} `, pattern.desireBlock],
+        focus: '다른 시간 + 주어 + 목적어 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: `topik-object-${order}-s7-b1`, text: alternateTime.block },
+          { id: `topik-object-${order}-s7-b2`, text: subject.block },
+          { id: `topik-object-${order}-s7-b3`, text: pattern.objectBlock },
+          { id: `topik-object-${order}-s7-b4`, text: pattern.desireBlock }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-object-${order}-s7-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-object-${order}-s7-d2`,
+            text: pattern.verbBlock,
+            advice: '여기서는 희망 표현이 필요합니다.'
           }
         ]
       }
@@ -292,6 +524,8 @@ function createObjectExercise(subject, time, pattern, order) {
 }
 
 function createComeExercise(subject, time, pattern, order) {
+  const alternateTime = pickAlternativeTime(time.block, '매일');
+
   return {
     id: `topik-1-come-${String(order).padStart(3, '0')}`,
     language: 'ko',
@@ -331,7 +565,7 @@ function createComeExercise(subject, time, pattern, order) {
         goalSegments: [`${subject.block} `, `${pattern.placeBlock} `, '와요.'],
         focus: '주어 + 장소 + 동사',
         selectionAdvice: '장소를 붙여 문장을 넓히세요.',
-        completionAdvice: '장소까지 붙였습니다.',
+        completionAdvice: '장소까지 붙였습니다. 다음은 희망 표현입니다.',
         correctBlocks: [
           { id: `topik-come-${order}-s2-b1`, text: subject.block },
           { id: `topik-come-${order}-s2-b2`, text: pattern.placeBlock },
@@ -353,27 +587,134 @@ function createComeExercise(subject, time, pattern, order) {
       {
         id: makeId('topik-come', order, 3),
         title: '3단계',
-        goal: `${time.block} ${subject.block} ${pattern.placeBlock} 와요.`,
-        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.placeBlock} `, '와요.'],
-        focus: '시간 + 주어 + 장소 + 동사',
-        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
-        completionAdvice: '시간까지 포함한 문장을 완성했습니다.',
+        goal: `${subject.block} ${pattern.placeBlock} 오고 싶어요.`,
+        goalSegments: [`${subject.block} `, `${pattern.placeBlock} `, '오고 싶어요.'],
+        focus: '주어 + 장소 + 희망 표현',
+        selectionAdvice: '장소 뒤에 희망 표현을 붙이세요.',
+        completionAdvice: '희망 표현까지 완성. 다음은 시간입니다.',
         correctBlocks: [
-          { id: `topik-come-${order}-s3-b1`, text: time.block },
-          { id: `topik-come-${order}-s3-b2`, text: subject.block },
-          { id: `topik-come-${order}-s3-b3`, text: pattern.placeBlock },
-          { id: `topik-come-${order}-s3-b4`, text: '와요.' }
+          { id: `topik-come-${order}-s3-b1`, text: subject.block },
+          { id: `topik-come-${order}-s3-b2`, text: pattern.placeBlock },
+          { id: `topik-come-${order}-s3-b3`, text: '오고 싶어요.' }
         ],
         distractorBlocks: [
           {
             id: `topik-come-${order}-s3-d1`,
-            text: '지금',
-            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+            text: '와요.',
+            advice: '여기서는 기본 동작보다 희망 표현이 필요합니다.'
           },
           {
             id: `topik-come-${order}-s3-d2`,
             text: pattern.altPlace,
             advice: pattern.altPlaceAdvice
+          }
+        ]
+      },
+      {
+        id: makeId('topik-come', order, 4),
+        title: '4단계',
+        goal: `${time.block} ${subject.block} ${pattern.placeBlock} 와요.`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.placeBlock} `, '와요.'],
+        focus: '시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '문장 앞에 시간 표현을 붙이세요.',
+        completionAdvice: '시간까지 포함한 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-come-${order}-s4-b1`, text: time.block },
+          { id: `topik-come-${order}-s4-b2`, text: subject.block },
+          { id: `topik-come-${order}-s4-b3`, text: pattern.placeBlock },
+          { id: `topik-come-${order}-s4-b4`, text: '와요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-come-${order}-s4-d1`,
+            text: '지금',
+            advice: '여기서는 정해진 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-come-${order}-s4-d2`,
+            text: '오고 싶어요.',
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-come', order, 5),
+        title: '5단계',
+        goal: `${time.block} ${subject.block} ${pattern.placeBlock} 오고 싶어요.`,
+        goalSegments: [`${time.block} `, `${subject.block} `, `${pattern.placeBlock} `, '오고 싶어요.'],
+        focus: '시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '마지막은 희망 표현을 고르세요.',
+        completionAdvice: '한 가지 시간 표현으로 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-come-${order}-s5-b1`, text: time.block },
+          { id: `topik-come-${order}-s5-b2`, text: subject.block },
+          { id: `topik-come-${order}-s5-b3`, text: pattern.placeBlock },
+          { id: `topik-come-${order}-s5-b4`, text: '오고 싶어요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-come-${order}-s5-d1`,
+            text: '와요.',
+            advice: '여기서는 희망 표현이 필요합니다.'
+          },
+          {
+            id: `topik-come-${order}-s5-d2`,
+            text: alternateTime.block,
+            advice: '지금 단계에서는 현재 목표 시간 표현을 유지하세요.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-come', order, 6),
+        title: '6단계',
+        goal: `${alternateTime.block} ${subject.block} ${pattern.placeBlock} 와요.`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${pattern.placeBlock} `, '와요.'],
+        focus: '다른 시간 + 주어 + 장소 + 동사',
+        selectionAdvice: '새로운 시간 표현으로 같은 문장을 다시 만드세요.',
+        completionAdvice: '새 시간 표현의 기본 문장을 완성했습니다.',
+        correctBlocks: [
+          { id: `topik-come-${order}-s6-b1`, text: alternateTime.block },
+          { id: `topik-come-${order}-s6-b2`, text: subject.block },
+          { id: `topik-come-${order}-s6-b3`, text: pattern.placeBlock },
+          { id: `topik-come-${order}-s6-b4`, text: '와요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-come-${order}-s6-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-come-${order}-s6-d2`,
+            text: '오고 싶어요.',
+            advice: '여기서는 먼저 기본 동작 문장을 만듭니다.'
+          }
+        ]
+      },
+      {
+        id: makeId('topik-come', order, 7),
+        title: '7단계',
+        goal: `${alternateTime.block} ${subject.block} ${pattern.placeBlock} 오고 싶어요.`,
+        goalSegments: [`${alternateTime.block} `, `${subject.block} `, `${pattern.placeBlock} `, '오고 싶어요.'],
+        focus: '다른 시간 + 주어 + 장소 + 희망 표현',
+        selectionAdvice: '새 시간 표현으로 희망 문장을 완성하세요.',
+        completionAdvice: '7단계 문장 확장을 모두 마쳤습니다.',
+        correctBlocks: [
+          { id: `topik-come-${order}-s7-b1`, text: alternateTime.block },
+          { id: `topik-come-${order}-s7-b2`, text: subject.block },
+          { id: `topik-come-${order}-s7-b3`, text: pattern.placeBlock },
+          { id: `topik-come-${order}-s7-b4`, text: '오고 싶어요.' }
+        ],
+        distractorBlocks: [
+          {
+            id: `topik-come-${order}-s7-d1`,
+            text: time.block,
+            advice: '이번에는 다른 시간 표현을 써야 합니다.'
+          },
+          {
+            id: `topik-come-${order}-s7-d2`,
+            text: '와요.',
+            advice: '여기서는 희망 표현이 필요합니다.'
           }
         ]
       }
