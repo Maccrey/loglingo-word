@@ -1,9 +1,14 @@
 import { z } from 'zod';
-import jlptN5SentenceAssemblySeed from './data/jlpt-n5-sentence-expansion.json';
+import cefrA1SentenceAssemblySeed from './data/en/cefr-a1-sentence-expansion.json';
+import jlptN5SentenceAssemblySeed from './data/ja/jlpt-n5-sentence-expansion.json';
 import {
+  getDefaultLearningLevel,
   supportedLearningLanguages,
-  supportedLearningLevels
+  supportedLearningLevels,
+  type SupportedLearningLanguage,
+  type SupportedLearningLevel
 } from './learning-preferences';
+import { supportedAppLanguages } from './types';
 
 export const sentenceAssemblyBlockSchema = z.object({
   id: z.string().min(1),
@@ -21,6 +26,14 @@ export const sentenceAssemblyStageSchema = z.object({
   title: z.string().min(1),
   goal: z.string().min(1),
   goalSegments: z.array(z.string().min(1)).min(1),
+  goalTranslations: z.record(
+    z.enum(supportedAppLanguages),
+    z.object({
+      text: z.string().min(1),
+      segments: z.array(z.string().min(1)).min(1),
+      segmentBlockIndexes: z.array(z.number().int().min(0)).min(1)
+    })
+  ),
   focus: z.string().min(1),
   selectionAdvice: z.string().min(1),
   completionAdvice: z.string().min(1),
@@ -46,7 +59,82 @@ export type SentenceAssemblyExercise = z.infer<
   typeof sentenceAssemblyExerciseSchema
 >;
 
+const sentenceAssemblySeedEntries = [
+  {
+    language: 'en',
+    level: 'cefr_a1',
+    seed: cefrA1SentenceAssemblySeed
+  },
+  {
+    language: 'ja',
+    level: 'jlpt_n5',
+    seed: jlptN5SentenceAssemblySeed
+  }
+] as const;
+
+function parseSentenceAssemblySeed(
+  language: SupportedLearningLanguage,
+  level: SupportedLearningLevel,
+  seed: unknown[]
+): SentenceAssemblyExercise[] {
+  return seed.map((exercise) => {
+    const parsed = sentenceAssemblyExerciseSchema.parse(exercise);
+
+    if (parsed.language !== language || parsed.level !== level) {
+      throw new Error(
+        `Sentence assembly seed mismatch: expected ${language}/${level}, got ${parsed.language}/${parsed.level}`
+      );
+    }
+
+    return parsed;
+  });
+}
+
+export const sentenceAssemblyExercisesByLanguageLevel = new Map<
+  `${SupportedLearningLanguage}:${SupportedLearningLevel}`,
+  SentenceAssemblyExercise[]
+>(
+  sentenceAssemblySeedEntries.map((entry) => [
+    `${entry.language}:${entry.level}`,
+    parseSentenceAssemblySeed(entry.language, entry.level, entry.seed)
+  ])
+);
+
+export const sentenceAssemblyExercises: SentenceAssemblyExercise[] = [
+  ...sentenceAssemblyExercisesByLanguageLevel.values()
+].flat();
+
+export const cefrA1SentenceAssemblyExercises: SentenceAssemblyExercise[] =
+  sentenceAssemblyExercisesByLanguageLevel.get('en:cefr_a1') ?? [];
+
 export const jlptN5SentenceAssemblyExercises: SentenceAssemblyExercise[] =
-  jlptN5SentenceAssemblySeed.map((exercise) =>
-    sentenceAssemblyExerciseSchema.parse(exercise)
-  );
+  sentenceAssemblyExercisesByLanguageLevel.get('ja:jlpt_n5') ?? [];
+
+export function getSentenceAssemblyExercisePool(input?: {
+  language?: SupportedLearningLanguage;
+  level?: SupportedLearningLevel;
+}): SentenceAssemblyExercise[] {
+  const language = input?.language;
+  const level = input?.level;
+
+  if (language && level) {
+    return [
+      ...(sentenceAssemblyExercisesByLanguageLevel.get(`${language}:${level}`) ??
+        [])
+    ];
+  }
+
+  if (language) {
+    return sentenceAssemblyExercises.filter(
+      (exercise) => exercise.language === language
+    );
+  }
+
+  return [...sentenceAssemblyExercises];
+}
+
+export function getSentenceAssemblyExerciseFallbackLevel(
+  language: SupportedLearningLanguage
+): SupportedLearningLevel {
+  return getDefaultLearningLevel(language);
+}

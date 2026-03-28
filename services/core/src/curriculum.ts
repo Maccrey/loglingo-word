@@ -2,62 +2,24 @@ import {
   curriculumUnitSchema,
   type CurriculumUnit
 } from '@wordflow/shared/curriculum';
-import jlptN5Units from '@wordflow/shared/data/jlpt-n5.json';
+import cefrA1Units from '@wordflow/shared/data/en/cefr-a1.json';
+import jlptN5Units from '@wordflow/shared/data/ja/jlpt-n5.json';
 import {
   type SupportedLearningLanguage,
   type SupportedLearningLevel,
   isLearningLevelSupportedForLanguage
 } from '@wordflow/shared/learning-preferences';
 
+const cefrA1Seed: CurriculumUnit[] = cefrA1Units.map((unit) =>
+  curriculumUnitSchema.parse(unit)
+);
+
 const jlptN5Seed: CurriculumUnit[] = jlptN5Units.map((unit) =>
   curriculumUnitSchema.parse(unit)
 );
 
 export const curriculumSeed: CurriculumUnit[] = [
-  {
-    id: 'starter-basics',
-    language: 'en',
-    standardLevel: 'cefr_a1',
-    level: 1,
-    order: 1,
-    title: '기초 인사',
-    words: [
-      {
-        id: 'hello',
-        term: 'hello',
-        meaning: '안녕하세요',
-        example: 'Hello, nice to meet you.'
-      },
-      {
-        id: 'thanks',
-        term: 'thanks',
-        meaning: '고마워요',
-        example: 'Thanks for your help.'
-      }
-    ]
-  },
-  {
-    id: 'starter-routine',
-    language: 'en',
-    standardLevel: 'cefr_a1',
-    level: 1,
-    order: 2,
-    title: '일상 표현',
-    words: [
-      {
-        id: 'breakfast',
-        term: 'breakfast',
-        meaning: '아침 식사',
-        example: 'I eat breakfast at seven.'
-      },
-      {
-        id: 'subway',
-        term: 'subway',
-        meaning: '지하철',
-        example: 'I take the subway to work.'
-      }
-    ]
-  },
+  ...cefrA1Seed,
   {
     id: 'travel-checkin',
     language: 'en',

@@ -4,12 +4,17 @@ import {
   type SupportedLearningLevel
 } from '@wordflow/shared/learning-preferences';
 import {
-  jlptN5SentenceAssemblyExercises,
+  getSentenceAssemblyExercisePool,
   type SentenceAssemblyBlock,
   type SentenceAssemblyDistractor,
   type SentenceAssemblyExercise,
   type SentenceAssemblyStage
 } from '@wordflow/shared/sentence-expansion';
+import {
+  getSentenceFeedbackMessage,
+  translateSentenceAdvice
+} from '@wordflow/shared/sentence-feedback';
+import type { SupportedAppLanguage } from '@wordflow/shared/types';
 
 type SentenceChoice = {
   id: string;
@@ -25,6 +30,7 @@ export type SentenceFeedback = {
 };
 
 export type SentenceSessionState = {
+  appLanguage: SupportedAppLanguage;
   exercise: SentenceAssemblyExercise;
   currentStageIndex: number;
   assembledBlocks: SentenceAssemblyBlock[];
@@ -109,7 +115,7 @@ function buildChoicesForCurrentTurn(
 }
 
 function getExercisePool(): SentenceAssemblyExercise[] {
-  return [...jlptN5SentenceAssemblyExercises];
+  return getSentenceAssemblyExercisePool();
 }
 
 function resolveSentenceExercise(
@@ -118,15 +124,13 @@ function resolveSentenceExercise(
   randomizeExercise: boolean
 ): SentenceAssemblyExercise {
   const exercises = getExercisePool();
-  const matchedExercises =
-    exercises.filter(
-      (exercise) =>
-        exercise.language === learningLanguage && exercise.level === learningLevel
-    ) ??
-    [];
-  const languageExercises = exercises.filter(
-    (exercise) => exercise.language === learningLanguage
-  );
+  const matchedExercises = getSentenceAssemblyExercisePool({
+    language: learningLanguage,
+    level: learningLevel
+  });
+  const languageExercises = getSentenceAssemblyExercisePool({
+    language: learningLanguage
+  });
   const candidateExercises =
     matchedExercises.length > 0
       ? matchedExercises
@@ -144,13 +148,14 @@ function resolveSentenceExercise(
 
 function buildSelectionAdvice(
   stage: SentenceAssemblyStage,
-  assembledCount: number
+  assembledCount: number,
+  appLanguage: SupportedAppLanguage
 ): string {
   if (stage.correctBlocks.length - assembledCount <= 0) {
-    return stage.completionAdvice;
+    return translateSentenceAdvice(stage.completionAdvice, appLanguage);
   }
 
-  return stage.selectionAdvice;
+  return translateSentenceAdvice(stage.selectionAdvice, appLanguage);
 }
 
 function buildChoiceScore(
@@ -170,12 +175,14 @@ function buildChoiceScore(
 
 function buildInitialState(
   exercise: SentenceAssemblyExercise,
+  appLanguage: SupportedAppLanguage,
   randomizeChoices: boolean,
   randomizeExercise: boolean
 ): SentenceSessionState {
   const firstStage = exercise.stages[0]!;
 
   return {
+    appLanguage,
     exercise,
     currentStageIndex: 0,
     assembledBlocks: [],
@@ -187,18 +194,20 @@ function buildInitialState(
     completed: false,
     feedback: {
       status: 'idle',
-      message: '어떤 블록을 골라야 하는지 먼저 확인하세요.',
-      advice: buildSelectionAdvice(firstStage, 0)
+      message: getSentenceFeedbackMessage('check_choice_first', appLanguage),
+      advice: buildSelectionAdvice(firstStage, 0, appLanguage)
     }
   };
 }
 
 export function createDemoSentenceSession(input?: {
+  appLanguage?: SupportedAppLanguage;
   learningLanguage?: SupportedLearningLanguage;
   learningLevel?: SupportedLearningLevel;
   randomizeChoices?: boolean;
   randomizeExercise?: boolean;
 }): SentenceSessionState {
+  const appLanguage = input?.appLanguage ?? 'ko';
   const learningLanguage = input?.learningLanguage ?? 'en';
   const learningLevel =
     input?.learningLevel ?? getDefaultLearningLevel(learningLanguage);
@@ -210,7 +219,12 @@ export function createDemoSentenceSession(input?: {
     randomizeExercise
   );
 
-  return buildInitialState(exercise, randomizeChoices, randomizeExercise);
+  return buildInitialState(
+    exercise,
+    appLanguage,
+    randomizeChoices,
+    randomizeExercise
+  );
 }
 
 export function resetSentenceSession(
@@ -226,6 +240,7 @@ export function resetSentenceSession(
 
   return buildInitialState(
     nextExercise,
+    state.appLanguage,
     state.randomizeChoices,
     state.randomizeExercise
   );
@@ -257,8 +272,13 @@ export function chooseSentenceBlock(
       ...state,
       feedback: {
         status: 'error',
-        message: `${choice.text} 블록은 이 문장에 맞지 않습니다.`,
-        advice: choice.advice ?? stage.selectionAdvice
+        message: getSentenceFeedbackMessage('wrong_block', state.appLanguage, {
+          block: choice.text
+        }),
+        advice: translateSentenceAdvice(
+          choice.advice ?? stage.selectionAdvice,
+          state.appLanguage
+        )
       }
     };
   }
@@ -280,14 +300,23 @@ export function chooseSentenceBlock(
     feedback: {
       status: 'success',
       message: stageCompleted
-        ? `${stage.title} 문장을 완성했습니다.`
-        : `${choice.text} 블록이 맞습니다.`,
+        ? getSentenceFeedbackMessage('stage_completed', state.appLanguage)
+        : getSentenceFeedbackMessage('correct_block', state.appLanguage, {
+            block: choice.text
+          }),
       ...(stageCompleted
         ? {
-            advice: stage.completionAdvice
+            advice: translateSentenceAdvice(
+              stage.completionAdvice,
+              state.appLanguage
+            )
           }
         : {
-            advice: buildSelectionAdvice(stage, nextAssembledBlocks.length)
+            advice: buildSelectionAdvice(
+              stage,
+              nextAssembledBlocks.length,
+              state.appLanguage
+            )
           })
     }
   };
@@ -321,7 +350,7 @@ export function moveToNextSentenceStage(
       stageCompleted: true,
       feedback: {
         status: 'success',
-        message: '모든 문자조립훈련 문제를 완료했습니다.'
+        message: getSentenceFeedbackMessage('all_completed', state.appLanguage)
       }
     };
   }
@@ -339,8 +368,11 @@ export function moveToNextSentenceStage(
     stageCompleted: false,
     feedback: {
       status: 'idle',
-      message: '다음 문장에서 어떤 블록이 먼저 필요한지 확인하세요.',
-      advice: buildSelectionAdvice(nextStage, 0)
+      message: getSentenceFeedbackMessage(
+        'check_next_sentence',
+        state.appLanguage
+      ),
+      advice: buildSelectionAdvice(nextStage, 0, state.appLanguage)
     }
   };
 }

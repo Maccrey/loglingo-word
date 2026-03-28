@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const outputPath = path.resolve(
   __dirname,
-  '../packages/shared/src/data/jlpt-n5-sentence-expansion.json'
+  '../packages/shared/src/data/ja/jlpt-n5-sentence-expansion.json'
 );
 
 const subjects = [
@@ -19,8 +19,8 @@ const subjects = [
 const times = [
   { id: 'today', block: '今日は', goal: '오늘은 ' },
   { id: 'tomorrow', block: '明日は', goal: '내일은 ' },
-  { id: 'yesterday', block: '昨日は', goal: '어제는 ' },
   { id: 'morning', block: '朝は', goal: '아침에는 ' },
+  { id: 'night', block: '夜は', goal: '밤에는 ' },
   { id: 'everyday', block: '毎日', goal: '매일 ' }
 ];
 
@@ -119,8 +119,29 @@ const objectPatterns = [
     distractorObjectAdvice: '여기서는 길이 아니라 이름이 맞습니다.',
     distractorVerbBlock: '書きます。',
     distractorVerbAdvice: '여기는 쓰다가 아니라 읽다입니다.'
+  },
+  {
+    id: 'tea-buy',
+    objectBlock: 'お茶を',
+    objectGoal: '차를 ',
+    verbBlock: '買います。',
+    verbGoal: '산다.',
+    desireBlock: '買いたいです。',
+    desireGoal: '사고 싶다.',
+    distractorObjectBlock: '水を',
+    distractorObjectAdvice: '여기서는 물보다 차가 맞습니다.',
+    distractorVerbBlock: '飲みます。',
+    distractorVerbAdvice: '여기서는 마시다가 아니라 사다입니다.'
   }
 ];
+
+function isNaturalTravelCombination(time, place) {
+  if (place.id === 'home') {
+    return ['today', 'tomorrow', 'night'].includes(time.id);
+  }
+
+  return true;
+}
 
 function createTravelExercise(subject, time, place, order) {
   const stage2DistractorPlace = pickAlternativePlaceBlock(place.block, '店に');
@@ -360,6 +381,7 @@ function createObjectExercise(subject, time, pattern, order) {
 }
 
 async function main() {
+  await fs.mkdir(path.dirname(outputPath), { recursive: true });
   const currentSeed = JSON.parse(await fs.readFile(outputPath, 'utf8'));
   const baseExercise = currentSeed[0];
   const exercises = [baseExercise];
@@ -369,6 +391,10 @@ async function main() {
   for (const subject of subjects) {
     for (const time of times) {
       for (const place of places) {
+        if (!isNaturalTravelCombination(time, place)) {
+          continue;
+        }
+
         exercises.push(createTravelExercise(subject, time, place, order));
         order += 1;
       }

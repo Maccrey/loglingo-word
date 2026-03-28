@@ -58,6 +58,52 @@ describe('settings ui', () => {
     ).toContain('JLPT N5');
   });
 
+  it('shows added app languages and language-specific level systems', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    expect(screen.getAllByRole('option', { name: 'Japanese' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('option', { name: 'Chinese' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('option', { name: 'German' }).length).toBeGreaterThan(0);
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '학습 언어' }),
+      'de'
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('CEFR A1');
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('CEFR C2');
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '학습 언어' }),
+      'ko'
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('TOPIK 1');
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('TOPIK 6');
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '학습 언어' }),
+      'zh'
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('HSK 1');
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('HSK 6');
+  });
+
   it('updates the per-session question count', async () => {
     const user = userEvent.setup();
 

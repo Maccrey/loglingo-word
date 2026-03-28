@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { jlptN5SentenceAssemblyExercises } from '@wordflow/shared/sentence-expansion';
+import {
+  cefrA1SentenceAssemblyExercises,
+  getSentenceAssemblyExercisePool,
+  jlptN5SentenceAssemblyExercises
+} from '@wordflow/shared/sentence-expansion';
 
 import {
   chooseSentenceBlock,
@@ -11,6 +15,20 @@ import {
 describe('sentence session state', () => {
   it('loads 200 jlpt n5 sentence exercises from json data', () => {
     expect(jlptN5SentenceAssemblyExercises).toHaveLength(200);
+  });
+
+  it('loads 200 cefr a1 sentence exercises from json data', () => {
+    expect(cefrA1SentenceAssemblyExercises).toHaveLength(200);
+  });
+
+  it('returns sentence exercise pools by language and level', () => {
+    expect(
+      getSentenceAssemblyExercisePool({ language: 'en', level: 'cefr_a1' })
+    ).toHaveLength(200);
+    expect(
+      getSentenceAssemblyExercisePool({ language: 'ja', level: 'jlpt_n5' })
+    ).toHaveLength(200);
+    expect(getSentenceAssemblyExercisePool({ language: 'en' }).length).toBeGreaterThan(0);
   });
 
   it('keeps every choice set unique so the same option is not shown twice', () => {
@@ -30,6 +48,7 @@ describe('sentence session state', () => {
 
   it('shows exactly three candidate blocks for the current turn', () => {
     const initial = createDemoSentenceSession({
+      appLanguage: 'ko',
       learningLanguage: 'ja',
       learningLevel: 'jlpt_n5'
     });
@@ -42,8 +61,64 @@ describe('sentence session state', () => {
     expect(initial.feedback.advice).toContain('주어와 동사부터 고르세요.');
   });
 
+  it('returns an english exercise when learning language is english', () => {
+    const initial = createDemoSentenceSession({
+      appLanguage: 'ko',
+      learningLanguage: 'en',
+      learningLevel: 'cefr_a1'
+    });
+
+    expect(initial.exercise.language).toBe('en');
+    expect(initial.exercise.level).toBe('cefr_a1');
+    expect(initial.availableChoices.map((choice) => choice.text)).toContain('I');
+    expect(initial.availableChoices.map((choice) => choice.text)).toContain('to school');
+  });
+
+  it('keeps english sentence goals in english word order', () => {
+    const firstObjectExercise = cefrA1SentenceAssemblyExercises.find((exercise) =>
+      exercise.id.startsWith('cefr-a1-object-')
+    );
+
+    expect(firstObjectExercise?.stages[1]?.goal).toBe('I drink water.');
+    expect(firstObjectExercise?.stages[1]?.correctBlocks.map((block) => block.text)).toEqual([
+      'I',
+      'drink',
+      'water.'
+    ]);
+    expect(firstObjectExercise?.stages[3]?.goal).toBe(
+      'I want to drink water today.'
+    );
+  });
+
+  it('puts english time expressions at the end when the sentence pattern requires it', () => {
+    const exercise = cefrA1SentenceAssemblyExercises.find(
+      (item) => item.id === 'cefr-a1-object-093'
+    );
+    const stage = exercise?.stages[2];
+
+    expect(stage?.goal).toBe('I drink water every day.');
+    expect(stage?.correctBlocks.map((block) => block.text)).toEqual([
+      'I',
+      'drink',
+      'water.',
+      'every day'
+    ]);
+    expect(stage?.goalTranslations.ko.segmentBlockIndexes).toEqual([3, 0, 2, 1]);
+  });
+
+  it('renders japanese learning sentences as natural english target sentences', () => {
+    const exercise = jlptN5SentenceAssemblyExercises.find(
+      (item) => item.id === 'jlpt-n5-travel-023'
+    );
+    const stage = exercise?.stages[1];
+
+    expect(stage?.goalTranslations.en.text).toBe('My friend goes to school.');
+    expect(stage?.goalTranslations.en.segmentBlockIndexes).toEqual([0, 2, 1]);
+  });
+
   it('builds the sentence one correct block at a time', () => {
     let state = createDemoSentenceSession({
+      appLanguage: 'ko',
       learningLanguage: 'ja',
       learningLevel: 'jlpt_n5'
     });
@@ -68,6 +143,7 @@ describe('sentence session state', () => {
 
   it('returns advice when a distractor block is selected', () => {
     const initial = createDemoSentenceSession({
+      appLanguage: 'ko',
       learningLanguage: 'ja',
       learningLevel: 'jlpt_n5'
     });
@@ -82,6 +158,7 @@ describe('sentence session state', () => {
 
   it('moves to the next problem after a stage is completed', () => {
     let state = createDemoSentenceSession({
+      appLanguage: 'ko',
       learningLanguage: 'ja',
       learningLevel: 'jlpt_n5'
     });
@@ -104,6 +181,7 @@ describe('sentence session state', () => {
 
   it('resets the full training back to the first problem', () => {
     let state = createDemoSentenceSession({
+      appLanguage: 'ko',
       learningLanguage: 'ja',
       learningLevel: 'jlpt_n5'
     });
@@ -117,5 +195,22 @@ describe('sentence session state', () => {
     expect(state.currentStageIndex).toBe(0);
     expect(state.assembledBlocks).toEqual([]);
     expect(state.completedStages).toEqual([]);
+  });
+
+  it('shows advice and feedback in the selected app language', () => {
+    const initial = createDemoSentenceSession({
+      appLanguage: 'en',
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5'
+    });
+    const distractor = initial.availableChoices.find(
+      (choice) => choice.text === '学校に'
+    );
+    const next = chooseSentenceBlock(initial, distractor!.id);
+
+    expect(initial.feedback.message).toBe('Check which block should come next.');
+    expect(initial.feedback.advice).toBe('Start with the subject and verb.');
+    expect(next.feedback.message).toContain('does not fit this sentence');
+    expect(next.feedback.advice).toBe('The place comes later.');
   });
 });

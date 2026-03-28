@@ -692,7 +692,7 @@
 - 상태: [x] 완료
 - 목적: 일본어 N5 단어를 실제 JSON 데이터로 관리하고 쓰기 모드 확장 기반까지 연결
 - 구현:
-- `packages/shared/src/data/jlpt-n5.json` 추가
+- `packages/shared/src/data/ja/jlpt-n5.json` 추가
 - `reading`, `partOfSpeech`, `writing` 메타데이터 확장
 - 커리큘럼 시드가 JSON 데이터를 실제로 읽도록 연결
 - 플래시카드 뒷면에 쓰기 모드 입력 UI 추가

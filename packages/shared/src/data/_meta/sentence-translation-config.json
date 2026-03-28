@@ -1,0 +1,395 @@
+{
+  "appLanguages": ["ko", "en", "ja", "zh", "de"],
+  "subjectConcepts": {
+    "i": { "agreement": "base" },
+    "you": { "agreement": "base" },
+    "we": { "agreement": "base" },
+    "my_friend": { "agreement": "third_singular" },
+    "teacher": { "agreement": "third_singular" },
+    "student": { "agreement": "third_singular" }
+  },
+  "sourceRoleProfiles": {
+    "en": {
+      "subject": {
+        "I": "i",
+        "You": "you",
+        "We": "we",
+        "My friend": "my_friend"
+      },
+      "time": {
+        "today": "today",
+        "tomorrow": "tomorrow",
+        "every day": "every_day",
+        "in the morning": "in_the_morning",
+        "at night": "at_night"
+      },
+      "place": {
+        "to school": "school",
+        "to the station": "station",
+        "home": "home",
+        "to the store": "store"
+      },
+      "object": {
+        "water": "water",
+        "tea": "tea",
+        "bread": "bread",
+        "a book": "book",
+        "my name": "my_name"
+      },
+      "predicate": {
+        "go.": "go",
+        "go": "go",
+        "come.": "come",
+        "come": "come",
+        "drink.": "drink",
+        "drink": "drink",
+        "eat.": "eat",
+        "eat": "eat",
+        "read.": "read",
+        "read": "read",
+        "write.": "write",
+        "write": "write",
+        "buy.": "buy",
+        "buy": "buy",
+        "want to go.": "want_to_go",
+        "want to go": "want_to_go",
+        "want to come.": "want_to_come",
+        "want to come": "want_to_come",
+        "want to drink.": "want_to_drink",
+        "want to drink": "want_to_drink",
+        "want to eat.": "want_to_eat",
+        "want to eat": "want_to_eat",
+        "want to read.": "want_to_read",
+        "want to read": "want_to_read",
+        "want to write.": "want_to_write",
+        "want to write": "want_to_write",
+        "want to buy.": "want_to_buy",
+        "want to buy": "want_to_buy"
+      }
+    },
+    "ja": {
+      "subject": {
+        "私は": "i",
+        "友だちは": "my_friend",
+        "先生は": "teacher",
+        "学生は": "student"
+      },
+      "time": {
+        "今日は": "today",
+        "明日は": "tomorrow",
+        "昨日は": "yesterday",
+        "朝は": "in_the_morning",
+        "夜は": "at_night",
+        "毎日": "every_day"
+      },
+      "place": {
+        "学校に": "school",
+        "駅に": "station",
+        "うちに": "home",
+        "店に": "store"
+      },
+      "object": {
+        "水を": "water",
+        "お茶を": "tea",
+        "ごはんを": "rice",
+        "パンを": "bread",
+        "名前を": "my_name"
+      },
+      "predicate": {
+        "行きます。": "go",
+        "来ます。": "come",
+        "行きたいです。": "want_to_go",
+        "来たいです。": "want_to_come",
+        "飲みます。": "drink",
+        "食べます。": "eat",
+        "書きます。": "write",
+        "読みます。": "read",
+        "買います。": "buy",
+        "飲みたいです。": "want_to_drink",
+        "食べたいです。": "want_to_eat",
+        "書きたいです。": "want_to_write",
+        "読みたいです。": "want_to_read",
+        "買いたいです。": "want_to_buy"
+      }
+    }
+  },
+  "targetSentencePatterns": {
+    "ko": {
+      "two": ["subject", "predicate"],
+      "three_place": ["subject", "place", "predicate"],
+      "three_object": ["subject", "object", "predicate"],
+      "four_place": ["time", "subject", "place", "predicate"],
+      "four_object": ["time", "subject", "object", "predicate"]
+    },
+    "en": {
+      "two": ["subject", "predicate"],
+      "three_place": ["subject", "predicate", "place"],
+      "three_object": ["subject", "predicate", "object"],
+      "four_place": ["subject", "predicate", "place", "time"],
+      "four_object": ["subject", "predicate", "object", "time"]
+    },
+    "ja": {
+      "two": ["subject", "predicate"],
+      "three_place": ["subject", "place", "predicate"],
+      "three_object": ["subject", "object", "predicate"],
+      "four_place": ["time", "subject", "place", "predicate"],
+      "four_object": ["time", "subject", "object", "predicate"]
+    },
+    "zh": {
+      "two": ["subject", "predicate"],
+      "three_place": ["subject", "place", "predicate"],
+      "three_object": ["subject", "object", "predicate"],
+      "four_place": ["time", "subject", "place", "predicate"],
+      "four_object": ["time", "subject", "object", "predicate"]
+    },
+    "de": {
+      "two": ["subject", "predicate"],
+      "three_place": ["subject", "predicate", "place"],
+      "three_object": ["subject", "predicate", "object"],
+      "four_place": ["subject", "predicate", "place", "time"],
+      "four_object": ["subject", "predicate", "object", "time"]
+    }
+  },
+  "targetLexicon": {
+    "ko": {
+      "subject": {
+        "i": "나는 ",
+        "you": "너는 ",
+        "we": "우리는 ",
+        "my_friend": "내 친구는 ",
+        "teacher": "선생님은 ",
+        "student": "학생은 "
+      },
+      "time": {
+        "today": "오늘 ",
+        "tomorrow": "내일 ",
+        "yesterday": "어제 ",
+        "every_day": "매일 ",
+        "in_the_morning": "아침에는 ",
+        "at_night": "밤에는 "
+      },
+      "place": {
+        "school": "학교에 ",
+        "station": "역에 ",
+        "home": "집에 ",
+        "store": "가게에 "
+      },
+      "object": {
+        "water": "물을 ",
+        "tea": "차를 ",
+        "rice": "밥을 ",
+        "bread": "빵을 ",
+        "book": "책을 ",
+        "my_name": "이름을 "
+      },
+      "predicate": {
+        "go": "간다.",
+        "come": "온다.",
+        "drink": "마신다.",
+        "eat": "먹는다.",
+        "read": "읽는다.",
+        "write": "쓴다.",
+        "buy": "산다.",
+        "want_to_go": "가고 싶다.",
+        "want_to_come": "오고 싶다.",
+        "want_to_drink": "마시고 싶다.",
+        "want_to_eat": "먹고 싶다.",
+        "want_to_read": "읽고 싶다.",
+        "want_to_write": "쓰고 싶다.",
+        "want_to_buy": "사고 싶다."
+      }
+    },
+    "en": {
+      "subject": {
+        "i": "I ",
+        "you": "You ",
+        "we": "We ",
+        "my_friend": "My friend ",
+        "teacher": "The teacher ",
+        "student": "The student "
+      },
+      "time": {
+        "today": "today.",
+        "tomorrow": "tomorrow.",
+        "yesterday": "yesterday.",
+        "every_day": "every day.",
+        "in_the_morning": "in the morning.",
+        "at_night": "at night."
+      },
+      "place": {
+        "school": "to school.",
+        "station": "to the station.",
+        "home": "home.",
+        "store": "to the store."
+      },
+      "object": {
+        "water": "water.",
+        "tea": "tea.",
+        "rice": "rice.",
+        "bread": "bread.",
+        "book": "a book.",
+        "my_name": "my name."
+      },
+      "predicate": {
+        "go": { "base": "go ", "third_singular": "goes " },
+        "come": { "base": "come ", "third_singular": "comes " },
+        "drink": { "base": "drink ", "third_singular": "drinks " },
+        "eat": { "base": "eat ", "third_singular": "eats " },
+        "read": { "base": "read ", "third_singular": "reads " },
+        "write": { "base": "write ", "third_singular": "writes " },
+        "buy": { "base": "buy ", "third_singular": "buys " },
+        "want_to_go": { "base": "want to go ", "third_singular": "wants to go " },
+        "want_to_come": { "base": "want to come ", "third_singular": "wants to come " },
+        "want_to_drink": { "base": "want to drink ", "third_singular": "wants to drink " },
+        "want_to_eat": { "base": "want to eat ", "third_singular": "wants to eat " },
+        "want_to_read": { "base": "want to read ", "third_singular": "wants to read " },
+        "want_to_write": { "base": "want to write ", "third_singular": "wants to write " },
+        "want_to_buy": { "base": "want to buy ", "third_singular": "wants to buy " }
+      }
+    },
+    "ja": {
+      "subject": {
+        "i": "私は",
+        "you": "あなたは",
+        "we": "私たちは",
+        "my_friend": "友だちは",
+        "teacher": "先生は",
+        "student": "学生は"
+      },
+      "time": {
+        "today": "今日は",
+        "tomorrow": "明日は",
+        "yesterday": "昨日は",
+        "every_day": "毎日",
+        "in_the_morning": "朝は",
+        "at_night": "夜は"
+      },
+      "place": {
+        "school": "学校に",
+        "station": "駅に",
+        "home": "うちに",
+        "store": "店に"
+      },
+      "object": {
+        "water": "水を",
+        "tea": "お茶を",
+        "rice": "ごはんを",
+        "bread": "パンを",
+        "book": "本を",
+        "my_name": "名前を"
+      },
+      "predicate": {
+        "go": "行きます。",
+        "come": "来ます。",
+        "drink": "飲みます。",
+        "eat": "食べます。",
+        "read": "読みます。",
+        "write": "書きます。",
+        "buy": "買います。",
+        "want_to_go": "行きたいです。",
+        "want_to_come": "来たいです。",
+        "want_to_drink": "飲みたいです。",
+        "want_to_eat": "食べたいです。",
+        "want_to_read": "読みたいです。",
+        "want_to_write": "書きたいです。",
+        "want_to_buy": "買いたいです。"
+      }
+    },
+    "zh": {
+      "subject": {
+        "i": "我",
+        "you": "你",
+        "we": "我们",
+        "my_friend": "我的朋友",
+        "teacher": "老师",
+        "student": "学生"
+      },
+      "time": {
+        "today": "今天",
+        "tomorrow": "明天",
+        "yesterday": "昨天",
+        "every_day": "每天",
+        "in_the_morning": "早上",
+        "at_night": "晚上"
+      },
+      "place": {
+        "school": "去学校",
+        "station": "去车站",
+        "home": "回家",
+        "store": "去商店"
+      },
+      "object": {
+        "water": "水",
+        "tea": "茶",
+        "rice": "米饭",
+        "bread": "面包",
+        "book": "书",
+        "my_name": "名字"
+      },
+      "predicate": {
+        "go": "去。",
+        "come": "来。",
+        "drink": "喝。",
+        "eat": "吃。",
+        "read": "读。",
+        "write": "写。",
+        "buy": "买。",
+        "want_to_go": "想去。",
+        "want_to_come": "想来。",
+        "want_to_drink": "想喝。",
+        "want_to_eat": "想吃。",
+        "want_to_read": "想读。",
+        "want_to_write": "想写。",
+        "want_to_buy": "想买。"
+      }
+    },
+    "de": {
+      "subject": {
+        "i": "Ich ",
+        "you": "Du ",
+        "we": "Wir ",
+        "my_friend": "Mein Freund ",
+        "teacher": "Der Lehrer ",
+        "student": "Der Student "
+      },
+      "time": {
+        "today": "heute.",
+        "tomorrow": "morgen.",
+        "yesterday": "gestern.",
+        "every_day": "jeden Tag.",
+        "in_the_morning": "am Morgen.",
+        "at_night": "am Abend."
+      },
+      "place": {
+        "school": "zur Schule.",
+        "station": "zum Bahnhof.",
+        "home": "nach Hause.",
+        "store": "zum Laden."
+      },
+      "object": {
+        "water": "Wasser.",
+        "tea": "Tee.",
+        "rice": "Reis.",
+        "bread": "Brot.",
+        "book": "ein Buch.",
+        "my_name": "meinen Namen."
+      },
+      "predicate": {
+        "go": { "base": "gehe ", "third_singular": "geht " },
+        "come": { "base": "komme ", "third_singular": "kommt " },
+        "drink": { "base": "trinke ", "third_singular": "trinkt " },
+        "eat": { "base": "esse ", "third_singular": "isst " },
+        "read": { "base": "lese ", "third_singular": "liest " },
+        "write": { "base": "schreibe ", "third_singular": "schreibt " },
+        "buy": { "base": "kaufe ", "third_singular": "kauft " },
+        "want_to_go": { "base": "möchte gehen ", "third_singular": "möchte gehen " },
+        "want_to_come": { "base": "möchte kommen ", "third_singular": "möchte kommen " },
+        "want_to_drink": { "base": "möchte trinken ", "third_singular": "möchte trinken " },
+        "want_to_eat": { "base": "möchte essen ", "third_singular": "möchte essen " },
+        "want_to_read": { "base": "möchte lesen ", "third_singular": "möchte lesen " },
+        "want_to_write": { "base": "möchte schreiben ", "third_singular": "möchte schreiben " },
+        "want_to_buy": { "base": "möchte kaufen ", "third_singular": "möchte kaufen " }
+      }
+    }
+  }
+}

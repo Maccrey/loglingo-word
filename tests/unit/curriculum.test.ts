@@ -11,8 +11,10 @@ describe('curriculum', () => {
     const units = getCurriculumUnits();
 
     expect(units.map((unit) => unit.id)).toEqual([
-      'starter-basics',
-      'starter-routine',
+      'cefr-a1-people',
+      'cefr-a1-time',
+      'cefr-a1-places',
+      'cefr-a1-actions',
       'travel-checkin',
       'japanese-greetings',
       'japanese-people',
@@ -27,7 +29,7 @@ describe('curriculum', () => {
   it('filters curriculum units by level', () => {
     const levelOneUnits = getCurriculumByLevel(1);
 
-    expect(levelOneUnits).toHaveLength(8);
+    expect(levelOneUnits).toHaveLength(10);
     expect(levelOneUnits.every((unit) => unit.level === 1)).toBe(true);
   });
 
@@ -42,6 +44,18 @@ describe('curriculum', () => {
       'japanese-food',
       'japanese-actions'
     ]);
+  });
+
+  it('returns imported english cefr a1 units', () => {
+    const englishStarter = getCurriculumByStandardLevel('en', 'cefr_a1');
+
+    expect(englishStarter.map((unit) => unit.id)).toEqual([
+      'cefr-a1-people',
+      'cefr-a1-time',
+      'cefr-a1-places',
+      'cefr-a1-actions'
+    ]);
+    expect(englishStarter[0]?.words[0]?.term).toBe('I');
   });
 
   it('includes writing metadata in imported jlpt n5 words', () => {

@@ -3,6 +3,10 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  supportedAppLanguages,
+  type SupportedAppLanguage
+} from '@wordflow/shared/types';
+import {
   getPaymentProducts,
   resolveEntitlementsForProducts,
   type PaymentProductId,
@@ -80,6 +84,21 @@ const fieldControlStyle: Record<string, string | number> = {
 };
 
 const sessionQuestionCountOptions = [3, 5, 10, 20];
+const appLanguageLabels: Record<SupportedAppLanguage, string> = {
+  ko: 'Korean',
+  en: 'English',
+  ja: 'Japanese',
+  zh: 'Chinese',
+  de: 'German'
+};
+
+const learningLanguageLabels: Record<SupportedLearningLanguage, string> = {
+  ko: 'Korean',
+  en: 'English',
+  ja: 'Japanese',
+  zh: 'Chinese',
+  de: 'German'
+};
 
 type SettingsClientProps = {
   locale?: AppLocale;
@@ -191,14 +210,19 @@ export default function SettingsClient(props: SettingsClientProps) {
                 setSettings((current) =>
                   updateSettings(
                     current,
-                    { appLanguage: event.target.value as 'ko' | 'en' },
+                    {
+                      appLanguage: event.target.value as SupportedAppLanguage
+                    },
                     '2026-03-26T00:00:00.000Z'
                   )
                 )
               }
             >
-              <option value="ko">Korean</option>
-              <option value="en">English</option>
+              {supportedAppLanguages.map((language) => (
+                <option key={language} value={language}>
+                  {appLanguageLabels[language]}
+                </option>
+              ))}
             </select>
           </label>
 
@@ -226,8 +250,13 @@ export default function SettingsClient(props: SettingsClientProps) {
                 )
               }
             >
-              <option value="en">English</option>
-              <option value="ja">Japanese</option>
+              {(Object.keys(learningLanguageLabels) as SupportedLearningLanguage[]).map(
+                (language) => (
+                  <option key={language} value={language}>
+                    {learningLanguageLabels[language]}
+                  </option>
+                )
+              )}
             </select>
           </label>
 

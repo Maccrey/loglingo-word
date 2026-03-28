@@ -1,11 +1,14 @@
 'use client';
 
 import {
+  isSupportedAppLanguage,
+  supportedAppLanguages,
   userSettingsSchema,
   type UserSettings
 } from '@wordflow/shared/types';
 import {
   getDefaultLearningLevel,
+  isSupportedLearningLanguage,
   type SupportedLearningLanguage,
   isLearningLevelSupportedForLanguage
 } from '@wordflow/shared/learning-preferences';
@@ -44,19 +47,28 @@ function migrateStoredSettings(raw: unknown): UserSettings {
     learningLanguage?: string;
     learningLevel?: string;
     sessionQuestionCount?: number;
+    appLanguage?: string;
   };
-  const learningLanguage = candidate.learningLanguage === 'ja' ? 'ja' : 'en';
+  const learningLanguage: SupportedLearningLanguage = isSupportedLearningLanguage(
+    candidate.learningLanguage ?? ''
+  )
+    ? (candidate.learningLanguage as SupportedLearningLanguage)
+    : 'en';
   const learningLevel =
     candidate.learningLevel &&
     isLearningLevelSupportedForLanguage(learningLanguage, candidate.learningLevel)
       ? candidate.learningLevel
       : getDefaultLearningLevel(learningLanguage);
+  const appLanguage =
+    candidate.appLanguage && isSupportedAppLanguage(candidate.appLanguage)
+      ? candidate.appLanguage
+      : base.appLanguage;
 
   return updateSettings(
     {
       ...base,
       ...(candidate.userId ? { userId: candidate.userId } : {}),
-      ...(candidate.appLanguage === 'en' ? { appLanguage: 'en' } : {}),
+      appLanguage,
       ...(candidate.notificationsEnabled !== undefined
         ? { notificationsEnabled: candidate.notificationsEnabled }
         : {}),

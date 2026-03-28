@@ -4,6 +4,16 @@ import {
   supportedLearningLevels
 } from './learning-preferences';
 
+export const supportedAppLanguages = ['ko', 'en', 'ja', 'zh', 'de'] as const;
+
+export type SupportedAppLanguage = (typeof supportedAppLanguages)[number];
+
+export function isSupportedAppLanguage(
+  language: string
+): language is SupportedAppLanguage {
+  return supportedAppLanguages.includes(language as SupportedAppLanguage);
+}
+
 export const userSchema = z.object({
   id: z.string().min(1),
   nativeLanguage: z.string().min(2),
@@ -43,7 +53,7 @@ export const chatMessageSchema = z.object({
 
 export const userSettingsSchema = z.object({
   userId: z.string().min(1),
-  appLanguage: z.enum(['ko', 'en']),
+  appLanguage: z.enum(supportedAppLanguages),
   learningLanguage: z.enum(supportedLearningLanguages),
   learningLevel: z.enum(supportedLearningLevels),
   sessionQuestionCount: z.number().int().min(1).max(50),

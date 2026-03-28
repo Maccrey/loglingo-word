@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { type SupportedAppLanguage } from '@wordflow/shared/types';
 import { t, type AppLocale } from '../i18n';
 import { BackButton } from '../../components/BackButton';
 import {
@@ -81,25 +82,24 @@ type SentenceClientProps = {
 
 function renderGoalSegments(input: {
   currentSegments: string[];
+  segmentBlockIndexes: number[];
   assembledCount: number;
-  previousSegments?: string[] | undefined;
 }) {
-  const previousSegments = input.previousSegments ?? [];
-
   return (
     <>
       {input.currentSegments.map((segment, index) => {
-        const isSelected = index < input.assembledCount;
-        const changedFromPrevious = previousSegments[index] !== segment;
+        const blockIndex = input.segmentBlockIndexes[index] ?? index;
+        const isSelected = blockIndex < input.assembledCount;
+        const isNext = blockIndex === input.assembledCount;
 
         return (
           <span
             key={`${index}-${segment}`}
             style={{
-              color: isSelected
+              color: isNext
                 ? '#1565c0'
-                : changedFromPrevious
-                  ? '#d32f2f'
+                : isSelected
+                  ? '#2d7a4d'
                   : 'var(--text-ink)'
             }}
           >
@@ -114,6 +114,7 @@ function renderGoalSegments(input: {
 export default function SentenceClient(props: SentenceClientProps) {
   const [session, setSession] = useState(() =>
     createDemoSentenceSession({
+      appLanguage: createFallbackSettings().appLanguage,
       learningLanguage: createFallbackSettings().learningLanguage,
       learningLevel: createFallbackSettings().learningLevel,
       randomizeChoices: false,
@@ -123,16 +124,27 @@ export default function SentenceClient(props: SentenceClientProps) {
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const [exerciseInfoCollapsed, setExerciseInfoCollapsed] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [appLanguage, setAppLanguage] = useState<SupportedAppLanguage>(
+    createFallbackSettings().appLanguage
+  );
   const locale = props.locale ?? 'ko';
   const currentStage = session.exercise.stages[session.currentStageIndex] ?? null;
-  const previousStage =
-    session.exercise.stages[session.currentStageIndex - 1] ?? null;
+  const localizedGoalText =
+    currentStage?.goalTranslations[appLanguage]?.text ?? currentStage?.goal ?? '';
+  const localizedGoalSegments =
+    currentStage?.goalTranslations[appLanguage]?.segments ?? currentStage?.goalSegments ?? [];
+  const localizedGoalSegmentBlockIndexes =
+    currentStage?.goalTranslations[appLanguage]?.segmentBlockIndexes ??
+    currentStage?.goalSegments.map((_, index) => index) ??
+    [];
 
   useEffect(() => {
     function syncFromStoredSettings() {
       const nextSettings = readStoredSettingsSnapshot();
+      setAppLanguage(nextSettings.appLanguage);
       setSession(
         createDemoSentenceSession({
+          appLanguage: nextSettings.appLanguage,
           learningLanguage: nextSettings.learningLanguage,
           learningLevel: nextSettings.learningLevel,
           randomizeChoices: true,
@@ -373,9 +385,9 @@ export default function SentenceClient(props: SentenceClientProps) {
                 >
                   목표 문장:{' '}
                   {renderGoalSegments({
-                    currentSegments: currentStage.goalSegments,
-                    assembledCount: session.assembledBlocks.length,
-                    previousSegments: previousStage?.goalSegments
+                    currentSegments: localizedGoalSegments,
+                    segmentBlockIndexes: localizedGoalSegmentBlockIndexes,
+                    assembledCount: session.assembledBlocks.length
                   })}
                 </p>
               </div>

@@ -62,13 +62,15 @@ describe('domain schemas', () => {
     expect(
       userSettingsSchema.parse({
         userId: 'user-1',
-        appLanguage: 'ko',
-        learningLanguage: 'en',
+        appLanguage: 'de',
+        learningLanguage: 'zh',
+        learningLevel: 'cefr_a1',
+        sessionQuestionCount: 5,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-25T00:00:00.000Z'
       }).appLanguage
-    ).toBe('ko');
+    ).toBe('de');
 
     expect(
       learningResultPostSchema.parse({
@@ -110,6 +112,8 @@ describe('domain schemas', () => {
         userId: 'user-1',
         appLanguage: 'jp',
         learningLanguage: 'en',
+        learningLevel: 'cefr_a1',
+        sessionQuestionCount: 5,
         notificationsEnabled: true,
         premiumEnabled: false,
         updatedAt: '2026-03-25T00:00:00.000Z'

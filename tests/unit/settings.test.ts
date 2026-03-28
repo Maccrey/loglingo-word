@@ -50,4 +50,46 @@ describe('settings domain', () => {
     expect(updated.premiumEnabled).toBe(false);
     expect(updated.updatedAt).toBe('2026-03-26T00:00:00.000Z');
   });
+
+  it('switches to language-specific level systems', () => {
+    const initial = createDefaultSettings({
+      userId: 'user-1',
+      learningLanguage: 'en',
+      updatedAt: '2026-03-25T00:00:00.000Z'
+    });
+
+    const japanese = updateSettings(
+      initial,
+      {
+        learningLanguage: 'ja'
+      },
+      '2026-03-26T00:00:00.000Z'
+    );
+    const german = updateSettings(
+      japanese,
+      {
+        learningLanguage: 'de'
+      },
+      '2026-03-27T00:00:00.000Z'
+    );
+    const korean = updateSettings(
+      german,
+      {
+        learningLanguage: 'ko'
+      },
+      '2026-03-28T00:00:00.000Z'
+    );
+    const chinese = updateSettings(
+      korean,
+      {
+        learningLanguage: 'zh'
+      },
+      '2026-03-29T00:00:00.000Z'
+    );
+
+    expect(japanese.learningLevel).toBe('jlpt_n5');
+    expect(german.learningLevel).toBe('cefr_a1');
+    expect(korean.learningLevel).toBe('topik_1');
+    expect(chinese.learningLevel).toBe('hsk_1');
+  });
 });

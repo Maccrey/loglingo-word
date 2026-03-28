@@ -30,6 +30,22 @@ describe('sentence builder ui', () => {
     );
   }
 
+  function setEnglishA1() {
+    window.localStorage.setItem(
+      'mock_user_settings',
+      JSON.stringify({
+        userId: 'demo-user',
+        appLanguage: 'ko',
+        learningLanguage: 'en',
+        learningLevel: 'cefr_a1',
+        sessionQuestionCount: 5,
+        notificationsEnabled: true,
+        premiumEnabled: false,
+        updatedAt: '2026-03-26T00:00:00.000Z'
+      })
+    );
+  }
+
   it('loads the jlpt n5 block-order game from stored settings', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
     setJapaneseN5();
@@ -81,9 +97,7 @@ describe('sentence builder ui', () => {
     expect(screen.getByRole('button', { name: '行きたいです。' })).toBeTruthy();
     await user.click(screen.getByRole('button', { name: '行きます。' }));
 
-    expect(screen.getByRole('alert').textContent).toContain(
-      '1단계 문장을 완성했습니다.'
-    );
+    expect(screen.getByRole('alert').textContent).toContain('현재 문장을 완성했습니다.');
     expect(screen.getByText('기본 문장 완성. 다음은 장소입니다.')).toBeTruthy();
     expect(screen.getByText('私は')).toBeTruthy();
     expect(screen.getByText('行きます。')).toBeTruthy();
@@ -98,5 +112,24 @@ describe('sentence builder ui', () => {
       ).toBeTruthy();
     });
     expect(screen.getByRole('button', { name: '私は' })).toBeTruthy();
+  });
+
+  it('shows english sentence assembly content when settings use english', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    setEnglishA1();
+
+    render(<SentenceClient />);
+
+    expect(await screen.findByText('Go Practice 001')).toBeTruthy();
+    expect(
+      screen.getByText((_, element) =>
+        element?.textContent === '목표 문장: 나는 간다.'
+      )
+    ).toBeTruthy();
+    expect(screen.queryByText('조립 순서:')).toBeNull();
+    expect(screen.getByText('주어와 동사부터 고르세요.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'I' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'to school' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'come.' })).toBeTruthy();
   });
 });

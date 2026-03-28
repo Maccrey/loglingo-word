@@ -1,0 +1,49 @@
+## German Data Guide
+
+Use this folder for German learning datasets.
+
+### Supported Levels
+
+- `cefr_a1`
+- `cefr_a2`
+- `cefr_b1`
+- `cefr_b2`
+- `cefr_c1`
+- `cefr_c2`
+
+### Files To Create Per Level
+
+- Curriculum: `cefr-a1.json`
+- Sentence assembly: `cefr-a1-sentence-expansion.json`
+
+Repeat the same pattern for every CEFR level.
+
+Target output for every German level:
+
+- `200` sentence assembly exercises per level
+- Sentences built primarily from that level's German curriculum words
+
+### Authoring Rules
+
+- `language` must always be `"de"`.
+- `standardLevel` must match the file level such as `"cefr_a1"`.
+- Source authoring must stay in German. Do not author English, Korean, Japanese, or Chinese sentence variants as the source data.
+- `goal`, `goalSegments`, and `correctBlocks` must follow natural German word order.
+- Pay close attention to verb position, capitalization, and article choice.
+- `selectionAdvice`, `completionAdvice`, and distractor `advice` should be written in German.
+- Use level vocabulary from the matching CEFR curriculum file as the base for sentence blocks.
+- Articles, separable verbs, inflection, and function words may be added when needed, but core content words should stay inside the same CEFR level.
+- App-language translations and highlight structures are generated artifacts, not the authoring target.
+- When German is added as a learning language, extend the shared `_meta/sentence-translation-config.json` data instead of adding a German-only formatter.
+
+### Curriculum Notes
+
+- Include useful distractors for article, case, and verb-position mistakes.
+- Writing metadata should support exact spelling, including umlauts where required.
+
+### Sentence Assembly Notes
+
+- Make sentence stages reflect real German syntax growth.
+- Do not flatten German structure into English order if the exercise is meant to teach German.
+- Translation text should be natural in the app language and separate from the German answer order.
+- Do not manually maintain per-app-language sentence structures in this file. The generator should derive them from the German source blocks.
