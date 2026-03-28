@@ -474,7 +474,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
     try {
       if (auth.isAuthenticated) {
         await auth.signOut();
-        setAuthMessage(locale === 'en' ? 'Signed out.' : '로그아웃되었습니다.');
+        window.location.href = locale === 'en' ? '/?locale=en' : '/';
         return;
       }
 

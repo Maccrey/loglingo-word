@@ -129,6 +129,7 @@ export default function SettingsClient(props: SettingsClientProps) {
   >([]);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const auth = useAppAuth();
   const entitlements: UserEntitlement =
     resolveEntitlementsForProducts(purchasedProductIds);
@@ -206,8 +207,9 @@ export default function SettingsClient(props: SettingsClientProps) {
   async function startGoogleLogin() {
     try {
       if (auth.isAuthenticated) {
+        setIsLoggingOut(true);
         await auth.signOut();
-        setAuthMessage(locale === 'en' ? 'Signed out.' : '로그아웃되었습니다.');
+        window.location.href = locale === 'en' ? '/?locale=en' : '/';
         return;
       }
 
@@ -226,6 +228,7 @@ export default function SettingsClient(props: SettingsClientProps) {
         `${t(locale, 'settings.google_login_success')} ${displayName}`
       );
     } catch (error) {
+      setIsLoggingOut(false);
       const message =
         error instanceof Error && error.message
           ? error.message
@@ -235,8 +238,8 @@ export default function SettingsClient(props: SettingsClientProps) {
   }
 
   return (
-    <main style={surfaceStyle}>
-      {auth.isGuest ? (
+      <main style={surfaceStyle}>
+      {auth.isGuest && !isLoggingOut ? (
         <AuthRequiredModal
           locale={locale}
           onLogin={() => void startGoogleLogin()}

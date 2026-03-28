@@ -299,7 +299,6 @@ describe('home dashboard', () => {
     await user.click(screen.getByRole('button', { name: '로그아웃' }));
 
     expect(signOutMock).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('status').textContent).toContain('로그아웃되었습니다.');
   });
 
   it('renders the cat card and quick start panel in the same feature row', () => {
