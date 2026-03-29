@@ -1,0 +1,627 @@
+[
+  {
+    "id": "hsk-1-people",
+    "language": "zh",
+    "standardLevel": "hsk_1",
+    "level": 1,
+    "order": 1,
+    "title": "基础人物",
+    "words": [
+      {
+        "id": "wo",
+        "term": "我",
+        "reading": "wǒ",
+        "meaning": "나",
+        "example": "我是学生。",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": [
+            "你",
+            "我们",
+            "老师"
+          ]
+        },
+        "writing": {
+          "prompt": "나에 맞는 중국어를 쓰세요.",
+          "answer": "我",
+          "accepted": [
+            "我"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ni",
+        "term": "你",
+        "reading": "nǐ",
+        "meaning": "너",
+        "example": "你是老师吗？",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": [
+            "我",
+            "我们",
+            "学生"
+          ]
+        },
+        "writing": {
+          "prompt": "너에 맞는 중국어를 쓰세요.",
+          "answer": "你",
+          "accepted": [
+            "你"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "women",
+        "term": "我们",
+        "reading": "wǒmen",
+        "meaning": "우리",
+        "example": "我们去学校。",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": [
+            "我",
+            "你",
+            "老师"
+          ]
+        },
+        "writing": {
+          "prompt": "우리에 맞는 중국어를 쓰세요.",
+          "answer": "我们",
+          "accepted": [
+            "我们"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "laoshi",
+        "term": "老师",
+        "reading": "lǎoshī",
+        "meaning": "선생님",
+        "example": "老师喝茶。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "学生",
+            "朋友",
+            "妈妈"
+          ]
+        },
+        "writing": {
+          "prompt": "선생님에 맞는 중국어를 쓰세요.",
+          "answer": "老师",
+          "accepted": [
+            "老师"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "xuesheng",
+        "term": "学生",
+        "reading": "xuéshēng",
+        "meaning": "학생",
+        "example": "学生读书。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "老师",
+            "朋友",
+            "爸爸"
+          ]
+        },
+        "writing": {
+          "prompt": "학생에 맞는 중국어를 쓰세요.",
+          "answer": "学生",
+          "accepted": [
+            "学生"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "hsk-1-time",
+    "language": "zh",
+    "standardLevel": "hsk_1",
+    "level": 1,
+    "order": 2,
+    "title": "基础时间",
+    "words": [
+      {
+        "id": "jintian",
+        "term": "今天",
+        "reading": "jīntiān",
+        "meaning": "오늘",
+        "example": "今天我去学校。",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "明天",
+            "晚上",
+            "每天"
+          ]
+        },
+        "writing": {
+          "prompt": "오늘에 맞는 중국어를 쓰세요.",
+          "answer": "今天",
+          "accepted": [
+            "今天"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "mingtian",
+        "term": "明天",
+        "reading": "míngtiān",
+        "meaning": "내일",
+        "example": "明天他来。",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "今天",
+            "早上",
+            "每天"
+          ]
+        },
+        "writing": {
+          "prompt": "내일에 맞는 중국어를 쓰세요.",
+          "answer": "明天",
+          "accepted": [
+            "明天"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "meitian",
+        "term": "每天",
+        "reading": "měitiān",
+        "meaning": "매일",
+        "example": "我们每天学习。",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "今天",
+            "明天",
+            "晚上"
+          ]
+        },
+        "writing": {
+          "prompt": "매일에 맞는 중국어를 쓰세요.",
+          "answer": "每天",
+          "accepted": [
+            "每天"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "zaoshang",
+        "term": "早上",
+        "reading": "zǎoshang",
+        "meaning": "아침",
+        "example": "早上我喝水。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "晚上",
+            "今天",
+            "明天"
+          ]
+        },
+        "writing": {
+          "prompt": "아침에 맞는 중국어를 쓰세요.",
+          "answer": "早上",
+          "accepted": [
+            "早上"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "wanshang",
+        "term": "晚上",
+        "reading": "wǎnshang",
+        "meaning": "밤",
+        "example": "晚上他回家。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "早上",
+            "今天",
+            "明天"
+          ]
+        },
+        "writing": {
+          "prompt": "밤에 맞는 중국어를 쓰세요.",
+          "answer": "晚上",
+          "accepted": [
+            "晚上"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "hsk-1-places",
+    "language": "zh",
+    "standardLevel": "hsk_1",
+    "level": 1,
+    "order": 3,
+    "title": "基础地点",
+    "words": [
+      {
+        "id": "xuexiao",
+        "term": "学校",
+        "reading": "xuéxiào",
+        "meaning": "학교",
+        "example": "我去学校。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "家",
+            "商店",
+            "饭店"
+          ]
+        },
+        "writing": {
+          "prompt": "학교에 맞는 중국어를 쓰세요.",
+          "answer": "学校",
+          "accepted": [
+            "学校"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "jia",
+        "term": "家",
+        "reading": "jiā",
+        "meaning": "집",
+        "example": "老师回家。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "学校",
+            "商店",
+            "饭店"
+          ]
+        },
+        "writing": {
+          "prompt": "집에 맞는 중국어를 쓰세요.",
+          "answer": "家",
+          "accepted": [
+            "家"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "shangdian",
+        "term": "商店",
+        "reading": "shāngdiàn",
+        "meaning": "가게",
+        "example": "你去商店吗？",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "学校",
+            "家",
+            "饭店"
+          ]
+        },
+        "writing": {
+          "prompt": "가게에 맞는 중국어를 쓰세요.",
+          "answer": "商店",
+          "accepted": [
+            "商店"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "chezhan",
+        "term": "车站",
+        "reading": "chēzhàn",
+        "meaning": "역",
+        "example": "我们去车站。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "学校",
+            "家",
+            "商店"
+          ]
+        },
+        "writing": {
+          "prompt": "역에 맞는 중국어를 쓰세요.",
+          "answer": "车站",
+          "accepted": [
+            "车站"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "hsk-1-actions",
+    "language": "zh",
+    "standardLevel": "hsk_1",
+    "level": 1,
+    "order": 4,
+    "title": "基础动作",
+    "words": [
+      {
+        "id": "qu",
+        "term": "去",
+        "reading": "qù",
+        "meaning": "가다",
+        "example": "我去学校。",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "来",
+            "喝",
+            "吃"
+          ]
+        },
+        "writing": {
+          "prompt": "가다에 맞는 중국어를 쓰세요.",
+          "answer": "去",
+          "accepted": [
+            "去"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "xiang",
+        "term": "想",
+        "reading": "xiǎng",
+        "meaning": "원하다",
+        "example": "我想喝茶。",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "去",
+            "吃",
+            "写"
+          ]
+        },
+        "writing": {
+          "prompt": "원하다에 맞는 중국어를 쓰세요.",
+          "answer": "想",
+          "accepted": [
+            "想"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "he",
+        "term": "喝",
+        "reading": "hē",
+        "meaning": "마시다",
+        "example": "你喝水吗？",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "吃",
+            "读",
+            "写"
+          ]
+        },
+        "writing": {
+          "prompt": "마시다에 맞는 중국어를 쓰세요.",
+          "answer": "喝",
+          "accepted": [
+            "喝"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "chi",
+        "term": "吃",
+        "reading": "chī",
+        "meaning": "먹다",
+        "example": "他吃米饭。",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "喝",
+            "读",
+            "写"
+          ]
+        },
+        "writing": {
+          "prompt": "먹다에 맞는 중국어를 쓰세요.",
+          "answer": "吃",
+          "accepted": [
+            "吃"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "du",
+        "term": "读",
+        "reading": "dú",
+        "meaning": "읽다",
+        "example": "学生读书。",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "写",
+            "吃",
+            "喝"
+          ]
+        },
+        "writing": {
+          "prompt": "읽다에 맞는 중국어를 쓰세요.",
+          "answer": "读",
+          "accepted": [
+            "读"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "xie",
+        "term": "写",
+        "reading": "xiě",
+        "meaning": "쓰다",
+        "example": "我写名字。",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "读",
+            "吃",
+            "喝"
+          ]
+        },
+        "writing": {
+          "prompt": "쓰다에 맞는 중국어를 쓰세요.",
+          "answer": "写",
+          "accepted": [
+            "写"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "hsk-1-objects",
+    "language": "zh",
+    "standardLevel": "hsk_1",
+    "level": 1,
+    "order": 5,
+    "title": "基础对象",
+    "words": [
+      {
+        "id": "shui",
+        "term": "水",
+        "reading": "shuǐ",
+        "meaning": "물",
+        "example": "我喝水。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "茶",
+            "米饭",
+            "书"
+          ]
+        },
+        "writing": {
+          "prompt": "물에 맞는 중국어를 쓰세요.",
+          "answer": "水",
+          "accepted": [
+            "水"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "cha",
+        "term": "茶",
+        "reading": "chá",
+        "meaning": "차",
+        "example": "老师喝茶。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "水",
+            "米饭",
+            "名字"
+          ]
+        },
+        "writing": {
+          "prompt": "차에 맞는 중국어를 쓰세요.",
+          "answer": "茶",
+          "accepted": [
+            "茶"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "mifan",
+        "term": "米饭",
+        "reading": "mǐfàn",
+        "meaning": "밥",
+        "example": "他吃米饭。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "面包",
+            "书",
+            "茶"
+          ]
+        },
+        "writing": {
+          "prompt": "밥에 맞는 중국어를 쓰세요.",
+          "answer": "米饭",
+          "accepted": [
+            "米饭"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "shu",
+        "term": "书",
+        "reading": "书",
+        "meaning": "책",
+        "example": "学生读书。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "水",
+            "茶",
+            "米饭"
+          ]
+        },
+        "writing": {
+          "prompt": "책에 맞는 중국어를 쓰세요.",
+          "answer": "书",
+          "accepted": [
+            "书"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "mingzi",
+        "term": "名字",
+        "reading": "míngzi",
+        "meaning": "이름",
+        "example": "我写名字。",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "书",
+            "茶",
+            "水"
+          ]
+        },
+        "writing": {
+          "prompt": "이름에 맞는 중국어를 쓰세요.",
+          "answer": "名字",
+          "accepted": [
+            "名字"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  }
+]

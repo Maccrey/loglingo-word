@@ -164,6 +164,53 @@
         "쓰고 싶어요.": "want_to_write",
         "쓰고 싶어요": "want_to_write"
       }
+    },
+    "zh": {
+      "subject": {
+        "我": "i",
+        "你": "you",
+        "我们": "we",
+        "我的朋友": "my_friend",
+        "老师": "teacher",
+        "学生": "student"
+      },
+      "time": {
+        "今天": "today",
+        "明天": "tomorrow",
+        "昨天": "yesterday",
+        "每天": "every_day",
+        "早上": "in_the_morning",
+        "晚上": "at_night"
+      },
+      "place": {
+        "学校": "school",
+        "家": "home",
+        "商店": "store",
+        "车站": "station"
+      },
+      "object": {
+        "水": "water",
+        "茶": "tea",
+        "米饭": "rice",
+        "书": "book",
+        "名字": "my_name"
+      },
+      "predicate": {
+        "去": "go",
+        "来": "come",
+        "喝": "drink",
+        "吃": "eat",
+        "读": "read",
+        "写": "write",
+        "买": "buy",
+        "想去": "want_to_go",
+        "想来": "want_to_come",
+        "想喝": "want_to_drink",
+        "想吃": "want_to_eat",
+        "想读": "want_to_read",
+        "想写": "want_to_write",
+        "想买": "want_to_buy"
+      }
     }
   },
   "targetSentencePatterns": {

@@ -34,7 +34,9 @@ function detectStructuredParts(sourceLanguage, blocks) {
   for (let index = 0; index < blocks.length; index += 1) {
     const text = blocks[index].text;
     let matched = null;
-    const candidates = text.endsWith('.') ? [text, text.slice(0, -1)] : [text];
+    const normalizedText = text.replace(/[.!?。！？]$/, '');
+    const candidates =
+      normalizedText !== text ? [text, normalizedText] : [text];
 
     for (const role of ['subject', 'time', 'place', 'object', 'predicate']) {
       for (const candidate of candidates) {
@@ -215,7 +217,8 @@ async function updateFile(relativePath, sourceLanguage) {
 const sentenceExpansionFiles = [
   { path: 'en/cefr-a1-sentence-expansion.json', sourceLanguage: 'en' },
   { path: 'ja/jlpt-n5-sentence-expansion.json', sourceLanguage: 'ja' },
-  { path: 'ko/topik-1-sentence-expansion.json', sourceLanguage: 'ko' }
+  { path: 'ko/topik-1-sentence-expansion.json', sourceLanguage: 'ko' },
+  { path: 'zh/hsk-1-sentence-expansion.json', sourceLanguage: 'zh' }
 ];
 
 for (const entry of sentenceExpansionFiles) {

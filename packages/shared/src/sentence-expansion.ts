@@ -2,6 +2,7 @@ import { z } from 'zod';
 import cefrA1SentenceAssemblySeed from './data/en/cefr-a1-sentence-expansion.json';
 import jlptN5SentenceAssemblySeed from './data/ja/jlpt-n5-sentence-expansion.json';
 import topik1SentenceAssemblySeed from './data/ko/topik-1-sentence-expansion.json';
+import hsk1SentenceAssemblySeed from './data/zh/hsk-1-sentence-expansion.json';
 import {
   getDefaultLearningLevel,
   supportedLearningLanguages,
@@ -75,6 +76,11 @@ const sentenceAssemblySeedEntries = [
     language: 'ko',
     level: 'topik_1',
     seed: topik1SentenceAssemblySeed
+  },
+  {
+    language: 'zh',
+    level: 'hsk_1',
+    seed: hsk1SentenceAssemblySeed
   }
 ] as const;
 
@@ -118,6 +124,9 @@ export const jlptN5SentenceAssemblyExercises: SentenceAssemblyExercise[] =
 
 export const topik1SentenceAssemblyExercises: SentenceAssemblyExercise[] =
   sentenceAssemblyExercisesByLanguageLevel.get('ko:topik_1') ?? [];
+
+export const hsk1SentenceAssemblyExercises: SentenceAssemblyExercise[] =
+  sentenceAssemblyExercisesByLanguageLevel.get('zh:hsk_1') ?? [];
 
 export function getSentenceAssemblyExercisePool(input?: {
   language?: SupportedLearningLanguage;

@@ -27,14 +27,19 @@ describe('curriculum', () => {
       'topik-1-people',
       'topik-1-time-place',
       'topik-1-food',
-      'topik-1-actions'
+      'topik-1-actions',
+      'hsk-1-people',
+      'hsk-1-time',
+      'hsk-1-places',
+      'hsk-1-actions',
+      'hsk-1-objects'
     ]);
   });
 
   it('filters curriculum units by level', () => {
     const levelOneUnits = getCurriculumByLevel(1);
 
-    expect(levelOneUnits).toHaveLength(15);
+    expect(levelOneUnits).toHaveLength(20);
     expect(levelOneUnits.every((unit) => unit.level === 1)).toBe(true);
   });
 
@@ -84,5 +89,19 @@ describe('curriculum', () => {
     ]);
     expect(koreanStarter[0]?.words[0]?.reading).toBe('annyeonghaseyo');
     expect(koreanStarter[0]?.words[0]?.writing?.answer).toBe('안녕하세요');
+  });
+
+  it('returns imported chinese hsk 1 units', () => {
+    const chineseStarter = getCurriculumByStandardLevel('zh', 'hsk_1');
+
+    expect(chineseStarter.map((unit) => unit.id)).toEqual([
+      'hsk-1-people',
+      'hsk-1-time',
+      'hsk-1-places',
+      'hsk-1-actions',
+      'hsk-1-objects'
+    ]);
+    expect(chineseStarter[0]?.words[0]?.reading).toBe('wǒ');
+    expect(chineseStarter[0]?.words[0]?.writing?.answer).toBe('我');
   });
 });
