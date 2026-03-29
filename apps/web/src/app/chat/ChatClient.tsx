@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CollapsiblePageHeader } from '../../components/CollapsiblePageHeader';
 
 import type { AIChatMessage } from '@wordflow/ai/chat';
@@ -49,11 +49,21 @@ const badgeStyle: Record<string, string | number> = {
   fontWeight: 600
 };
 
+const panelBadgeStyle: Record<string, string | number> = {
+  ...badgeStyle,
+  height: 32,
+  alignItems: 'center'
+};
+
 type ChatClientProps = {
   locale?: AppLocale;
 };
 
-function labelForRole(locale: AppLocale, role: AIChatMessage['role']): string {
+function labelForRole(
+  locale: AppLocale,
+  role: AIChatMessage['role'],
+  userDisplayName?: string | null
+): string {
   if (role === 'assistant') {
     return t(locale, 'chat.role.assistant');
   }
@@ -62,7 +72,7 @@ function labelForRole(locale: AppLocale, role: AIChatMessage['role']): string {
     return t(locale, 'chat.role.correction');
   }
 
-  return t(locale, 'chat.role.user');
+  return userDisplayName?.trim() || t(locale, 'chat.role.user');
 }
 
 export default function ChatClient(props: ChatClientProps) {
@@ -72,10 +82,56 @@ export default function ChatClient(props: ChatClientProps) {
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const conversationScrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
 
   const latestCorrection =
     [...messages].reverse().find((message) => message.role === 'correction') ??
     null;
+  const conversationMessages = messages.filter(
+    (message) => message.role !== 'correction'
+  );
+
+  useEffect(() => {
+    const container = conversationScrollRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, [conversationMessages, loading]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  function handleConversationScroll() {
+    if (scrollTimeoutRef.current !== null) {
+      window.clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      const container = conversationScrollRef.current;
+
+      if (!container) {
+        return;
+      }
+
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+      scrollTimeoutRef.current = null;
+    }, 1000);
+  }
 
   async function submitMessage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -128,6 +184,20 @@ export default function ChatClient(props: ChatClientProps) {
     }
   }
 
+  function handleDraftKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== 'Enter' || event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (!draft.trim() || loading) {
+      return;
+    }
+
+    event.currentTarget.form?.requestSubmit();
+  }
+
   return (
     <main style={surfaceStyle}>
       {auth.isGuest ? (
@@ -156,134 +226,242 @@ export default function ChatClient(props: ChatClientProps) {
           </div>
         </CollapsiblePageHeader>
 
-        <section
-          data-testid="chat-conversation-panel"
-          style={{ ...panelStyle, display: 'grid', gap: 16 }}
+        <div
+          style={{
+            display: 'grid',
+            gap: 20,
+            alignItems: 'stretch',
+            gridTemplateColumns: 'minmax(0, 1.7fr) minmax(280px, 1fr)'
+          }}
         >
-          <div style={badgeStyle}>{t(locale, 'chat.conversation')}</div>
-          <div style={{ display: 'grid', gap: 12 }}>
-            {messages.length === 0 ? (
-              <p style={{ margin: 0, color: 'var(--text-faded)' }}>
-                {t(locale, 'chat.empty')}
-              </p>
-            ) : (
-              messages.map((message, index) => (
-                <article
-                  key={`${message.role}-${index}-${message.createdAt}`}
-                  style={{
-                    borderRadius: 16,
-                    padding: '14px 16px',
-                    border: '1px solid var(--border-pencil)',
-                    boxShadow: '0 2px 4px rgba(44,42,37,0.03)',
-                    background:
-                      message.role === 'user'
-                        ? 'var(--accent-blue)'
-                        : message.role === 'assistant'
-                          ? 'var(--accent-yellow)'
-                          : 'var(--accent-green)'
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      color: 'var(--text-faded)',
-                      marginBottom: 8
-                    }}
-                  >
-                    {labelForRole(locale, message.role)}
-                  </div>
-                  <p style={{ margin: 0, lineHeight: 1.6 }}>
-                    {message.message}
-                  </p>
-                </article>
-              ))
-            )}
-          </div>
-
-          <form onSubmit={submitMessage} style={{ display: 'grid', gap: 12 }}>
-            <label style={{ display: 'grid', gap: 8 }}>
-              <span>{t(locale, 'chat.input_label')}</span>
-              <textarea
-                aria-label={t(locale, 'chat.input_label')}
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder={t(locale, 'chat.placeholder')}
-                rows={4}
-                style={{
-                  borderRadius: 16,
-                  border: '1px solid var(--border-pencil)',
-                  padding: '14px 16px',
-                  background: 'transparent',
-                  color: 'var(--text-ink)',
-                  resize: 'vertical',
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-                }}
-              />
-            </label>
-            <button
-              type="submit"
-              aria-label={t(locale, 'chat.send')}
-              disabled={loading}
+          <section
+            data-testid="chat-conversation-panel"
+            style={{ ...panelStyle, display: 'flex', flexDirection: 'column', gap: 16, minHeight: '72vh' }}
+          >
+            <div style={panelBadgeStyle}>{t(locale, 'chat.conversation')}</div>
+            <div
+              ref={conversationScrollRef}
+              onScroll={handleConversationScroll}
               style={{
-                width: 'fit-content',
-                border: '1px solid var(--btn-primary-border)',
-                borderRadius: 999,
-                padding: '12px 24px',
-                fontSize: 16,
-                fontWeight: 700,
-                background: loading
-                  ? 'var(--btn-disabled-bg)'
-                  : 'var(--btn-primary-bg)',
-                color: loading ? 'var(--btn-disabled-color)' : '#fff',
-                cursor: loading ? 'wait' : 'pointer',
-                boxShadow: 'var(--shadow-card)'
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 18,
+                flex: 1,
+                minHeight: 0,
+                overflowY: 'auto',
+                scrollbarGutter: 'stable',
+                boxSizing: 'border-box',
+                paddingLeft: 14,
+                paddingRight: 22
               }}
             >
-              {loading
-                ? t(locale, 'common.status.loading')
-                : t(locale, 'chat.send')}
-            </button>
-          </form>
-
-          {loading ? (
-            <StatusMessage
-              tone="loading"
-              message={t(locale, 'common.status.loading')}
-            />
-          ) : null}
-        </section>
-
-        <section style={{ ...panelStyle, display: 'grid', gap: 12 }}>
-          <div style={badgeStyle}>{t(locale, 'chat.correction')}</div>
-          {latestCorrection ? (
-            <>
-              <div>
-                <h2 style={{ margin: '0 0 8px' }}>
-                  {t(locale, 'chat.corrected')}
-                </h2>
-                <p style={{ margin: 0, lineHeight: 1.6 }}>
-                  {latestCorrection.corrected ?? latestCorrection.message}
+              {conversationMessages.length === 0 ? (
+                <p style={{ margin: 0, color: 'var(--text-faded)' }}>
+                  {t(locale, 'chat.empty')}
                 </p>
-              </div>
-              <div>
-                <h2 style={{ margin: '0 0 8px' }}>
-                  {t(locale, 'chat.feedback')}
-                </h2>
-                <p style={{ margin: 0, lineHeight: 1.6 }}>
-                  {latestCorrection.feedback}
-                </p>
-              </div>
-            </>
-          ) : (
-            <p style={{ margin: 0, color: 'var(--text-faded)' }}>
-              {t(locale, 'chat.correction_empty')}
-            </p>
-          )}
+              ) : (
+                conversationMessages.map((message, index) => {
+                  const isUserMessage = message.role === 'user';
+                  const bubbleBackground =
+                    isUserMessage
+                      ? 'var(--accent-blue)'
+                      : message.role === 'assistant'
+                        ? 'var(--accent-yellow)'
+                        : 'var(--accent-green)';
 
-          {error ? <StatusMessage tone="error" message={error} /> : null}
-        </section>
+                  return (
+                    <div
+                      key={`${message.role}-${index}-${message.createdAt}`}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: isUserMessage ? 'flex-end' : 'flex-start',
+                        paddingBottom: 10
+                      }}
+                    >
+                      <article
+                        style={{
+                          position: 'relative',
+                          width: '70%',
+                          maxWidth: 560,
+                          marginLeft: isUserMessage ? 'auto' : 0,
+                          marginRight: isUserMessage ? 0 : 'auto',
+                          borderRadius: 18,
+                          padding: '10px 16px',
+                          minHeight: 30,
+                          display: 'flex',
+                          alignItems: 'center',
+                          overflow: 'visible',
+                          border: '1px solid var(--border-pencil)',
+                          boxShadow: '0 3px 8px rgba(44,42,37,0.08)',
+                          background: bubbleBackground
+                        }}
+                      >
+                        {/* 말풍선 꼬리 — 카카오톡 스타일: 옆방향 하단 배치 */}
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            position: 'absolute',
+                            /* 사용자(파랑): 오른쪽 밖 하단 / 튜터(노랑): 왼쪽 밖 하단 */
+                            left: isUserMessage ? 'auto' : -12,
+                            right: isUserMessage ? -12 : 'auto',
+                            bottom: 10,
+                            width: 0,
+                            height: 0,
+                            /* 사용자: ▶ (border-left에 색상), 튜터: ◀ (border-right에 색상) */
+                            borderTop: '7px solid transparent',
+                            borderBottom: '7px solid transparent',
+                            borderLeft: isUserMessage
+                              ? `12px solid ${bubbleBackground}`
+                              : 'none',
+                            borderRight: isUserMessage
+                              ? 'none'
+                              : `12px solid ${bubbleBackground}`,
+                            zIndex: 2
+                          }}
+                        />
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            minHeight: 0
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              padding: '2px 6px',
+                              borderRadius: 999,
+                              background: 'rgba(255,255,255,0.35)',
+                              fontSize: 10,
+                              lineHeight: 1,
+                              letterSpacing: '0.08em',
+                              textTransform: 'uppercase',
+                              color: 'var(--text-faded)',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
+                            }}
+                          >
+                            {labelForRole(locale, message.role, auth.displayName)}
+                          </span>
+                          <p
+                            style={{
+                              margin: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              minHeight: 0,
+                              flex: 1,
+                              lineHeight: 1.2,
+                              textAlign: 'left'
+                            }}
+                          >
+                            {message.message}
+                          </p>
+                        </div>
+                      </article>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <form
+              onSubmit={submitMessage}
+              style={{
+                display: 'grid',
+                gap: 12,
+                gridTemplateColumns: 'minmax(0, 1fr) auto',
+                alignItems: 'end',
+                flexShrink: 0
+              }}
+            >
+              <label style={{ display: 'grid', gap: 8 }}>
+                <span>{t(locale, 'chat.input_label')}</span>
+                <textarea
+                  aria-label={t(locale, 'chat.input_label')}
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={handleDraftKeyDown}
+                  placeholder={t(locale, 'chat.placeholder')}
+                  rows={4}
+                  style={{
+                    borderRadius: 16,
+                    border: '1px solid var(--border-pencil)',
+                    padding: '14px 16px',
+                    background: 'transparent',
+                    color: 'var(--text-ink)',
+                    resize: 'vertical',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                  }}
+                />
+              </label>
+              <button
+                type="submit"
+                aria-label="SEND"
+                disabled={loading}
+                style={{
+                  width: 'fit-content',
+                  height: 84,
+                  border: '1px solid var(--btn-primary-border)',
+                  borderRadius: 999,
+                  padding: '12px 24px',
+                  fontSize: 16,
+                  fontWeight: 700,
+                  background: loading
+                    ? 'var(--btn-disabled-bg)'
+                    : 'var(--btn-primary-bg)',
+                  color: loading ? 'var(--btn-disabled-color)' : '#fff',
+                  cursor: loading ? 'wait' : 'pointer',
+                  boxShadow: 'var(--shadow-card)'
+                }}
+              >
+                {loading ? t(locale, 'common.status.loading') : 'SEND'}
+              </button>
+            </form>
+
+          </section>
+
+          <section
+            style={{
+              ...panelStyle,
+              display: 'grid',
+              gap: 12,
+              minHeight: '72vh',
+              alignContent: 'start',
+              overflowY: 'auto'
+            }}
+          >
+            <div style={panelBadgeStyle}>{t(locale, 'chat.correction')}</div>
+            {latestCorrection ? (
+              <>
+                <div>
+                  <h2 style={{ margin: '0 0 8px' }}>
+                    {t(locale, 'chat.corrected')}
+                  </h2>
+                  <p style={{ margin: 0, lineHeight: 1.6 }}>
+                    {latestCorrection.corrected ?? latestCorrection.message}
+                  </p>
+                </div>
+                <div>
+                  <h2 style={{ margin: '0 0 8px' }}>
+                    {t(locale, 'chat.feedback')}
+                  </h2>
+                  <p style={{ margin: 0, lineHeight: 1.6 }}>
+                    {latestCorrection.feedback}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <p style={{ margin: 0, color: 'var(--text-faded)' }}>
+                {t(locale, 'chat.correction_empty')}
+              </p>
+            )}
+
+            {error ? <StatusMessage tone="error" message={error} /> : null}
+          </section>
+        </div>
       </div>
     </main>
   );
