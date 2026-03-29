@@ -19,6 +19,7 @@ export interface Cat {
   activeDays: number;
   // Used for keeping alive without interaction
   resurrectedAt?: number;
+  treatmentRequiredAt?: number;
 }
 
 export interface CatCareAction {

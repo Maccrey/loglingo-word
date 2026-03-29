@@ -39,6 +39,28 @@ export interface EnvThresholds {
 const MS_PER_HOUR = 60 * 60 * 1000;
 const MS_PER_DAY = 24 * MS_PER_HOUR;
 
+export function getLastCareAt(cat: Cat): number {
+  return Math.max(cat.lastFedAt, cat.lastWashedAt, cat.lastPlayedAt);
+}
+
+export function getTreatmentRequiredAt(
+  cat: Cat,
+  currentTime: number,
+  thresholds: EnvThresholds
+): number | undefined {
+  if (cat.treatmentRequiredAt) {
+    return cat.treatmentRequiredAt;
+  }
+
+  const inferredTreatmentRequiredAt = getLastCareAt(cat) + MS_PER_DAY;
+
+  if (currentTime >= inferredTreatmentRequiredAt) {
+    return inferredTreatmentRequiredAt;
+  }
+
+  return undefined;
+}
+
 const DEFAULT_THRESHOLDS: EnvThresholds = {
   CAT_HUNGRY_HOURS: 12,
   CAT_SMELLY_HOURS: 24,
@@ -129,10 +151,19 @@ export function calculateSeverityStatus(cat: Cat, currentTime: number, threshold
   const feedElapsed = currentTime - cat.lastFedAt;
   const washElapsed = currentTime - cat.lastWashedAt;
   const playElapsed = currentTime - cat.lastPlayedAt;
+  const treatmentRequiredAt = getTreatmentRequiredAt(cat, currentTime, thresholds);
   const criticalMs = thresholds.CAT_CRITICAL_HOURS * MS_PER_HOUR;
 
   if (feedElapsed >= thresholds.CAT_DEATH_AFTER_NO_FEED_DAYS * MS_PER_DAY) {
     return 'dead';
+  }
+
+  if (treatmentRequiredAt) {
+    if ((currentTime - treatmentRequiredAt) >= thresholds.CAT_DEAD_DAYS * MS_PER_DAY) {
+      return 'dead';
+    }
+
+    return 'sick';
   }
 
   if (

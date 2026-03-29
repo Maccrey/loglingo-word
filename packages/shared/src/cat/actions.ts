@@ -75,6 +75,7 @@ export function giveMedicine(cat: Cat, currentPoints: number, currentTime: numbe
       lastWashedAt: currentTime,
       lastPlayedAt: currentTime,
       updatedAt: currentTime,
+      treatmentRequiredAt: undefined
     },
   };
 }
@@ -98,6 +99,7 @@ export function giveInjection(cat: Cat, currentPoints: number, currentTime: numb
       lastWashedAt: currentTime,
       lastPlayedAt: currentTime,
       updatedAt: currentTime,
+      treatmentRequiredAt: undefined
     },
   };
 }

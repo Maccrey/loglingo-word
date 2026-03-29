@@ -111,6 +111,16 @@ describe('Cat Status Transition Engine', () => {
       const cat = createMockCat(169, 10, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('dead');
     });
+
+    it('should require healing after a full day without any visit', () => {
+      const cat = createMockCat(25, 25, 25);
+      expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
+    });
+
+    it('should die when a sick cat is left untreated for three more days', () => {
+      const cat = createMockCat(96, 96, 96);
+      expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('dead');
+    });
     
     it('should trigger severity from the specific neglected care dimension', () => {
       // Feed and wash are ok, but play neglect alone should trigger sickness.

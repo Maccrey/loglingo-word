@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { buildCatStateSnapshot, getCatThresholds, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
+import { buildCatStateSnapshot, getCatThresholds, type Cat, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
 import { useCat } from '../lib/useCat';
 import { getCatImagePath } from '../lib/catImage';
 
@@ -65,10 +65,45 @@ function getRequiredCare(status: CatStatus) {
   }
 }
 
+function isSameLocalDay(left: number, right: number): boolean {
+  const leftDate = new Date(left);
+  const rightDate = new Date(right);
+
+  return (
+    leftDate.getFullYear() === rightDate.getFullYear() &&
+    leftDate.getMonth() === rightDate.getMonth() &&
+    leftDate.getDate() === rightDate.getDate()
+  );
+}
+
+function getDailyCareChecklist(cat: Cat, now: number) {
+  return [
+    { action: 'feed', label: '밥주기', done: isSameLocalDay(cat.lastFedAt, now) },
+    { action: 'wash', label: '씻기기', done: isSameLocalDay(cat.lastWashedAt, now) },
+    { action: 'play', label: '놀아주기', done: isSameLocalDay(cat.lastPlayedAt, now) }
+  ] as const;
+}
+
 function getRecommendedCareAction(
+  cat: Cat,
   status: CatStatus,
+  now: number,
   isStressWarning: boolean
 ): keyof typeof careActionCosts {
+  const missingDailyCare = getDailyCareChecklist(cat, now).find((item) => !item.done);
+
+  if (status === 'dead') {
+    return 'feed';
+  }
+
+  if (status === 'sick' || status === 'critical') {
+    return 'heal';
+  }
+
+  if (missingDailyCare) {
+    return missingDailyCare.action;
+  }
+
   if (isStressWarning) {
     return 'play';
   }
@@ -89,7 +124,16 @@ function getRecommendedCareAction(
 }
 
 export default function CatCard() {
-  const { cat, points, currentStatus, handleFeed, handleWash, handlePlay, handleHeal } = useCat();
+  const {
+    cat,
+    points,
+    currentStatus,
+    handleFeed,
+    handleWash,
+    handlePlay,
+    handleHeal,
+    resetCat
+  } = useCat();
   const [mounted, setMounted] = useState(false);
   const [actionOverlay, setActionOverlay] = useState<string | null>(null);
   const [displayImagePath, setDisplayImagePath] = useState('/images/cats/kitten-base.png');
@@ -162,10 +206,15 @@ export default function CatCard() {
   };
 
   const thresholds = getCatThresholds(MOCK_ENV);
-  const snapshot = buildCatStateSnapshot(cat, Date.now(), thresholds);
+  const now = Date.now();
+  const snapshot = buildCatStateSnapshot(cat, now, thresholds);
+  const dailyCareChecklist = getDailyCareChecklist(cat, now);
+  const missingDailyCare = dailyCareChecklist.find((item) => !item.done);
   const requiredCare = getRequiredCare(snapshot.status);
   const recommendedCareAction = getRecommendedCareAction(
+    cat,
     snapshot.status,
+    now,
     snapshot.isStressWarning
   );
   const missingPoints = Math.max(0, requiredCare.cost - points);
@@ -232,22 +281,66 @@ export default function CatCard() {
       </div>
 
       <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--text-faded)', lineHeight: 1.5 }}>
-        {snapshot.isStressWarning
-          ? '지금 필요한 돌봄: 15시간 전에 놀아주기'
-          : `지금 필요한 돌봄: ${requiredCare.label}`}
+        {snapshot.status === 'dead'
+          ? '지금 필요한 돌봄: 고양이 다시 키우기'
+          : snapshot.status === 'sick' || snapshot.status === 'critical'
+            ? '지금 필요한 돌봄: 치료하기'
+            : missingDailyCare
+              ? `지금 필요한 돌봄: 오늘 ${missingDailyCare.label}`
+              : `지금 필요한 돌봄: ${requiredCare.label}`}
       </p>
+
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+        {dailyCareChecklist.map((item) => (
+          <span
+            key={item.action}
+            style={{
+              borderRadius: 999,
+              padding: '6px 10px',
+              background: item.done ? 'rgba(76, 175, 80, 0.16)' : 'rgba(255, 152, 0, 0.14)',
+              border: item.done ? '1px solid rgba(76, 175, 80, 0.4)' : '1px solid rgba(255, 152, 0, 0.35)',
+              color: 'var(--text-ink)',
+              fontSize: 13,
+              fontWeight: 600
+            }}
+          >
+            {item.done ? `오늘 완료: ${item.label}` : `오늘 필요: ${item.label}`}
+          </span>
+        ))}
+      </div>
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-        <button onClick={() => handleAction(handleFeed, 'feed')} style={btnStyle(careActionPalette.feed, recommendedCareAction === 'feed')}>🐟 밥주기 (100pt)</button>
-        <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle(careActionPalette.play, recommendedCareAction === 'play')}>🧶 놀아주기 (200pt)</button>
-        <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle(careActionPalette.wash, recommendedCareAction === 'wash')}>🛁 씻기기 (150pt)</button>
-        {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
+        {snapshot.status === 'dead' ? (
+          <button onClick={resetCat} style={btnStyle(careActionPalette.heal, true)}>🐣 고양이 다시 키우기</button>
+        ) : (
+          <>
+            <button onClick={() => handleAction(handleFeed, 'feed')} style={btnStyle(careActionPalette.feed, recommendedCareAction === 'feed')}>🐟 밥주기 (100pt)</button>
+            <button onClick={() => handleAction(handlePlay, 'play')} style={btnStyle(careActionPalette.play, recommendedCareAction === 'play')}>🧶 놀아주기 (200pt)</button>
+            <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle(careActionPalette.wash, recommendedCareAction === 'wash')}>🛁 씻기기 (150pt)</button>
+          </>
+        )}
+        {(snapshot.status === 'sick' || snapshot.status === 'critical') && snapshot.status !== 'dead' && (
           <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle(careActionPalette.heal, recommendedCareAction === 'heal')}>💊 치료하기 (1000pt)</button>
         )}
       </div>
 
-      {snapshot.isStressWarning ? (
+      {snapshot.status === 'sick' || snapshot.status === 'critical' ? (
+        <div
+          style={{
+            marginTop: 14,
+            width: '100%',
+            borderRadius: 14,
+            padding: '12px 14px',
+            background: 'rgba(244, 67, 54, 0.12)',
+            border: '1px solid rgba(244, 67, 54, 0.3)',
+            color: 'var(--text-ink)',
+            lineHeight: 1.5
+          }}
+        >
+          하루 동안 돌봄 방문이 없어서 치료가 필요해요. 치료하지 않은 채 3일이 더 지나면 고양이가 죽습니다.
+        </div>
+      ) : snapshot.isStressWarning ? (
         <div
           style={{
             marginTop: 14,

@@ -57,7 +57,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -72,6 +73,9 @@ describe('cat detail page', () => {
     expect(screen.getByText('급식 타이머')).toBeTruthy();
     expect(screen.getByText('청결 타이머')).toBeTruthy();
     expect(screen.getByText('놀이 타이머')).toBeTruthy();
+    expect(screen.getByText('오늘 완료: 밥주기')).toBeTruthy();
+    expect(screen.getByText('오늘 완료: 씻기기')).toBeTruthy();
+    expect(screen.getByText('오늘 완료: 놀아주기')).toBeTruthy();
     expect(screen.getByRole('button', { name: /밥주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /놀아주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /씻기기/ })).toBeTruthy();
@@ -97,7 +101,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -130,7 +135,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -160,7 +166,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -193,7 +200,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -228,7 +236,8 @@ describe('cat detail page', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatDetailScreen />);
@@ -236,5 +245,71 @@ describe('cat detail page', () => {
     expect(
       screen.getByRole('button', { name: /치료하기/ }).getAttribute('style')
     ).toContain('background: rgb(190, 18, 60)');
+  });
+
+  it('shows a treatment warning after one day without a visit', () => {
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'junior',
+        status: 'sick',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 25 * 60 * 60 * 1000,
+        lastWashedAt: Date.now() - 25 * 60 * 60 * 1000,
+        lastPlayedAt: Date.now() - 25 * 60 * 60 * 1000,
+        activeDays: 40
+      },
+      points: 5000,
+      currentStatus: 'sick',
+      handleFeed: vi.fn(() => true),
+      handleWash: vi.fn(() => true),
+      handlePlay: vi.fn(() => true),
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
+    });
+
+    render(<CatDetailScreen />);
+
+    expect(
+      screen.getByText('하루 동안 방문하지 않아 치료가 필요해졌어요. 여기서 치료하지 않고 3일이 더 지나면 고양이가 죽습니다.')
+    ).toBeTruthy();
+  });
+
+  it('shows a restart button when the cat is dead', () => {
+    const resetCat = vi.fn();
+
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'senior',
+        status: 'dead',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 96 * 60 * 60 * 1000,
+        lastWashedAt: Date.now() - 96 * 60 * 60 * 1000,
+        lastPlayedAt: Date.now() - 96 * 60 * 60 * 1000,
+        activeDays: 220
+      },
+      points: 5000,
+      currentStatus: 'dead',
+      handleFeed: vi.fn(() => false),
+      handleWash: vi.fn(() => false),
+      handlePlay: vi.fn(() => false),
+      handleHeal: vi.fn(() => false),
+      resetCat
+    });
+
+    render(<CatDetailScreen />);
+
+    expect(screen.getByRole('button', { name: /고양이 다시 키우기/ })).toBeTruthy();
+    expect(screen.getByAltText('Cat Large View').getAttribute('src')).toContain('senior-dead.png');
+
+    fireEvent.click(screen.getByRole('button', { name: /고양이 다시 키우기/ }));
+    expect(resetCat).toHaveBeenCalledTimes(1);
   });
 });

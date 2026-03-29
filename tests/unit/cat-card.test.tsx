@@ -52,7 +52,8 @@ describe('cat card', () => {
       handleFeed: vi.fn(() => false),
       handleWash: vi.fn(() => false),
       handlePlay: vi.fn(() => false),
-      handleHeal: vi.fn(() => false)
+      handleHeal: vi.fn(() => false),
+      resetCat: vi.fn()
     });
 
     render(<CatCard />);
@@ -87,12 +88,13 @@ describe('cat card', () => {
       handleFeed: vi.fn(() => false),
       handleWash: vi.fn(() => false),
       handlePlay: vi.fn(() => false),
-      handleHeal: vi.fn(() => false)
+      handleHeal: vi.fn(() => false),
+      resetCat: vi.fn()
     });
 
     render(<CatCard />);
 
-    expect(screen.getByText('지금 필요한 돌봄: 15시간 전에 놀아주기')).toBeTruthy();
+    expect(screen.getByText('지금 필요한 돌봄: 놀아주기')).toBeTruthy();
     expect(
       screen.getByText('스트레스 경고 구간이에요. 학습 포인트가 있으면 먼저 놀아주는 편이 안전합니다.')
     ).toBeTruthy();
@@ -121,7 +123,8 @@ describe('cat card', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatCard />);
@@ -156,7 +159,8 @@ describe('cat card', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<CatCard />);
@@ -169,5 +173,40 @@ describe('cat card', () => {
     expect(
       screen.getByAltText('adult cat feeling hungry').getAttribute('src')
     ).toContain('adult-action-feed.png');
+  });
+
+  it('shows a restart button and dead image when the cat has died', () => {
+    const resetCat = vi.fn();
+
+    vi.mocked(useCat).mockReturnValue({
+      cat: {
+        id: 'cat-1',
+        userId: 'demo-user',
+        name: '로그링고',
+        stage: 'adult',
+        status: 'dead',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastFedAt: Date.now() - 96 * 60 * 60 * 1000,
+        lastWashedAt: Date.now() - 96 * 60 * 60 * 1000,
+        lastPlayedAt: Date.now() - 96 * 60 * 60 * 1000,
+        activeDays: 90
+      },
+      points: 5000,
+      currentStatus: 'dead',
+      handleFeed: vi.fn(() => false),
+      handleWash: vi.fn(() => false),
+      handlePlay: vi.fn(() => false),
+      handleHeal: vi.fn(() => false),
+      resetCat
+    });
+
+    render(<CatCard />);
+
+    expect(screen.getByRole('button', { name: /고양이 다시 키우기/ })).toBeTruthy();
+    expect(screen.getByAltText('adult cat feeling dead').getAttribute('src')).toContain('adult-dead.png');
+
+    fireEvent.click(screen.getByRole('button', { name: /고양이 다시 키우기/ }));
+    expect(resetCat).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,5 +1,5 @@
 import type { Cat } from './types';
-import { type EnvThresholds, calculateCatStatus, calculateCatStage } from './engine';
+import { type EnvThresholds, calculateCatStatus, calculateCatStage, getCatThresholds, getTreatmentRequiredAt } from './engine';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -13,11 +13,13 @@ export function calculateGrowthDays(
   currentTime: number = Date.now(),
   env: Partial<EnvThresholds> = {}
 ): Cat {
+  const thresholds = getCatThresholds(env);
   const currentStatus = calculateCatStatus(cat, currentTime, env);
+  const treatmentRequiredAt = getTreatmentRequiredAt(cat, currentTime, thresholds);
   
   // If severely neglected, do not grow. Simply return the cat unaffected.
   if (currentStatus === 'dead' || currentStatus === 'critical' || currentStatus === 'sick') {
-    return { ...cat, updatedAt: currentTime };
+    return { ...cat, updatedAt: currentTime, treatmentRequiredAt };
   }
 
   const deltaMs = currentTime - cat.updatedAt;
@@ -36,6 +38,7 @@ export function calculateGrowthDays(
     activeDays: newActiveDays,
     stage: newStage,
     updatedAt: currentTime,
+    treatmentRequiredAt: undefined,
   };
 }
 

@@ -446,6 +446,24 @@ export function useCat() {
   const handlePlay = () => performAction(playWithCat, 'cat_care_play');
   const handleHeal = () => performAction(giveMedicine, 'cat_care_heal'); // simplified
 
+  const resetCat = useCallback(() => {
+    const userId = auth.isAuthenticated ? auth.userId : 'demo-user';
+    const freshCat = buildInitialCat(userId);
+
+    setCat(freshCat);
+    setLedgers([]);
+    setPoints(INITIAL_POINTS);
+
+    persistCatState(freshCat);
+    persistPointLedgers(userId, [], []);
+  }, [
+    auth.isAuthenticated,
+    auth.userId,
+    buildInitialCat,
+    persistCatState,
+    persistPointLedgers
+  ]);
+
   // Provide current calculated static properties derived on the fly
   const currentStatus = cat ? calculateCatStatus(cat, Date.now(), LOCAL_APP_ENV as EnvThresholds) : 'healthy';
 
@@ -459,5 +477,6 @@ export function useCat() {
     handleWash,
     handlePlay,
     handleHeal,
+    resetCat,
   };
 }
