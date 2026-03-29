@@ -432,4 +432,31 @@ describe('useCat', () => {
       false
     );
   });
+
+  it('reserves the veteran stage for the final learning level only', async () => {
+    readStoredSettingsSnapshotMock.mockReturnValue({
+      userId: 'demo-user',
+      appLanguage: 'ko',
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n2',
+      sessionQuestionCount: 10,
+      notificationsEnabled: true,
+      premiumEnabled: false,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(saveStoredCat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stage: 'senior'
+      }),
+      false
+    );
+  });
 });

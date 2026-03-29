@@ -119,6 +119,7 @@ function getLearningDrivenCatStage(): Cat['stage'] {
   const settings = readStoredSettingsSnapshot();
   const language = settings.learningLanguage as SupportedLearningLanguage;
   const levelOptions = learningLevelOptionsByLanguage[language] ?? [];
+  const lastLevelIndex = levelOptions.length - 1;
   const currentIndex = levelOptions.findIndex(
     (option) => option.value === settings.learningLevel
   );
@@ -127,11 +128,15 @@ function getLearningDrivenCatStage(): Cat['stage'] {
     return 'kitten';
   }
 
-  const nonLegacyStages = CAT_STAGES.slice(0, -1);
-  const normalizedProgress = currentIndex / (levelOptions.length - 1);
-  const scaledIndex = Math.round(normalizedProgress * (nonLegacyStages.length - 1));
+  if (currentIndex >= lastLevelIndex) {
+    return 'veteran';
+  }
 
-  return nonLegacyStages[Math.min(Math.max(scaledIndex, 0), nonLegacyStages.length - 1)] ?? 'kitten';
+  const preVeteranStages = CAT_STAGES.slice(0, -2);
+  const normalizedProgress = currentIndex / Math.max(lastLevelIndex - 1, 1);
+  const scaledIndex = Math.round(normalizedProgress * (preVeteranStages.length - 1));
+
+  return preVeteranStages[Math.min(Math.max(scaledIndex, 0), preVeteranStages.length - 1)] ?? 'kitten';
 }
 
 function alignCatStageWithLearningLevel(nextCat: Cat): Cat {
