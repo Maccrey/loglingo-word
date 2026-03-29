@@ -522,12 +522,18 @@ describe('home dashboard', () => {
   it('opens and closes the cat guide modal from the home cat container', async () => {
     const user = userEvent.setup();
 
-    render(<HomeDashboard />);
+    const { container } = render(<HomeDashboard />);
 
     await user.click(screen.getByRole('button', { name: '고양이 사육방법' }));
 
+    const catCard = container.querySelector('.cat-card');
+    const guideButton = screen.getByRole('button', { name: '고양이 사육방법' });
+
+    expect(catCard?.contains(guideButton)).toBe(true);
     expect(screen.getByRole('dialog', { name: '고양이 사육방법' })).toBeTruthy();
     expect(screen.getByText(/하루 동안 고양이를 돌보러 오지 않으면/)).toBeTruthy();
+    expect(screen.getByText(/현재 진행도를 계산해서 알맞은 단계로 맞춰집니다\./)).toBeTruthy();
+    expect(screen.queryByText(/dead 이미지가 보이고/)).toBeNull();
 
     await user.click(screen.getByRole('button', { name: '확인' }));
 

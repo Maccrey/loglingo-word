@@ -5,12 +5,10 @@ import {
   type EnvThresholds,
   type ActionResult,
   calculateCatStatus,
-  calculateCatStage,
   feedCat,
   batheCat,
   playWithCat,
   giveMedicine,
-  giveInjection,
   calculateGrowthDays
 } from '../../../../packages/shared/src/cat';
 import { type LearningActivity } from '../../../../packages/shared/src/point';
@@ -29,6 +27,7 @@ import { buildPointEarnedToast, notifyAppToast } from './toast';
 import { useCatSync } from './useCatSync';
 import { usePointSync } from './usePointSync';
 import { useAppAuth } from './useAppAuth';
+import { readStoredSettingsSnapshot, USER_SETTINGS_UPDATED_EVENT } from './settingsStorage';
 import {
   hasFirebaseWebConfig,
   loadFirebaseCatState,
@@ -36,6 +35,10 @@ import {
 } from './firebase-client';
 import { createCatGrowthPost } from '../../../../services/core/src/social';
 import { CAT_STAGES } from '../../../../packages/shared/src/cat/constants';
+import {
+  learningLevelOptionsByLanguage,
+  type SupportedLearningLanguage
+} from '../../../../packages/shared/src/learning-preferences';
 
 // Provide some default dummy env if we don't have access to the actual env
 const LOCAL_APP_ENV: AppEnv = {
@@ -110,6 +113,40 @@ function didCatStageAdvance(previous: Cat | null, current: Cat): boolean {
   }
 
   return CAT_STAGES.indexOf(current.stage) > CAT_STAGES.indexOf(previous.stage);
+}
+
+function getLearningDrivenCatStage(): Cat['stage'] {
+  const settings = readStoredSettingsSnapshot();
+  const language = settings.learningLanguage as SupportedLearningLanguage;
+  const levelOptions = learningLevelOptionsByLanguage[language] ?? [];
+  const currentIndex = levelOptions.findIndex(
+    (option) => option.value === settings.learningLevel
+  );
+
+  if (currentIndex <= 0 || levelOptions.length <= 1) {
+    return 'kitten';
+  }
+
+  const nonLegacyStages = CAT_STAGES.slice(0, -1);
+  const normalizedProgress = currentIndex / (levelOptions.length - 1);
+  const scaledIndex = Math.round(normalizedProgress * (nonLegacyStages.length - 1));
+
+  return nonLegacyStages[Math.min(Math.max(scaledIndex, 0), nonLegacyStages.length - 1)] ?? 'kitten';
+}
+
+function alignCatStageWithLearningLevel(nextCat: Cat): Cat {
+  const timeBasedStageIndex = CAT_STAGES.indexOf(nextCat.stage);
+  const learningStageIndex = CAT_STAGES.indexOf(getLearningDrivenCatStage());
+
+  if (learningStageIndex <= timeBasedStageIndex) {
+    return nextCat;
+  }
+
+  return {
+    ...nextCat,
+    stage: CAT_STAGES[learningStageIndex] ?? nextCat.stage,
+    updatedAt: Date.now()
+  };
 }
 
 export function useCat() {
@@ -220,10 +257,8 @@ export function useCat() {
             : storedCat
               ? { ...storedCat, userId: auth.userId }
               : buildInitialCat(auth.userId);
-          const nextCat = calculateGrowthDays(
-            baseCat,
-            Date.now(),
-            LOCAL_APP_ENV as EnvThresholds
+          const nextCat = alignCatStageWithLearningLevel(
+            calculateGrowthDays(baseCat, Date.now(), LOCAL_APP_ENV as EnvThresholds)
           );
           const nextLedgers =
             remotePointState?.ledgers && remotePointState.ledgers.length > 0
@@ -253,10 +288,8 @@ export function useCat() {
         }
 
         const baseCat = storedCat ?? buildInitialCat('demo-user');
-        const initialCat = calculateGrowthDays(
-          baseCat,
-          Date.now(),
-          LOCAL_APP_ENV as EnvThresholds
+        const initialCat = alignCatStageWithLearningLevel(
+          calculateGrowthDays(baseCat, Date.now(), LOCAL_APP_ENV as EnvThresholds)
         );
         const nextLedgers = storedLedgers;
 
@@ -298,10 +331,12 @@ export function useCat() {
     };
 
     window.addEventListener(CAT_STORAGE_UPDATED_EVENT, handleStorageUpdated);
+    window.addEventListener(USER_SETTINGS_UPDATED_EVENT, handleStorageUpdated);
     window.addEventListener('storage', handleStorageUpdated);
 
     return () => {
       window.removeEventListener(CAT_STORAGE_UPDATED_EVENT, handleStorageUpdated);
+      window.removeEventListener(USER_SETTINGS_UPDATED_EVENT, handleStorageUpdated);
       window.removeEventListener('storage', handleStorageUpdated);
     };
   }, [hydrateFromStorage]);
@@ -310,7 +345,9 @@ export function useCat() {
   useEffect(() => {
     if (!cat) return;
     const interval = setInterval(() => {
-      const updated = calculateGrowthDays(cat, Date.now(), LOCAL_APP_ENV as EnvThresholds);
+      const updated = alignCatStageWithLearningLevel(
+        calculateGrowthDays(cat, Date.now(), LOCAL_APP_ENV as EnvThresholds)
+      );
       setCat(updated);
       persistCatState(updated);
       publishCatGrowthUpdate(cat, updated);

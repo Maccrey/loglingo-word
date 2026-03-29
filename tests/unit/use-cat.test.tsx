@@ -32,6 +32,17 @@ const useAppAuthMock = vi.fn(() => ({
 }));
 const loadFirebaseCatStateMock = vi.fn(async () => null);
 const loadFirebasePointLedgerStateMock = vi.fn(async () => null);
+const saveFirebaseFeedPostMock = vi.fn(async () => undefined);
+const readStoredSettingsSnapshotMock = vi.fn(() => ({
+  userId: 'demo-user',
+  appLanguage: 'ko',
+  learningLanguage: 'ja',
+  learningLevel: 'jlpt_n5',
+  sessionQuestionCount: 10,
+  notificationsEnabled: true,
+  premiumEnabled: false,
+  updatedAt: '2026-03-26T00:00:00.000Z'
+}));
 
 vi.mock('../../apps/web/src/lib/catStorage', () => ({
   CAT_STORAGE_UPDATED_EVENT: 'cat-storage-updated',
@@ -71,7 +82,13 @@ vi.mock('../../apps/web/src/lib/firebase-client', () => ({
   hasFirebaseWebConfig: vi.fn(() => true),
   loadFirebaseCatState: (...args: unknown[]) => loadFirebaseCatStateMock(...args),
   loadFirebasePointLedgerState: (...args: unknown[]) =>
-    loadFirebasePointLedgerStateMock(...args)
+    loadFirebasePointLedgerStateMock(...args),
+  saveFirebaseFeedPost: (...args: unknown[]) => saveFirebaseFeedPostMock(...args)
+}));
+
+vi.mock('../../apps/web/src/lib/settingsStorage', () => ({
+  USER_SETTINGS_UPDATED_EVENT: 'user-settings-updated',
+  readStoredSettingsSnapshot: () => readStoredSettingsSnapshotMock()
 }));
 
 function UseCatHarness() {
@@ -107,6 +124,18 @@ describe('useCat', () => {
     loadFirebaseCatStateMock.mockResolvedValue(null);
     loadFirebasePointLedgerStateMock.mockReset();
     loadFirebasePointLedgerStateMock.mockResolvedValue(null);
+    saveFirebaseFeedPostMock.mockReset();
+    readStoredSettingsSnapshotMock.mockReset();
+    readStoredSettingsSnapshotMock.mockReturnValue({
+      userId: 'demo-user',
+      appLanguage: 'ko',
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n5',
+      sessionQuestionCount: 10,
+      notificationsEnabled: true,
+      premiumEnabled: false,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
     useAppAuthMock.mockReset();
     useAppAuthMock.mockReturnValue({
       authReady: true,
@@ -375,5 +404,32 @@ describe('useCat', () => {
     expect(saveStoredCatLedgers).toHaveBeenCalled();
     expect(syncPendingPoints).not.toHaveBeenCalled();
     expect(screen.getByText('5030')).toBeTruthy();
+  });
+
+  it('aligns the cat growth stage with the user learning level progress', async () => {
+    readStoredSettingsSnapshotMock.mockReturnValue({
+      userId: 'demo-user',
+      appLanguage: 'ko',
+      learningLanguage: 'ja',
+      learningLevel: 'jlpt_n1',
+      sessionQuestionCount: 10,
+      notificationsEnabled: true,
+      premiumEnabled: false,
+      updatedAt: '2026-03-26T00:00:00.000Z'
+    });
+
+    render(<UseCatHarness />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(saveStoredCat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stage: 'veteran'
+      }),
+      false
+    );
   });
 });

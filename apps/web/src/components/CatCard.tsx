@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { buildCatStateSnapshot, getCatThresholds, type Cat, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
@@ -123,7 +123,11 @@ function getRecommendedCareAction(
   }
 }
 
-export default function CatCard() {
+type CatCardProps = {
+  headerAccessory?: ReactNode;
+};
+
+export default function CatCard({ headerAccessory }: CatCardProps) {
   const {
     cat,
     points,
@@ -242,6 +246,12 @@ export default function CatCard() {
           ⭐ {points} pt
         </div>
       </div>
+
+      {headerAccessory ? (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginBottom: 16 }}>
+          {headerAccessory}
+        </div>
+      ) : null}
 
       <div style={{ position: 'relative', width: 240, height: 240, marginBottom: 16, alignSelf: 'center' }}>
         <Image

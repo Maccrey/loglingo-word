@@ -698,25 +698,26 @@ export default function HomeDashboard(props: HomeDashboardProps) {
 
         <section className="home-feature-row">
           <div className="home-feature-row__cat">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-              <button
-                type="button"
-                onClick={() => setIsCatGuideOpen(true)}
-                style={{
-                  borderRadius: 999,
-                  border: '1px solid var(--border-pencil)',
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-ink)',
-                  padding: '8px 14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: 'var(--shadow-card)'
-                }}
-              >
-                고양이 사육방법
-              </button>
-            </div>
-            <CatCard />
+            <CatCard
+              headerAccessory={
+                <button
+                  type="button"
+                  onClick={() => setIsCatGuideOpen(true)}
+                  style={{
+                    borderRadius: 999,
+                    border: '1px solid var(--border-pencil)',
+                    background: 'var(--bg-surface)',
+                    color: 'var(--text-ink)',
+                    padding: '8px 14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    boxShadow: 'var(--shadow-card)'
+                  }}
+                >
+                  고양이 사육방법
+                </button>
+              }
+            />
           </div>
           {quickStartPanel}
         </section>
@@ -757,7 +758,8 @@ export default function HomeDashboard(props: HomeDashboardProps) {
                 <p style={{ margin: 0 }}>2. 학습을 하면 포인트를 얻고, 그 포인트로 고양이 돌봄 액션을 사용할 수 있습니다.</p>
                 <p style={{ margin: 0 }}>3. 하루 동안 고양이를 돌보러 오지 않으면 `치료하기`가 필요합니다.</p>
                 <p style={{ margin: 0 }}>4. 치료가 필요한 상태에서 3일 더 방치하면 고양이가 죽습니다.</p>
-                <p style={{ margin: 0 }}>5. 고양이가 죽으면 성장 단계에 맞는 dead 이미지가 보이고, `고양이 다시 키우기`로 처음부터 다시 시작할 수 있습니다.</p>
+                <p style={{ margin: 0 }}>5. 고양이가 죽으면 `고양이 다시 키우기`로 처음부터 다시 시작할 수 있습니다.</p>
+                <p style={{ margin: 0 }}>6. 학습 레벨이 올라가면 고양이 성장 단계도 함께 올라갑니다. 언어별 레벨 수가 성장 단계보다 적어도 현재 진행도를 계산해서 알맞은 단계로 맞춰집니다.</p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button
