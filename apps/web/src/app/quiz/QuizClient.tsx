@@ -368,17 +368,19 @@ export default function QuizClient(props: QuizClientProps) {
                         }
                         style={{
                           borderRadius: 16,
-                          border: selected
-                            ? '2px solid #1565c0'
-                            : '1px solid var(--border-pencil)',
+                          border: matched
+                            ? '1px solid #b8b2a8'
+                            : selected
+                              ? '2px solid #1565c0'
+                              : '1px solid var(--border-pencil)',
                           padding: '16px 18px',
                           textAlign: 'left',
                           background: matched
-                            ? '#cfeecf'
+                            ? '#e4e0d9'
                             : selected
                               ? '#dbeafe'
                               : 'transparent',
-                          color: 'var(--text-ink)',
+                          color: matched ? 'var(--text-faded)' : 'var(--text-ink)',
                           cursor: matched ? 'default' : 'pointer',
                           opacity: matched ? 0.8 : 1
                         }}
@@ -411,12 +413,12 @@ export default function QuizClient(props: QuizClientProps) {
                         style={{
                           borderRadius: 16,
                           border: matched
-                            ? '1px solid #2d7a4d'
+                            ? '1px solid #b8b2a8'
                             : '1px solid var(--border-pencil)',
                           padding: '16px 18px',
                           textAlign: 'left',
-                          background: matched ? '#cfeecf' : 'transparent',
-                          color: 'var(--text-ink)',
+                          background: matched ? '#e4e0d9' : 'transparent',
+                          color: matched ? 'var(--text-faded)' : 'var(--text-ink)',
                           cursor: matched ? 'default' : 'pointer',
                           opacity: matched ? 0.8 : 1
                         }}
