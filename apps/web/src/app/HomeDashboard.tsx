@@ -224,6 +224,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   const settingsHref = locale === 'en' ? '/settings?locale=en' : '/settings';
   const auth = useAppAuth();
   const { cat } = useCat();
+  const [isCatGuideOpen, setIsCatGuideOpen] = useState(false);
   const [recommendation, setRecommendation] = useState<RecommendationState>({
     words: [],
     loading: false
@@ -697,10 +698,87 @@ export default function HomeDashboard(props: HomeDashboardProps) {
 
         <section className="home-feature-row">
           <div className="home-feature-row__cat">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+              <button
+                type="button"
+                onClick={() => setIsCatGuideOpen(true)}
+                style={{
+                  borderRadius: 999,
+                  border: '1px solid var(--border-pencil)',
+                  background: 'var(--bg-surface)',
+                  color: 'var(--text-ink)',
+                  padding: '8px 14px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-card)'
+                }}
+              >
+                고양이 사육방법
+              </button>
+            </div>
             <CatCard />
           </div>
           {quickStartPanel}
         </section>
+
+        {isCatGuideOpen ? (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="고양이 사육방법"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(15, 23, 42, 0.52)',
+              display: 'grid',
+              placeItems: 'center',
+              padding: 20,
+              zIndex: 1000
+            }}
+          >
+            <section
+              style={{
+                width: 'min(560px, 100%)',
+                borderRadius: 20,
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-pencil)',
+                boxShadow: 'var(--shadow-card)',
+                padding: 24,
+                display: 'grid',
+                gap: 14
+              }}
+            >
+              <h2 style={{ margin: 0, fontSize: 24 }}>고양이 사육방법</h2>
+              <p style={{ margin: 0, lineHeight: 1.6, color: 'var(--text-faded)' }}>
+                학습으로 포인트를 모아 고양이를 돌보는 방식입니다. 처음 시작할 때 꼭 알아야 할 규칙만 정리했습니다.
+              </p>
+              <div style={{ display: 'grid', gap: 10, lineHeight: 1.6, color: 'var(--text-ink)' }}>
+                <p style={{ margin: 0 }}>1. `밥주기`, `씻기기`, `놀아주기`는 하루에 한 번씩 해주는 것이 기본입니다.</p>
+                <p style={{ margin: 0 }}>2. 학습을 하면 포인트를 얻고, 그 포인트로 고양이 돌봄 액션을 사용할 수 있습니다.</p>
+                <p style={{ margin: 0 }}>3. 하루 동안 고양이를 돌보러 오지 않으면 `치료하기`가 필요합니다.</p>
+                <p style={{ margin: 0 }}>4. 치료가 필요한 상태에서 3일 더 방치하면 고양이가 죽습니다.</p>
+                <p style={{ margin: 0 }}>5. 고양이가 죽으면 성장 단계에 맞는 dead 이미지가 보이고, `고양이 다시 키우기`로 처음부터 다시 시작할 수 있습니다.</p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsCatGuideOpen(false)}
+                  style={{
+                    borderRadius: 12,
+                    border: '1px solid var(--border-pencil)',
+                    background: 'var(--accent-yellow)',
+                    color: 'var(--text-ink)',
+                    padding: '10px 16px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  확인
+                </button>
+              </div>
+            </section>
+          </div>
+        ) : null}
 
         {auth.isAuthenticated &&
         pendingSource === 'recommendation' &&

@@ -116,7 +116,8 @@ beforeEach(() => {
     handleFeed: vi.fn(() => true),
     handleWash: vi.fn(() => true),
     handlePlay: vi.fn(() => true),
-    handleHeal: vi.fn(() => true)
+    handleHeal: vi.fn(() => true),
+    resetCat: vi.fn()
   });
 });
 
@@ -506,7 +507,8 @@ describe('home dashboard', () => {
       handleFeed: vi.fn(() => true),
       handleWash: vi.fn(() => true),
       handlePlay: vi.fn(() => true),
-      handleHeal: vi.fn(() => true)
+      handleHeal: vi.fn(() => true),
+      resetCat: vi.fn()
     });
 
     render(<HomeDashboard />);
@@ -515,5 +517,20 @@ describe('home dashboard', () => {
     expect(
       screen.getByText(/스트레스 질병 구간에 가까워지고 있습니다\./)
     ).toBeTruthy();
+  });
+
+  it('opens and closes the cat guide modal from the home cat container', async () => {
+    const user = userEvent.setup();
+
+    render(<HomeDashboard />);
+
+    await user.click(screen.getByRole('button', { name: '고양이 사육방법' }));
+
+    expect(screen.getByRole('dialog', { name: '고양이 사육방법' })).toBeTruthy();
+    expect(screen.getByText(/하루 동안 고양이를 돌보러 오지 않으면/)).toBeTruthy();
+
+    await user.click(screen.getByRole('button', { name: '확인' }));
+
+    expect(screen.queryByRole('dialog', { name: '고양이 사육방법' })).toBeNull();
   });
 });
