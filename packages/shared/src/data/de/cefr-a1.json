@@ -1,0 +1,602 @@
+[
+  {
+    "id": "de-cefr-a1-people",
+    "language": "de",
+    "standardLevel": "cefr_a1",
+    "level": 1,
+    "order": 1,
+    "title": "Grundlegende Personen",
+    "words": [
+      {
+        "id": "ich",
+        "term": "Ich",
+        "meaning": "나",
+        "example": "Ich lerne Deutsch.",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": [
+            "Wir",
+            "Mein Freund",
+            "Der Lehrer"
+          ]
+        },
+        "writing": {
+          "prompt": "나에 맞는 독일어를 쓰세요.",
+          "answer": "Ich",
+          "accepted": [
+            "Ich"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "wir",
+        "term": "Wir",
+        "meaning": "우리",
+        "example": "Wir gehen zur Schule.",
+        "partOfSpeech": "pronoun",
+        "quiz": {
+          "distractors": [
+            "Ich",
+            "Der Student",
+            "Der Lehrer"
+          ]
+        },
+        "writing": {
+          "prompt": "우리에 맞는 독일어를 쓰세요.",
+          "answer": "Wir",
+          "accepted": [
+            "Wir"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "mein-freund",
+        "term": "Mein Freund",
+        "meaning": "내 친구",
+        "example": "Mein Freund trinkt Tee.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Wir",
+            "Der Lehrer",
+            "Der Student"
+          ]
+        },
+        "writing": {
+          "prompt": "내 친구에 맞는 독일어를 쓰세요.",
+          "answer": "Mein Freund",
+          "accepted": [
+            "Mein Freund"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "der-lehrer",
+        "term": "Der Lehrer",
+        "meaning": "선생님",
+        "example": "Der Lehrer liest ein Buch.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Mein Freund",
+            "Der Student",
+            "Wir"
+          ]
+        },
+        "writing": {
+          "prompt": "선생님에 맞는 독일어를 쓰세요.",
+          "answer": "Der Lehrer",
+          "accepted": [
+            "Der Lehrer"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "der-student",
+        "term": "Der Student",
+        "meaning": "학생",
+        "example": "Der Student schreibt den Namen.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Der Lehrer",
+            "Mein Freund",
+            "Ich"
+          ]
+        },
+        "writing": {
+          "prompt": "학생에 맞는 독일어를 쓰세요.",
+          "answer": "Der Student",
+          "accepted": [
+            "Der Student"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "de-cefr-a1-time",
+    "language": "de",
+    "standardLevel": "cefr_a1",
+    "level": 1,
+    "order": 2,
+    "title": "Grundlegende Zeitangaben",
+    "words": [
+      {
+        "id": "heute",
+        "term": "heute",
+        "meaning": "오늘",
+        "example": "Heute gehe ich zur Schule.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "morgen",
+            "jeden Tag",
+            "am Morgen"
+          ]
+        },
+        "writing": {
+          "prompt": "오늘에 맞는 독일어를 쓰세요.",
+          "answer": "heute",
+          "accepted": [
+            "heute"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "morgen",
+        "term": "morgen",
+        "meaning": "내일",
+        "example": "Morgen kommt der Lehrer.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "heute",
+            "am Abend",
+            "jeden Tag"
+          ]
+        },
+        "writing": {
+          "prompt": "내일에 맞는 독일어를 쓰세요.",
+          "answer": "morgen",
+          "accepted": [
+            "morgen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "jeden-tag",
+        "term": "jeden Tag",
+        "meaning": "매일",
+        "example": "Wir lernen jeden Tag.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "heute",
+            "morgen",
+            "am Abend"
+          ]
+        },
+        "writing": {
+          "prompt": "매일에 맞는 독일어를 쓰세요.",
+          "answer": "jeden Tag",
+          "accepted": [
+            "jeden Tag"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "am-morgen",
+        "term": "am Morgen",
+        "meaning": "아침에",
+        "example": "Am Morgen trinke ich Wasser.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "am Abend",
+            "heute",
+            "morgen"
+          ]
+        },
+        "writing": {
+          "prompt": "아침에 맞는 독일어를 쓰세요.",
+          "answer": "am Morgen",
+          "accepted": [
+            "am Morgen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "am-abend",
+        "term": "am Abend",
+        "meaning": "밤에",
+        "example": "Am Abend liest mein Freund.",
+        "partOfSpeech": "adverb",
+        "quiz": {
+          "distractors": [
+            "am Morgen",
+            "heute",
+            "morgen"
+          ]
+        },
+        "writing": {
+          "prompt": "밤에 맞는 독일어를 쓰세요.",
+          "answer": "am Abend",
+          "accepted": [
+            "am Abend"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "de-cefr-a1-places",
+    "language": "de",
+    "standardLevel": "cefr_a1",
+    "level": 1,
+    "order": 3,
+    "title": "Grundlegende Orte",
+    "words": [
+      {
+        "id": "zur-schule",
+        "term": "zur Schule",
+        "meaning": "학교에",
+        "example": "Ich gehe zur Schule.",
+        "partOfSpeech": "phrase",
+        "quiz": {
+          "distractors": [
+            "zum Bahnhof",
+            "nach Hause",
+            "zum Laden"
+          ]
+        },
+        "writing": {
+          "prompt": "학교에 맞는 독일어를 쓰세요.",
+          "answer": "zur Schule",
+          "accepted": [
+            "zur Schule"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "zum-bahnhof",
+        "term": "zum Bahnhof",
+        "meaning": "역에",
+        "example": "Wir gehen zum Bahnhof.",
+        "partOfSpeech": "phrase",
+        "quiz": {
+          "distractors": [
+            "zur Schule",
+            "nach Hause",
+            "zum Laden"
+          ]
+        },
+        "writing": {
+          "prompt": "역에 맞는 독일어를 쓰세요.",
+          "answer": "zum Bahnhof",
+          "accepted": [
+            "zum Bahnhof"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "nach-hause",
+        "term": "nach Hause",
+        "meaning": "집에",
+        "example": "Mein Freund kommt nach Hause.",
+        "partOfSpeech": "phrase",
+        "quiz": {
+          "distractors": [
+            "zur Schule",
+            "zum Bahnhof",
+            "zum Laden"
+          ]
+        },
+        "writing": {
+          "prompt": "집에 맞는 독일어를 쓰세요.",
+          "answer": "nach Hause",
+          "accepted": [
+            "nach Hause"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "zum-laden",
+        "term": "zum Laden",
+        "meaning": "가게에",
+        "example": "Der Lehrer geht zum Laden.",
+        "partOfSpeech": "phrase",
+        "quiz": {
+          "distractors": [
+            "zur Schule",
+            "zum Bahnhof",
+            "nach Hause"
+          ]
+        },
+        "writing": {
+          "prompt": "가게에 맞는 독일어를 쓰세요.",
+          "answer": "zum Laden",
+          "accepted": [
+            "zum Laden"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "de-cefr-a1-actions",
+    "language": "de",
+    "standardLevel": "cefr_a1",
+    "level": 1,
+    "order": 4,
+    "title": "Grundlegende Verben",
+    "words": [
+      {
+        "id": "gehen",
+        "term": "gehen",
+        "meaning": "가다",
+        "example": "Wir gehen heute zur Schule.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "kommen",
+            "trinken",
+            "essen"
+          ]
+        },
+        "writing": {
+          "prompt": "가다에 맞는 독일어를 쓰세요.",
+          "answer": "gehen",
+          "accepted": [
+            "gehen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "kommen",
+        "term": "kommen",
+        "meaning": "오다",
+        "example": "Der Student kommt morgen nach Hause.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "gehen",
+            "lesen",
+            "schreiben"
+          ]
+        },
+        "writing": {
+          "prompt": "오다에 맞는 독일어를 쓰세요.",
+          "answer": "kommen",
+          "accepted": [
+            "kommen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "trinken",
+        "term": "trinken",
+        "meaning": "마시다",
+        "example": "Ich trinke Wasser.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "essen",
+            "lesen",
+            "schreiben"
+          ]
+        },
+        "writing": {
+          "prompt": "마시다에 맞는 독일어를 쓰세요.",
+          "answer": "trinken",
+          "accepted": [
+            "trinken"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "essen",
+        "term": "essen",
+        "meaning": "먹다",
+        "example": "Mein Freund isst Brot.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "trinken",
+            "lesen",
+            "schreiben"
+          ]
+        },
+        "writing": {
+          "prompt": "먹다에 맞는 독일어를 쓰세요.",
+          "answer": "essen",
+          "accepted": [
+            "essen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "lesen",
+        "term": "lesen",
+        "meaning": "읽다",
+        "example": "Der Lehrer liest ein Buch.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "schreiben",
+            "essen",
+            "trinken"
+          ]
+        },
+        "writing": {
+          "prompt": "읽다에 맞는 독일어를 쓰세요.",
+          "answer": "lesen",
+          "accepted": [
+            "lesen"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "schreiben",
+        "term": "schreiben",
+        "meaning": "쓰다",
+        "example": "Der Student schreibt den Namen.",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "lesen",
+            "essen",
+            "trinken"
+          ]
+        },
+        "writing": {
+          "prompt": "쓰다에 맞는 독일어를 쓰세요.",
+          "answer": "schreiben",
+          "accepted": [
+            "schreiben"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  },
+  {
+    "id": "de-cefr-a1-objects",
+    "language": "de",
+    "standardLevel": "cefr_a1",
+    "level": 1,
+    "order": 5,
+    "title": "Grundlegende Objekte",
+    "words": [
+      {
+        "id": "wasser",
+        "term": "Wasser",
+        "meaning": "물",
+        "example": "Ich trinke Wasser.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Tee",
+            "Brot",
+            "ein Buch"
+          ]
+        },
+        "writing": {
+          "prompt": "물에 맞는 독일어를 쓰세요.",
+          "answer": "Wasser",
+          "accepted": [
+            "Wasser"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "tee",
+        "term": "Tee",
+        "meaning": "차",
+        "example": "Mein Freund trinkt Tee.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Wasser",
+            "Brot",
+            "den Namen"
+          ]
+        },
+        "writing": {
+          "prompt": "차에 맞는 독일어를 쓰세요.",
+          "answer": "Tee",
+          "accepted": [
+            "Tee"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "brot",
+        "term": "Brot",
+        "meaning": "빵",
+        "example": "Der Student isst Brot.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Wasser",
+            "Tee",
+            "ein Buch"
+          ]
+        },
+        "writing": {
+          "prompt": "빵에 맞는 독일어를 쓰세요.",
+          "answer": "Brot",
+          "accepted": [
+            "Brot"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "ein-buch",
+        "term": "ein Buch",
+        "meaning": "책",
+        "example": "Der Lehrer liest ein Buch.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "Brot",
+            "Wasser",
+            "den Namen"
+          ]
+        },
+        "writing": {
+          "prompt": "책에 맞는 독일어를 쓰세요.",
+          "answer": "ein Buch",
+          "accepted": [
+            "ein Buch"
+          ],
+          "script": "mixed"
+        }
+      },
+      {
+        "id": "den-namen",
+        "term": "den Namen",
+        "meaning": "이름",
+        "example": "Ich schreibe den Namen.",
+        "partOfSpeech": "noun",
+        "quiz": {
+          "distractors": [
+            "ein Buch",
+            "Tee",
+            "Wasser"
+          ]
+        },
+        "writing": {
+          "prompt": "이름에 맞는 독일어를 쓰세요.",
+          "answer": "den Namen",
+          "accepted": [
+            "den Namen"
+          ],
+          "script": "mixed"
+        }
+      }
+    ]
+  }
+]

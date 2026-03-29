@@ -211,6 +211,55 @@
         "想写": "want_to_write",
         "想买": "want_to_buy"
       }
+    },
+    "de": {
+      "subject": {
+        "Ich": "i",
+        "Wir": "we",
+        "Mein Freund": "my_friend",
+        "Der Lehrer": "teacher",
+        "Der Student": "student"
+      },
+      "time": {
+        "heute": "today",
+        "morgen": "tomorrow",
+        "jeden Tag": "every_day",
+        "am Morgen": "in_the_morning",
+        "am Abend": "at_night"
+      },
+      "place": {
+        "zur Schule": "school",
+        "zum Bahnhof": "station",
+        "nach Hause": "home",
+        "zum Laden": "store"
+      },
+      "object": {
+        "Wasser": "water",
+        "Tee": "tea",
+        "Brot": "bread",
+        "ein Buch": "book",
+        "seinen Namen": "my_name"
+      },
+      "predicate": {
+        "gehe": "go",
+        "gehen": "go",
+        "geht": "go",
+        "komme": "come",
+        "kommen": "come",
+        "kommt": "come",
+        "trinke": "drink",
+        "trinken": "drink",
+        "trinkt": "drink",
+        "esse": "eat",
+        "essen": "eat",
+        "isst": "eat",
+        "lese": "read",
+        "lesen": "read",
+        "liest": "read",
+        "schreibe": "write",
+        "schreiben": "write",
+        "schreibt": "write"
+      }
     }
   },
   "targetSentencePatterns": {

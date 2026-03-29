@@ -11,6 +11,11 @@ describe('curriculum', () => {
     const units = getCurriculumUnits();
 
     expect(units.map((unit) => unit.id)).toEqual([
+      'de-cefr-a1-people',
+      'de-cefr-a1-time',
+      'de-cefr-a1-places',
+      'de-cefr-a1-actions',
+      'de-cefr-a1-objects',
       'cefr-a1-people',
       'cefr-a1-time',
       'cefr-a1-places',
@@ -39,7 +44,7 @@ describe('curriculum', () => {
   it('filters curriculum units by level', () => {
     const levelOneUnits = getCurriculumByLevel(1);
 
-    expect(levelOneUnits).toHaveLength(20);
+    expect(levelOneUnits).toHaveLength(25);
     expect(levelOneUnits.every((unit) => unit.level === 1)).toBe(true);
   });
 
@@ -66,6 +71,23 @@ describe('curriculum', () => {
       'cefr-a1-actions'
     ]);
     expect(englishStarter[0]?.words[0]?.term).toBe('I');
+  });
+
+  it('returns imported german cefr a1 units', () => {
+    const germanStarter = getCurriculumByStandardLevel('de', 'cefr_a1');
+
+    expect(germanStarter.map((unit) => unit.id)).toEqual([
+      'de-cefr-a1-people',
+      'de-cefr-a1-time',
+      'de-cefr-a1-places',
+      'de-cefr-a1-actions',
+      'de-cefr-a1-objects'
+    ]);
+    expect(germanStarter[0]?.words[0]?.term).toBe('Ich');
+    expect(germanStarter[0]?.words[0]?.reading).toBeUndefined();
+    expect(germanStarter[1]?.words[3]?.writing?.prompt).toBe(
+      '아침에 맞는 독일어를 쓰세요.'
+    );
   });
 
   it('includes writing metadata in imported jlpt n5 words', () => {

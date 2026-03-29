@@ -2,6 +2,7 @@ import {
   curriculumUnitSchema,
   type CurriculumUnit
 } from '@wordflow/shared/curriculum';
+import germanCefrA1Units from '@wordflow/shared/data/de/cefr-a1.json';
 import cefrA1Units from '@wordflow/shared/data/en/cefr-a1.json';
 import jlptN5Units from '@wordflow/shared/data/ja/jlpt-n5.json';
 import topik1Units from '@wordflow/shared/data/ko/topik-1.json';
@@ -11,6 +12,10 @@ import {
   type SupportedLearningLevel,
   isLearningLevelSupportedForLanguage
 } from '@wordflow/shared/learning-preferences';
+
+const germanCefrA1Seed: CurriculumUnit[] = germanCefrA1Units.map((unit) =>
+  curriculumUnitSchema.parse(unit)
+);
 
 const cefrA1Seed: CurriculumUnit[] = cefrA1Units.map((unit) =>
   curriculumUnitSchema.parse(unit)
@@ -29,6 +34,7 @@ const hsk1Seed: CurriculumUnit[] = hsk1Units.map((unit) =>
 );
 
 export const curriculumSeed: CurriculumUnit[] = [
+  ...germanCefrA1Seed,
   ...cefrA1Seed,
   {
     id: 'travel-checkin',

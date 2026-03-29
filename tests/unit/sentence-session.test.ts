@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cefrA1SentenceAssemblyExercises,
   getSentenceAssemblyExercisePool,
+  germanCefrA1SentenceAssemblyExercises,
   hsk1SentenceAssemblyExercises,
   jlptN5SentenceAssemblyExercises,
   topik1SentenceAssemblyExercises
@@ -23,6 +24,31 @@ describe('sentence session state', () => {
     expect(cefrA1SentenceAssemblyExercises).toHaveLength(200);
   });
 
+  it('loads 200 german cefr a1 sentence exercises from json data', () => {
+    expect(germanCefrA1SentenceAssemblyExercises).toHaveLength(200);
+  });
+
+  it('keeps german inverted pronouns lowercase after a leading time expression', () => {
+    const badStages = germanCefrA1SentenceAssemblyExercises.flatMap((exercise) =>
+      exercise.stages.filter((stage) => /\b(heute|morgen|jeden Tag|am Morgen|am Abend) [^.]*(Ich|Wir)\b/.test(stage.goal))
+    );
+
+    expect(badStages).toHaveLength(0);
+  });
+
+  it('uses the neutral object form for german name-writing exercises', () => {
+    const germanNameExercise = germanCefrA1SentenceAssemblyExercises.find((exercise) =>
+      exercise.title.startsWith('den Namen schreiben')
+    );
+
+    expect(germanNameExercise?.stages.some((stage) => stage.goal.includes('den Namen'))).toBe(
+      true
+    );
+    expect(germanNameExercise?.stages.some((stage) => stage.goal.includes('seinen Namen'))).toBe(
+      false
+    );
+  });
+
   it('loads 200 topik 1 sentence exercises from json data', () => {
     expect(topik1SentenceAssemblyExercises).toHaveLength(200);
   });
@@ -40,6 +66,9 @@ describe('sentence session state', () => {
     ).toHaveLength(200);
     expect(
       getSentenceAssemblyExercisePool({ language: 'ko', level: 'topik_1' })
+    ).toHaveLength(200);
+    expect(
+      getSentenceAssemblyExercisePool({ language: 'de', level: 'cefr_a1' })
     ).toHaveLength(200);
     expect(
       getSentenceAssemblyExercisePool({ language: 'zh', level: 'hsk_1' })

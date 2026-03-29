@@ -216,6 +216,7 @@ async function updateFile(relativePath, sourceLanguage) {
 
 const sentenceExpansionFiles = [
   { path: 'en/cefr-a1-sentence-expansion.json', sourceLanguage: 'en' },
+  { path: 'de/cefr-a1-sentence-expansion.json', sourceLanguage: 'de' },
   { path: 'ja/jlpt-n5-sentence-expansion.json', sourceLanguage: 'ja' },
   { path: 'ko/topik-1-sentence-expansion.json', sourceLanguage: 'ko' },
   { path: 'zh/hsk-1-sentence-expansion.json', sourceLanguage: 'zh' }
