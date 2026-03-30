@@ -1,0 +1,4622 @@
+[
+  {
+    "id": "phrasal-verbs-core-01",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 1,
+    "title": "Conversation And Coordination",
+    "words": [
+      {
+        "id": "ask-around",
+        "term": "ask around",
+        "meaning": "수소문하다",
+        "example": "I ask around at school.",
+        "reading": "/æsk əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "ask out",
+            "back down",
+            "back up"
+          ]
+        }
+      },
+      {
+        "id": "ask-out",
+        "term": "ask out",
+        "meaning": "데이트를 신청하다",
+        "example": "We ask out my classmate.",
+        "reading": "/æsk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "back down",
+            "back up",
+            "bring up"
+          ]
+        }
+      },
+      {
+        "id": "back-down",
+        "term": "back down",
+        "meaning": "양보하다",
+        "example": "My friend back down during practice.",
+        "reading": "/bæk daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "back up",
+            "bring up",
+            "call back"
+          ]
+        }
+      },
+      {
+        "id": "back-up",
+        "term": "back up",
+        "meaning": "지원하다",
+        "example": "They back up my team.",
+        "reading": "/bæk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring up",
+            "call back",
+            "call off"
+          ]
+        }
+      },
+      {
+        "id": "bring-up",
+        "term": "bring up",
+        "meaning": "제기하다",
+        "example": "I bring up the idea.",
+        "reading": "/brɪŋ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "call back",
+            "call off",
+            "carry on"
+          ]
+        }
+      },
+      {
+        "id": "call-back",
+        "term": "call back",
+        "meaning": "다시 전화하다",
+        "example": "We call back my client.",
+        "reading": "/kɔːl bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "call off",
+            "carry on",
+            "catch on"
+          ]
+        }
+      },
+      {
+        "id": "call-off",
+        "term": "call off",
+        "meaning": "취소하다",
+        "example": "My friend call off the meeting.",
+        "reading": "/kɔːl ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "carry on",
+            "catch on",
+            "catch up"
+          ]
+        }
+      },
+      {
+        "id": "carry-on",
+        "term": "carry on",
+        "meaning": "계속하다",
+        "example": "They carry on after lunch.",
+        "reading": "/ˈkæri ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "catch on",
+            "catch up",
+            "check in"
+          ]
+        }
+      },
+      {
+        "id": "catch-on",
+        "term": "catch on",
+        "meaning": "이해하다",
+        "example": "I catch on after a while.",
+        "reading": "/kætʃ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "catch up",
+            "check in",
+            "check out"
+          ]
+        }
+      },
+      {
+        "id": "catch-up",
+        "term": "catch up",
+        "meaning": "따라가다",
+        "example": "We catch up with the group.",
+        "reading": "/kætʃ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "check in",
+            "check out",
+            "cheer up"
+          ]
+        }
+      },
+      {
+        "id": "check-in",
+        "term": "check in",
+        "meaning": "체크인하다",
+        "example": "My friend check in at the hotel.",
+        "reading": "/tʃek ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "check out",
+            "cheer up",
+            "chip in"
+          ]
+        }
+      },
+      {
+        "id": "check-out",
+        "term": "check out",
+        "meaning": "체크아웃하다",
+        "example": "They check out before noon.",
+        "reading": "/tʃek aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cheer up",
+            "chip in",
+            "clear up"
+          ]
+        }
+      },
+      {
+        "id": "cheer-up",
+        "term": "cheer up",
+        "meaning": "기운을 내다",
+        "example": "I cheer up after the call.",
+        "reading": "/tʃɪr ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "chip in",
+            "clear up",
+            "close down"
+          ]
+        }
+      },
+      {
+        "id": "chip-in",
+        "term": "chip in",
+        "meaning": "돈을 보태다",
+        "example": "We chip in some money.",
+        "reading": "/tʃɪp ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "clear up",
+            "close down",
+            "come across"
+          ]
+        }
+      },
+      {
+        "id": "clear-up",
+        "term": "clear up",
+        "meaning": "명확해지다",
+        "example": "My friend clear up by tomorrow.",
+        "reading": "/klɪr ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "close down",
+            "come across",
+            "come back"
+          ]
+        }
+      },
+      {
+        "id": "close-down",
+        "term": "close down",
+        "meaning": "폐쇄하다",
+        "example": "They close down the shop.",
+        "reading": "/kloʊz daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come across",
+            "come back",
+            "come by"
+          ]
+        }
+      },
+      {
+        "id": "come-across",
+        "term": "come across",
+        "meaning": "우연히 발견하다",
+        "example": "I come across an old photo.",
+        "reading": "/kʌm əˈkrɔːs/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come back",
+            "come by",
+            "count on"
+          ]
+        }
+      },
+      {
+        "id": "come-back",
+        "term": "come back",
+        "meaning": "돌아오다",
+        "example": "We come back after work.",
+        "reading": "/kʌm bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come by",
+            "count on",
+            "cut off"
+          ]
+        }
+      },
+      {
+        "id": "come-by",
+        "term": "come by",
+        "meaning": "들르다",
+        "example": "My friend come by in the evening.",
+        "reading": "/kʌm baɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "count on",
+            "cut off",
+            "dress up"
+          ]
+        }
+      },
+      {
+        "id": "count-on",
+        "term": "count on",
+        "meaning": "믿고 의지하다",
+        "example": "They count on my friend.",
+        "reading": "/kaʊnt ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cut off",
+            "dress up",
+            "drop by"
+          ]
+        }
+      },
+      {
+        "id": "cut-off",
+        "term": "cut off",
+        "meaning": "끊다",
+        "example": "I cut off the power.",
+        "reading": "/kʌt ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "dress up",
+            "drop by",
+            "drop off"
+          ]
+        }
+      },
+      {
+        "id": "dress-up",
+        "term": "dress up",
+        "meaning": "차려입다",
+        "example": "We dress up for the party.",
+        "reading": "/dres ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "drop by",
+            "drop off",
+            "figure out"
+          ]
+        }
+      },
+      {
+        "id": "drop-by",
+        "term": "drop by",
+        "meaning": "잠깐 들르다",
+        "example": "My friend drop by before dinner.",
+        "reading": "/drɑːp baɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "drop off",
+            "figure out",
+            "ask around"
+          ]
+        }
+      },
+      {
+        "id": "drop-off",
+        "term": "drop off",
+        "meaning": "내려주다",
+        "example": "They drop off my sister.",
+        "reading": "/drɑːp ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "figure out",
+            "ask around",
+            "ask out"
+          ]
+        }
+      },
+      {
+        "id": "figure-out",
+        "term": "figure out",
+        "meaning": "알아내다",
+        "example": "I figure out the answer.",
+        "reading": "/ˈfɪɡjər aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "ask around",
+            "ask out",
+            "back down"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-02",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 2,
+    "title": "Everyday Progress",
+    "words": [
+      {
+        "id": "fill-in",
+        "term": "fill in",
+        "meaning": "작성하다",
+        "example": "We fill in the form.",
+        "reading": "/fɪl ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fill out",
+            "find out",
+            "get ahead"
+          ]
+        }
+      },
+      {
+        "id": "fill-out",
+        "term": "fill out",
+        "meaning": "작성하다",
+        "example": "My friend fill out the survey.",
+        "reading": "/fɪl aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "find out",
+            "get ahead",
+            "get along"
+          ]
+        }
+      },
+      {
+        "id": "find-out",
+        "term": "find out",
+        "meaning": "알아내다",
+        "example": "They find out the truth.",
+        "reading": "/faɪnd aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get ahead",
+            "get along",
+            "get around"
+          ]
+        }
+      },
+      {
+        "id": "get-ahead",
+        "term": "get ahead",
+        "meaning": "앞서가다",
+        "example": "I get ahead at work.",
+        "reading": "/ɡet əˈhed/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get along",
+            "get around",
+            "get away"
+          ]
+        }
+      },
+      {
+        "id": "get-along",
+        "term": "get along",
+        "meaning": "잘 지내다",
+        "example": "We get along with everyone.",
+        "reading": "/ɡet əˈlɔːŋ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get around",
+            "get away",
+            "get back"
+          ]
+        }
+      },
+      {
+        "id": "get-around",
+        "term": "get around",
+        "meaning": "이동하다",
+        "example": "My friend get around in the city.",
+        "reading": "/ɡet əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get away",
+            "get back",
+            "get by"
+          ]
+        }
+      },
+      {
+        "id": "get-away",
+        "term": "get away",
+        "meaning": "떠나다",
+        "example": "They get away for the weekend.",
+        "reading": "/ɡet əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get back",
+            "get by",
+            "get in"
+          ]
+        }
+      },
+      {
+        "id": "get-back",
+        "term": "get back",
+        "meaning": "돌아오다",
+        "example": "I get back before sunset.",
+        "reading": "/ɡet bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get by",
+            "get in",
+            "get off"
+          ]
+        }
+      },
+      {
+        "id": "get-by",
+        "term": "get by",
+        "meaning": "버텨내다",
+        "example": "We get by with a small budget.",
+        "reading": "/ɡet baɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get in",
+            "get off",
+            "get on"
+          ]
+        }
+      },
+      {
+        "id": "get-in",
+        "term": "get in",
+        "meaning": "도착하다",
+        "example": "My friend get in before class.",
+        "reading": "/ɡet ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get off",
+            "get on",
+            "get out"
+          ]
+        }
+      },
+      {
+        "id": "get-off",
+        "term": "get off",
+        "meaning": "내리다",
+        "example": "They get off at the station.",
+        "reading": "/ɡet ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get on",
+            "get out",
+            "get over"
+          ]
+        }
+      },
+      {
+        "id": "get-on",
+        "term": "get on",
+        "meaning": "타다",
+        "example": "I get on on the bus.",
+        "reading": "/ɡet ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get out",
+            "get over",
+            "get through"
+          ]
+        }
+      },
+      {
+        "id": "get-out",
+        "term": "get out",
+        "meaning": "나가다",
+        "example": "We get out after the show.",
+        "reading": "/ɡet aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get over",
+            "get through",
+            "get up"
+          ]
+        }
+      },
+      {
+        "id": "get-over",
+        "term": "get over",
+        "meaning": "극복하다",
+        "example": "My friend get over the mistake.",
+        "reading": "/ɡet ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get through",
+            "get up",
+            "give away"
+          ]
+        }
+      },
+      {
+        "id": "get-through",
+        "term": "get through",
+        "meaning": "끝내다",
+        "example": "They get through the report.",
+        "reading": "/ɡet θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "get up",
+            "give away",
+            "give back"
+          ]
+        }
+      },
+      {
+        "id": "get-up",
+        "term": "get up",
+        "meaning": "일어나다",
+        "example": "I get up before six.",
+        "reading": "/ɡet ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "give away",
+            "give back",
+            "give in"
+          ]
+        }
+      },
+      {
+        "id": "give-away",
+        "term": "give away",
+        "meaning": "나누어 주다",
+        "example": "We give away old clothes.",
+        "reading": "/ɡɪv əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "give back",
+            "give in",
+            "give up"
+          ]
+        }
+      },
+      {
+        "id": "give-back",
+        "term": "give back",
+        "meaning": "돌려주다",
+        "example": "My friend give back the book.",
+        "reading": "/ɡɪv bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "give in",
+            "give up",
+            "go ahead"
+          ]
+        }
+      },
+      {
+        "id": "give-in",
+        "term": "give in",
+        "meaning": "굴복하다",
+        "example": "They give in under pressure.",
+        "reading": "/ɡɪv ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "give up",
+            "go ahead",
+            "go away"
+          ]
+        }
+      },
+      {
+        "id": "give-up",
+        "term": "give up",
+        "meaning": "포기하다",
+        "example": "I give up the plan.",
+        "reading": "/ɡɪv ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go ahead",
+            "go away",
+            "go back"
+          ]
+        }
+      },
+      {
+        "id": "go-ahead",
+        "term": "go ahead",
+        "meaning": "진행하다",
+        "example": "We go ahead with confidence.",
+        "reading": "/ɡoʊ əˈhed/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go away",
+            "go back",
+            "go out"
+          ]
+        }
+      },
+      {
+        "id": "go-away",
+        "term": "go away",
+        "meaning": "떠나다",
+        "example": "My friend go away for a day.",
+        "reading": "/ɡoʊ əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go back",
+            "go out",
+            "go over"
+          ]
+        }
+      },
+      {
+        "id": "go-back",
+        "term": "go back",
+        "meaning": "되돌아가다",
+        "example": "They go back to the office.",
+        "reading": "/ɡoʊ bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go out",
+            "go over",
+            "fill in"
+          ]
+        }
+      },
+      {
+        "id": "go-out",
+        "term": "go out",
+        "meaning": "외출하다",
+        "example": "I go out after dinner.",
+        "reading": "/ɡoʊ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go over",
+            "fill in",
+            "fill out"
+          ]
+        }
+      },
+      {
+        "id": "go-over",
+        "term": "go over",
+        "meaning": "검토하다",
+        "example": "We go over the notes.",
+        "reading": "/ɡoʊ ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fill in",
+            "fill out",
+            "find out"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-03",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 3,
+    "title": "Work And Support",
+    "words": [
+      {
+        "id": "go-through",
+        "term": "go through",
+        "meaning": "겪다",
+        "example": "My friend go through a hard time.",
+        "reading": "/ɡoʊ θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "grow up",
+            "hand in",
+            "hand out"
+          ]
+        }
+      },
+      {
+        "id": "grow-up",
+        "term": "grow up",
+        "meaning": "성장하다",
+        "example": "They grow up in Seoul.",
+        "reading": "/ɡroʊ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hand in",
+            "hand out",
+            "hang around"
+          ]
+        }
+      },
+      {
+        "id": "hand-in",
+        "term": "hand in",
+        "meaning": "제출하다",
+        "example": "I hand in the homework.",
+        "reading": "/hænd ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hand out",
+            "hang around",
+            "hang on"
+          ]
+        }
+      },
+      {
+        "id": "hand-out",
+        "term": "hand out",
+        "meaning": "배포하다",
+        "example": "We hand out the flyers.",
+        "reading": "/hænd aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hang around",
+            "hang on",
+            "hang out"
+          ]
+        }
+      },
+      {
+        "id": "hang-around",
+        "term": "hang around",
+        "meaning": "어슬렁거리다",
+        "example": "My friend hang around after school.",
+        "reading": "/hæŋ əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hang on",
+            "hang out",
+            "hold back"
+          ]
+        }
+      },
+      {
+        "id": "hang-on",
+        "term": "hang on",
+        "meaning": "기다리다",
+        "example": "They hang on for a minute.",
+        "reading": "/hæŋ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hang out",
+            "hold back",
+            "hold on"
+          ]
+        }
+      },
+      {
+        "id": "hang-out",
+        "term": "hang out",
+        "meaning": "어울리다",
+        "example": "I hang out with friends.",
+        "reading": "/hæŋ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hold back",
+            "hold on",
+            "hold up"
+          ]
+        }
+      },
+      {
+        "id": "hold-back",
+        "term": "hold back",
+        "meaning": "참다",
+        "example": "We hold back my opinion.",
+        "reading": "/hoʊld bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hold on",
+            "hold up",
+            "keep away"
+          ]
+        }
+      },
+      {
+        "id": "hold-on",
+        "term": "hold on",
+        "meaning": "기다리다",
+        "example": "My friend hold on for a second.",
+        "reading": "/hoʊld ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hold up",
+            "keep away",
+            "keep on"
+          ]
+        }
+      },
+      {
+        "id": "hold-up",
+        "term": "hold up",
+        "meaning": "지연시키다",
+        "example": "They hold up the line.",
+        "reading": "/hoʊld ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "keep away",
+            "keep on",
+            "keep up"
+          ]
+        }
+      },
+      {
+        "id": "keep-away",
+        "term": "keep away",
+        "meaning": "멀리하다",
+        "example": "I keep away from stress.",
+        "reading": "/kiːp əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "keep on",
+            "keep up",
+            "kick off"
+          ]
+        }
+      },
+      {
+        "id": "keep-on",
+        "term": "keep on",
+        "meaning": "계속하다",
+        "example": "We keep on with the lesson.",
+        "reading": "/kiːp ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "keep up",
+            "kick off",
+            "knock out"
+          ]
+        }
+      },
+      {
+        "id": "keep-up",
+        "term": "keep up",
+        "meaning": "유지하다",
+        "example": "My friend keep up the pace.",
+        "reading": "/kiːp ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "kick off",
+            "knock out",
+            "lay off"
+          ]
+        }
+      },
+      {
+        "id": "kick-off",
+        "term": "kick off",
+        "meaning": "시작하다",
+        "example": "They kick off the event.",
+        "reading": "/kɪk ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "knock out",
+            "lay off",
+            "leave out"
+          ]
+        }
+      },
+      {
+        "id": "knock-out",
+        "term": "knock out",
+        "meaning": "기절시키다",
+        "example": "I knock out the boxer.",
+        "reading": "/nɑːk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "lay off",
+            "leave out",
+            "let down"
+          ]
+        }
+      },
+      {
+        "id": "lay-off",
+        "term": "lay off",
+        "meaning": "해고하다",
+        "example": "We lay off two workers.",
+        "reading": "/leɪ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "leave out",
+            "let down",
+            "let in"
+          ]
+        }
+      },
+      {
+        "id": "leave-out",
+        "term": "leave out",
+        "meaning": "빼다",
+        "example": "My friend leave out one detail.",
+        "reading": "/liːv aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "let down",
+            "let in",
+            "line up"
+          ]
+        }
+      },
+      {
+        "id": "let-down",
+        "term": "let down",
+        "meaning": "실망시키다",
+        "example": "They let down the team.",
+        "reading": "/let daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "let in",
+            "line up",
+            "live on"
+          ]
+        }
+      },
+      {
+        "id": "let-in",
+        "term": "let in",
+        "meaning": "들여보내다",
+        "example": "I let in the guest.",
+        "reading": "/let ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "line up",
+            "live on",
+            "log in"
+          ]
+        }
+      },
+      {
+        "id": "line-up",
+        "term": "line up",
+        "meaning": "줄을 세우다",
+        "example": "We line up the kids.",
+        "reading": "/laɪn ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "live on",
+            "log in",
+            "look after"
+          ]
+        }
+      },
+      {
+        "id": "live-on",
+        "term": "live on",
+        "meaning": "먹고 살다",
+        "example": "My friend live on on noodles.",
+        "reading": "/lɪv ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "log in",
+            "look after",
+            "look around"
+          ]
+        }
+      },
+      {
+        "id": "log-in",
+        "term": "log in",
+        "meaning": "로그인하다",
+        "example": "They log in with my password.",
+        "reading": "/lɔːɡ ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look after",
+            "look around",
+            "look for"
+          ]
+        }
+      },
+      {
+        "id": "look-after",
+        "term": "look after",
+        "meaning": "돌보다",
+        "example": "I look after my nephew.",
+        "reading": "/lʊk ˈæftər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look around",
+            "look for",
+            "go through"
+          ]
+        }
+      },
+      {
+        "id": "look-around",
+        "term": "look around",
+        "meaning": "둘러보다",
+        "example": "We look around in the store.",
+        "reading": "/lʊk əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look for",
+            "go through",
+            "grow up"
+          ]
+        }
+      },
+      {
+        "id": "look-for",
+        "term": "look for",
+        "meaning": "찾다",
+        "example": "My friend look for my keys.",
+        "reading": "/lʊk fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go through",
+            "grow up",
+            "hand in"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-04",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 4,
+    "title": "Planning And Review",
+    "words": [
+      {
+        "id": "look-forward-to",
+        "term": "look forward to",
+        "meaning": "기대하다",
+        "example": "They look forward to the vacation.",
+        "reading": "/lʊk ˈfɔːrwərd tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look into",
+            "look out",
+            "look over"
+          ]
+        }
+      },
+      {
+        "id": "look-into",
+        "term": "look into",
+        "meaning": "조사하다",
+        "example": "I look into the problem.",
+        "reading": "/lʊk ˈɪntuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look out",
+            "look over",
+            "look up"
+          ]
+        }
+      },
+      {
+        "id": "look-out",
+        "term": "look out",
+        "meaning": "조심하다",
+        "example": "We look out near the road.",
+        "reading": "/lʊk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look over",
+            "look up",
+            "make up"
+          ]
+        }
+      },
+      {
+        "id": "look-over",
+        "term": "look over",
+        "meaning": "살펴보다",
+        "example": "My friend look over the document.",
+        "reading": "/lʊk ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look up",
+            "make up",
+            "mix up"
+          ]
+        }
+      },
+      {
+        "id": "look-up",
+        "term": "look up",
+        "meaning": "찾아보다",
+        "example": "They look up the word.",
+        "reading": "/lʊk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "make up",
+            "mix up",
+            "move in"
+          ]
+        }
+      },
+      {
+        "id": "make-up",
+        "term": "make up",
+        "meaning": "만들어 내다",
+        "example": "I make up an excuse.",
+        "reading": "/meɪk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "mix up",
+            "move in",
+            "move on"
+          ]
+        }
+      },
+      {
+        "id": "mix-up",
+        "term": "mix up",
+        "meaning": "혼동하다",
+        "example": "We mix up the names.",
+        "reading": "/mɪks ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "move in",
+            "move on",
+            "move out"
+          ]
+        }
+      },
+      {
+        "id": "move-in",
+        "term": "move in",
+        "meaning": "이사 오다",
+        "example": "My friend move in next month.",
+        "reading": "/muːv ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "move on",
+            "move out",
+            "nod off"
+          ]
+        }
+      },
+      {
+        "id": "move-on",
+        "term": "move on",
+        "meaning": "넘어가다",
+        "example": "They move on after the lesson.",
+        "reading": "/muːv ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "move out",
+            "nod off",
+            "open up"
+          ]
+        }
+      },
+      {
+        "id": "move-out",
+        "term": "move out",
+        "meaning": "이사 나가다",
+        "example": "I move out this spring.",
+        "reading": "/muːv aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "nod off",
+            "open up",
+            "pass away"
+          ]
+        }
+      },
+      {
+        "id": "nod-off",
+        "term": "nod off",
+        "meaning": "깜빡 잠들다",
+        "example": "We nod off on the sofa.",
+        "reading": "/nɑːd ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "open up",
+            "pass away",
+            "pass on"
+          ]
+        }
+      },
+      {
+        "id": "open-up",
+        "term": "open up",
+        "meaning": "마음을 열다",
+        "example": "My friend open up during the talk.",
+        "reading": "/ˈoʊpən ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pass away",
+            "pass on",
+            "pay back"
+          ]
+        }
+      },
+      {
+        "id": "pass-away",
+        "term": "pass away",
+        "meaning": "세상을 떠나다",
+        "example": "They pass away last year.",
+        "reading": "/pæs əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pass on",
+            "pay back",
+            "pay for"
+          ]
+        }
+      },
+      {
+        "id": "pass-on",
+        "term": "pass on",
+        "meaning": "전달하다",
+        "example": "I pass on the message.",
+        "reading": "/pæs ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pay back",
+            "pay for",
+            "pay off"
+          ]
+        }
+      },
+      {
+        "id": "pay-back",
+        "term": "pay back",
+        "meaning": "갚다",
+        "example": "We pay back the money.",
+        "reading": "/peɪ bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pay for",
+            "pay off",
+            "pick out"
+          ]
+        }
+      },
+      {
+        "id": "pay-for",
+        "term": "pay for",
+        "meaning": "지불하다",
+        "example": "My friend pay for the meal.",
+        "reading": "/peɪ fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pay off",
+            "pick out",
+            "pick up"
+          ]
+        }
+      },
+      {
+        "id": "pay-off",
+        "term": "pay off",
+        "meaning": "성과를 내다",
+        "example": "They pay off in the end.",
+        "reading": "/peɪ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pick out",
+            "pick up",
+            "plan ahead"
+          ]
+        }
+      },
+      {
+        "id": "pick-out",
+        "term": "pick out",
+        "meaning": "고르다",
+        "example": "I pick out a gift.",
+        "reading": "/pɪk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pick up",
+            "plan ahead",
+            "point out"
+          ]
+        }
+      },
+      {
+        "id": "pick-up",
+        "term": "pick up",
+        "meaning": "집어 들다",
+        "example": "We pick up the package.",
+        "reading": "/pɪk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "plan ahead",
+            "point out",
+            "print out"
+          ]
+        }
+      },
+      {
+        "id": "plan-ahead",
+        "term": "plan ahead",
+        "meaning": "미리 계획하다",
+        "example": "My friend plan ahead for the trip.",
+        "reading": "/plæn əˈhed/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "point out",
+            "print out",
+            "put away"
+          ]
+        }
+      },
+      {
+        "id": "point-out",
+        "term": "point out",
+        "meaning": "지적하다",
+        "example": "They point out the error.",
+        "reading": "/pɔɪnt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "print out",
+            "put away",
+            "put back"
+          ]
+        }
+      },
+      {
+        "id": "print-out",
+        "term": "print out",
+        "meaning": "출력하다",
+        "example": "I print out the ticket.",
+        "reading": "/prɪnt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put away",
+            "put back",
+            "put down"
+          ]
+        }
+      },
+      {
+        "id": "put-away",
+        "term": "put away",
+        "meaning": "치우다",
+        "example": "We put away the dishes.",
+        "reading": "/pʊt əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put back",
+            "put down",
+            "look forward to"
+          ]
+        }
+      },
+      {
+        "id": "put-back",
+        "term": "put back",
+        "meaning": "제자리에 두다",
+        "example": "My friend put back the chair.",
+        "reading": "/pʊt bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put down",
+            "look forward to",
+            "look into"
+          ]
+        }
+      },
+      {
+        "id": "put-down",
+        "term": "put down",
+        "meaning": "적어 두다",
+        "example": "They put down the idea.",
+        "reading": "/pʊt daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look forward to",
+            "look into",
+            "look out"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-05",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 5,
+    "title": "Handling Situations",
+    "words": [
+      {
+        "id": "put-off",
+        "term": "put off",
+        "meaning": "미루다",
+        "example": "I put off the appointment.",
+        "reading": "/pʊt ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put on",
+            "put out",
+            "put together"
+          ]
+        }
+      },
+      {
+        "id": "put-on",
+        "term": "put on",
+        "meaning": "입다",
+        "example": "We put on a jacket.",
+        "reading": "/pʊt ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put out",
+            "put together",
+            "run across"
+          ]
+        }
+      },
+      {
+        "id": "put-out",
+        "term": "put out",
+        "meaning": "끄다",
+        "example": "My friend put out the fire.",
+        "reading": "/pʊt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put together",
+            "run across",
+            "run away"
+          ]
+        }
+      },
+      {
+        "id": "put-together",
+        "term": "put together",
+        "meaning": "조립하다",
+        "example": "They put together the shelf.",
+        "reading": "/pʊt təˈɡeðər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "run across",
+            "run away",
+            "run into"
+          ]
+        }
+      },
+      {
+        "id": "run-across",
+        "term": "run across",
+        "meaning": "우연히 만나다",
+        "example": "I run across an old friend.",
+        "reading": "/rʌn əˈkrɔːs/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "run away",
+            "run into",
+            "run out of"
+          ]
+        }
+      },
+      {
+        "id": "run-away",
+        "term": "run away",
+        "meaning": "도망가다",
+        "example": "We run away from home.",
+        "reading": "/rʌn əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "run into",
+            "run out of",
+            "save up"
+          ]
+        }
+      },
+      {
+        "id": "run-into",
+        "term": "run into",
+        "meaning": "우연히 만나다",
+        "example": "My friend run into my teacher.",
+        "reading": "/rʌn ˈɪntuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "run out of",
+            "save up",
+            "sell out"
+          ]
+        }
+      },
+      {
+        "id": "run-out-of",
+        "term": "run out of",
+        "meaning": "다 써 버리다",
+        "example": "They run out of milk.",
+        "reading": "/rʌn aʊt əv/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "save up",
+            "sell out",
+            "send back"
+          ]
+        }
+      },
+      {
+        "id": "save-up",
+        "term": "save up",
+        "meaning": "저축하다",
+        "example": "I save up for a bike.",
+        "reading": "/seɪv ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sell out",
+            "send back",
+            "set aside"
+          ]
+        }
+      },
+      {
+        "id": "sell-out",
+        "term": "sell out",
+        "meaning": "매진되다",
+        "example": "We sell out before noon.",
+        "reading": "/sel aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "send back",
+            "set aside",
+            "set off"
+          ]
+        }
+      },
+      {
+        "id": "send-back",
+        "term": "send back",
+        "meaning": "반송하다",
+        "example": "My friend send back the order.",
+        "reading": "/send bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "set aside",
+            "set off",
+            "set up"
+          ]
+        }
+      },
+      {
+        "id": "set-aside",
+        "term": "set aside",
+        "meaning": "따로 두다",
+        "example": "They set aside some time.",
+        "reading": "/set əˈsaɪd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "set off",
+            "set up",
+            "show up"
+          ]
+        }
+      },
+      {
+        "id": "set-off",
+        "term": "set off",
+        "meaning": "출발하다",
+        "example": "I set off before dawn.",
+        "reading": "/set ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "set up",
+            "show up",
+            "shut down"
+          ]
+        }
+      },
+      {
+        "id": "set-up",
+        "term": "set up",
+        "meaning": "설치하다",
+        "example": "We set up the camera.",
+        "reading": "/set ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "show up",
+            "shut down",
+            "sign in"
+          ]
+        }
+      },
+      {
+        "id": "show-up",
+        "term": "show up",
+        "meaning": "나타나다",
+        "example": "My friend show up on time.",
+        "reading": "/ʃoʊ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "shut down",
+            "sign in",
+            "sign up"
+          ]
+        }
+      },
+      {
+        "id": "shut-down",
+        "term": "shut down",
+        "meaning": "중단하다",
+        "example": "They shut down the system.",
+        "reading": "/ʃʌt daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sign in",
+            "sign up",
+            "sit down"
+          ]
+        }
+      },
+      {
+        "id": "sign-in",
+        "term": "sign in",
+        "meaning": "서명하고 들어가다",
+        "example": "I sign in at the desk.",
+        "reading": "/saɪn ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sign up",
+            "sit down",
+            "sleep in"
+          ]
+        }
+      },
+      {
+        "id": "sign-up",
+        "term": "sign up",
+        "meaning": "신청하다",
+        "example": "We sign up for the class.",
+        "reading": "/saɪn ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sit down",
+            "sleep in",
+            "speak up"
+          ]
+        }
+      },
+      {
+        "id": "sit-down",
+        "term": "sit down",
+        "meaning": "앉다",
+        "example": "My friend sit down near the window.",
+        "reading": "/sɪt daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sleep in",
+            "speak up",
+            "speed up"
+          ]
+        }
+      },
+      {
+        "id": "sleep-in",
+        "term": "sleep in",
+        "meaning": "늦잠 자다",
+        "example": "They sleep in on Sundays.",
+        "reading": "/sliːp ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "speak up",
+            "speed up",
+            "stand by"
+          ]
+        }
+      },
+      {
+        "id": "speak-up",
+        "term": "speak up",
+        "meaning": "크게 말하다",
+        "example": "I speak up during the meeting.",
+        "reading": "/spiːk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "speed up",
+            "stand by",
+            "stand out"
+          ]
+        }
+      },
+      {
+        "id": "speed-up",
+        "term": "speed up",
+        "meaning": "속도를 높이다",
+        "example": "We speed up the process.",
+        "reading": "/spiːd ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stand by",
+            "stand out",
+            "start over"
+          ]
+        }
+      },
+      {
+        "id": "stand-by",
+        "term": "stand by",
+        "meaning": "대기하다",
+        "example": "My friend stand by for updates.",
+        "reading": "/stænd baɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stand out",
+            "start over",
+            "put off"
+          ]
+        }
+      },
+      {
+        "id": "stand-out",
+        "term": "stand out",
+        "meaning": "두드러지다",
+        "example": "They stand out in the crowd.",
+        "reading": "/stænd aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "start over",
+            "put off",
+            "put on"
+          ]
+        }
+      },
+      {
+        "id": "start-over",
+        "term": "start over",
+        "meaning": "다시 시작하다",
+        "example": "I start over after the mistake.",
+        "reading": "/stɑːrt ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put off",
+            "put on",
+            "put out"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-06",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 6,
+    "title": "Habits And Decisions",
+    "words": [
+      {
+        "id": "stay-in",
+        "term": "stay in",
+        "meaning": "집에 머물다",
+        "example": "We stay in on rainy days.",
+        "reading": "/steɪ ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stay up",
+            "step down",
+            "step in"
+          ]
+        }
+      },
+      {
+        "id": "stay-up",
+        "term": "stay up",
+        "meaning": "늦게까지 깨어 있다",
+        "example": "My friend stay up for the game.",
+        "reading": "/steɪ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "step down",
+            "step in",
+            "stick to"
+          ]
+        }
+      },
+      {
+        "id": "step-down",
+        "term": "step down",
+        "meaning": "사임하다",
+        "example": "They step down after the vote.",
+        "reading": "/step daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "step in",
+            "stick to",
+            "switch off"
+          ]
+        }
+      },
+      {
+        "id": "step-in",
+        "term": "step in",
+        "meaning": "개입하다",
+        "example": "I step in during the argument.",
+        "reading": "/step ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stick to",
+            "switch off",
+            "switch on"
+          ]
+        }
+      },
+      {
+        "id": "stick-to",
+        "term": "stick to",
+        "meaning": "고수하다",
+        "example": "We stick to the schedule.",
+        "reading": "/stɪk tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "switch off",
+            "switch on",
+            "take after"
+          ]
+        }
+      },
+      {
+        "id": "switch-off",
+        "term": "switch off",
+        "meaning": "끄다",
+        "example": "My friend switch off the light.",
+        "reading": "/swɪtʃ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "switch on",
+            "take after",
+            "take away"
+          ]
+        }
+      },
+      {
+        "id": "switch-on",
+        "term": "switch on",
+        "meaning": "켜다",
+        "example": "They switch on the heater.",
+        "reading": "/swɪtʃ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take after",
+            "take away",
+            "take back"
+          ]
+        }
+      },
+      {
+        "id": "take-after",
+        "term": "take after",
+        "meaning": "닮다",
+        "example": "I take after my father.",
+        "reading": "/teɪk ˈæftər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take away",
+            "take back",
+            "take down"
+          ]
+        }
+      },
+      {
+        "id": "take-away",
+        "term": "take away",
+        "meaning": "치우다",
+        "example": "We take away the tray.",
+        "reading": "/teɪk əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take back",
+            "take down",
+            "take off"
+          ]
+        }
+      },
+      {
+        "id": "take-back",
+        "term": "take back",
+        "meaning": "철회하다",
+        "example": "My friend take back my words.",
+        "reading": "/teɪk bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take down",
+            "take off",
+            "take on"
+          ]
+        }
+      },
+      {
+        "id": "take-down",
+        "term": "take down",
+        "meaning": "메모하다",
+        "example": "They take down the address.",
+        "reading": "/teɪk daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take off",
+            "take on",
+            "take out"
+          ]
+        }
+      },
+      {
+        "id": "take-off",
+        "term": "take off",
+        "meaning": "벗다",
+        "example": "I take off my shoes.",
+        "reading": "/teɪk ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take on",
+            "take out",
+            "talk over"
+          ]
+        }
+      },
+      {
+        "id": "take-on",
+        "term": "take on",
+        "meaning": "맡다",
+        "example": "We take on the task.",
+        "reading": "/teɪk ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take out",
+            "talk over",
+            "tear down"
+          ]
+        }
+      },
+      {
+        "id": "take-out",
+        "term": "take out",
+        "meaning": "꺼내다",
+        "example": "My friend take out the trash.",
+        "reading": "/teɪk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "talk over",
+            "tear down",
+            "think over"
+          ]
+        }
+      },
+      {
+        "id": "talk-over",
+        "term": "talk over",
+        "meaning": "상의하다",
+        "example": "They talk over the issue.",
+        "reading": "/tɔːk ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "tear down",
+            "think over",
+            "throw away"
+          ]
+        }
+      },
+      {
+        "id": "tear-down",
+        "term": "tear down",
+        "meaning": "철거하다",
+        "example": "I tear down the wall.",
+        "reading": "/ter daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "think over",
+            "throw away",
+            "tidy up"
+          ]
+        }
+      },
+      {
+        "id": "think-over",
+        "term": "think over",
+        "meaning": "곰곰이 생각하다",
+        "example": "We think over the offer.",
+        "reading": "/θɪŋk ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "throw away",
+            "tidy up",
+            "try on"
+          ]
+        }
+      },
+      {
+        "id": "throw-away",
+        "term": "throw away",
+        "meaning": "버리다",
+        "example": "My friend throw away old papers.",
+        "reading": "/θroʊ əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "tidy up",
+            "try on",
+            "turn around"
+          ]
+        }
+      },
+      {
+        "id": "tidy-up",
+        "term": "tidy up",
+        "meaning": "정리하다",
+        "example": "They tidy up the room.",
+        "reading": "/ˈtaɪdi ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "try on",
+            "turn around",
+            "turn down"
+          ]
+        }
+      },
+      {
+        "id": "try-on",
+        "term": "try on",
+        "meaning": "입어 보다",
+        "example": "I try on the coat.",
+        "reading": "/traɪ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn around",
+            "turn down",
+            "turn in"
+          ]
+        }
+      },
+      {
+        "id": "turn-around",
+        "term": "turn around",
+        "meaning": "돌아서다",
+        "example": "We turn around at the door.",
+        "reading": "/tɝːn əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn down",
+            "turn in",
+            "turn off"
+          ]
+        }
+      },
+      {
+        "id": "turn-down",
+        "term": "turn down",
+        "meaning": "거절하다",
+        "example": "My friend turn down the invitation.",
+        "reading": "/tɝːn daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn in",
+            "turn off",
+            "turn on"
+          ]
+        }
+      },
+      {
+        "id": "turn-in",
+        "term": "turn in",
+        "meaning": "제출하다",
+        "example": "They turn in the report.",
+        "reading": "/tɝːn ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn off",
+            "turn on",
+            "stay in"
+          ]
+        }
+      },
+      {
+        "id": "turn-off",
+        "term": "turn off",
+        "meaning": "끄다",
+        "example": "I turn off the TV.",
+        "reading": "/tɝːn ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn on",
+            "stay in",
+            "stay up"
+          ]
+        }
+      },
+      {
+        "id": "turn-on",
+        "term": "turn on",
+        "meaning": "켜다",
+        "example": "We turn on the radio.",
+        "reading": "/tɝːn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stay in",
+            "stay up",
+            "step down"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-07",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 7,
+    "title": "Movement And Change",
+    "words": [
+      {
+        "id": "turn-out",
+        "term": "turn out",
+        "meaning": "드러나다",
+        "example": "My friend turn out to be true.",
+        "reading": "/tɝːn aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn up",
+            "use up",
+            "wait for"
+          ]
+        }
+      },
+      {
+        "id": "turn-up",
+        "term": "turn up",
+        "meaning": "나타나다",
+        "example": "They turn up at the station.",
+        "reading": "/tɝːn ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "use up",
+            "wait for",
+            "wake up"
+          ]
+        }
+      },
+      {
+        "id": "use-up",
+        "term": "use up",
+        "meaning": "다 써 버리다",
+        "example": "I use up all the paper.",
+        "reading": "/juːz ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wait for",
+            "wake up",
+            "walk in"
+          ]
+        }
+      },
+      {
+        "id": "wait-for",
+        "term": "wait for",
+        "meaning": "기다리다",
+        "example": "We wait for the bus.",
+        "reading": "/weɪt fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wake up",
+            "walk in",
+            "walk out"
+          ]
+        }
+      },
+      {
+        "id": "wake-up",
+        "term": "wake up",
+        "meaning": "잠에서 깨다",
+        "example": "My friend wake up before sunrise.",
+        "reading": "/weɪk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "walk in",
+            "walk out",
+            "warm up"
+          ]
+        }
+      },
+      {
+        "id": "walk-in",
+        "term": "walk in",
+        "meaning": "걸어 들어오다",
+        "example": "They walk in without knocking.",
+        "reading": "/wɔːk ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "walk out",
+            "warm up",
+            "wash up"
+          ]
+        }
+      },
+      {
+        "id": "walk-out",
+        "term": "walk out",
+        "meaning": "걸어 나가다",
+        "example": "I walk out during the break.",
+        "reading": "/wɔːk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "warm up",
+            "wash up",
+            "watch out"
+          ]
+        }
+      },
+      {
+        "id": "warm-up",
+        "term": "warm up",
+        "meaning": "몸을 풀다",
+        "example": "We warm up before practice.",
+        "reading": "/wɔːrm ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wash up",
+            "watch out",
+            "wear out"
+          ]
+        }
+      },
+      {
+        "id": "wash-up",
+        "term": "wash up",
+        "meaning": "씻다",
+        "example": "My friend wash up after dinner.",
+        "reading": "/wɑːʃ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "watch out",
+            "wear out",
+            "wind down"
+          ]
+        }
+      },
+      {
+        "id": "watch-out",
+        "term": "watch out",
+        "meaning": "조심하다",
+        "example": "They watch out near the stairs.",
+        "reading": "/wɑːtʃ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wear out",
+            "wind down",
+            "work out"
+          ]
+        }
+      },
+      {
+        "id": "wear-out",
+        "term": "wear out",
+        "meaning": "닳게 하다",
+        "example": "I wear out my sneakers.",
+        "reading": "/wer aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wind down",
+            "work out",
+            "write down"
+          ]
+        }
+      },
+      {
+        "id": "wind-down",
+        "term": "wind down",
+        "meaning": "긴장을 풀다",
+        "example": "We wind down after work.",
+        "reading": "/waɪnd daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "work out",
+            "write down",
+            "zone out"
+          ]
+        }
+      },
+      {
+        "id": "work-out",
+        "term": "work out",
+        "meaning": "해결하다",
+        "example": "My friend work out the plan.",
+        "reading": "/wɝːk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "write down",
+            "zone out",
+            "add up"
+          ]
+        }
+      },
+      {
+        "id": "write-down",
+        "term": "write down",
+        "meaning": "적다",
+        "example": "They write down the number.",
+        "reading": "/raɪt daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "zone out",
+            "add up",
+            "blow up"
+          ]
+        }
+      },
+      {
+        "id": "zone-out",
+        "term": "zone out",
+        "meaning": "멍해지다",
+        "example": "I zone out during the lecture.",
+        "reading": "/zoʊn aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "add up",
+            "blow up",
+            "boil down"
+          ]
+        }
+      },
+      {
+        "id": "add-up",
+        "term": "add up",
+        "meaning": "합산되다",
+        "example": "We add up in the end.",
+        "reading": "/æd ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "blow up",
+            "boil down",
+            "book in"
+          ]
+        }
+      },
+      {
+        "id": "blow-up",
+        "term": "blow up",
+        "meaning": "폭발하다",
+        "example": "My friend blow up in the movie.",
+        "reading": "/bloʊ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "boil down",
+            "book in",
+            "break down"
+          ]
+        }
+      },
+      {
+        "id": "boil-down",
+        "term": "boil down",
+        "meaning": "요약되다",
+        "example": "They boil down to one point.",
+        "reading": "/bɔɪl daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "book in",
+            "break down",
+            "break in"
+          ]
+        }
+      },
+      {
+        "id": "book-in",
+        "term": "book in",
+        "meaning": "예약하다",
+        "example": "I book in a table.",
+        "reading": "/bʊk ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "break down",
+            "break in",
+            "break out"
+          ]
+        }
+      },
+      {
+        "id": "break-down",
+        "term": "break down",
+        "meaning": "고장 나다",
+        "example": "We break down on the road.",
+        "reading": "/breɪk daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "break in",
+            "break out",
+            "break up"
+          ]
+        }
+      },
+      {
+        "id": "break-in",
+        "term": "break in",
+        "meaning": "침입하다",
+        "example": "My friend break in at night.",
+        "reading": "/breɪk ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "break out",
+            "break up",
+            "bring about"
+          ]
+        }
+      },
+      {
+        "id": "break-out",
+        "term": "break out",
+        "meaning": "발생하다",
+        "example": "They break out in the city.",
+        "reading": "/breɪk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "break up",
+            "bring about",
+            "bring back"
+          ]
+        }
+      },
+      {
+        "id": "break-up",
+        "term": "break up",
+        "meaning": "헤어지다",
+        "example": "I break up after a year.",
+        "reading": "/breɪk ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring about",
+            "bring back",
+            "turn out"
+          ]
+        }
+      },
+      {
+        "id": "bring-about",
+        "term": "bring about",
+        "meaning": "초래하다",
+        "example": "We bring about a change.",
+        "reading": "/brɪŋ əˈbaʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring back",
+            "turn out",
+            "turn up"
+          ]
+        }
+      },
+      {
+        "id": "bring-back",
+        "term": "bring back",
+        "meaning": "되살리다",
+        "example": "My friend bring back old memories.",
+        "reading": "/brɪŋ bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn out",
+            "turn up",
+            "use up"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-08",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 8,
+    "title": "Results And Causes",
+    "words": [
+      {
+        "id": "bring-down",
+        "term": "bring down",
+        "meaning": "낮추다",
+        "example": "They bring down the price.",
+        "reading": "/brɪŋ daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring in",
+            "bring out",
+            "calm down"
+          ]
+        }
+      },
+      {
+        "id": "bring-in",
+        "term": "bring in",
+        "meaning": "도입하다",
+        "example": "I bring in a new rule.",
+        "reading": "/brɪŋ ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring out",
+            "calm down",
+            "call for"
+          ]
+        }
+      },
+      {
+        "id": "bring-out",
+        "term": "bring out",
+        "meaning": "드러내다",
+        "example": "We bring out the flavor.",
+        "reading": "/brɪŋ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "calm down",
+            "call for",
+            "come down with"
+          ]
+        }
+      },
+      {
+        "id": "calm-down",
+        "term": "calm down",
+        "meaning": "진정하다",
+        "example": "My friend calm down after the news.",
+        "reading": "/kɑːm daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "call for",
+            "come down with",
+            "come from"
+          ]
+        }
+      },
+      {
+        "id": "call-for",
+        "term": "call for",
+        "meaning": "요구하다",
+        "example": "They call for more time.",
+        "reading": "/kɔːl fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come down with",
+            "come from",
+            "come in"
+          ]
+        }
+      },
+      {
+        "id": "come-down-with",
+        "term": "come down with",
+        "meaning": "걸리다",
+        "example": "I come down with the flu.",
+        "reading": "/kʌm daʊn wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come from",
+            "come in",
+            "come off"
+          ]
+        }
+      },
+      {
+        "id": "come-from",
+        "term": "come from",
+        "meaning": "출신이다",
+        "example": "We come from from Busan.",
+        "reading": "/kʌm frʌm/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come in",
+            "come off",
+            "come out"
+          ]
+        }
+      },
+      {
+        "id": "come-in",
+        "term": "come in",
+        "meaning": "들어오다",
+        "example": "My friend come in through the door.",
+        "reading": "/kʌm ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come off",
+            "come out",
+            "come over"
+          ]
+        }
+      },
+      {
+        "id": "come-off",
+        "term": "come off",
+        "meaning": "성공하다",
+        "example": "They come off as planned.",
+        "reading": "/kʌm ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come out",
+            "come over",
+            "come through"
+          ]
+        }
+      },
+      {
+        "id": "come-out",
+        "term": "come out",
+        "meaning": "나오다",
+        "example": "I come out next month.",
+        "reading": "/kʌm aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come over",
+            "come through",
+            "cut back"
+          ]
+        }
+      },
+      {
+        "id": "come-over",
+        "term": "come over",
+        "meaning": "방문하다",
+        "example": "We come over after lunch.",
+        "reading": "/kʌm ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "come through",
+            "cut back",
+            "cut down on"
+          ]
+        }
+      },
+      {
+        "id": "come-through",
+        "term": "come through",
+        "meaning": "해내다",
+        "example": "My friend come through in the end.",
+        "reading": "/kʌm θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cut back",
+            "cut down on",
+            "do over"
+          ]
+        }
+      },
+      {
+        "id": "cut-back",
+        "term": "cut back",
+        "meaning": "줄이다",
+        "example": "They cut back our spending.",
+        "reading": "/kʌt bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cut down on",
+            "do over",
+            "do without"
+          ]
+        }
+      },
+      {
+        "id": "cut-down-on",
+        "term": "cut down on",
+        "meaning": "줄이다",
+        "example": "I cut down on sugar.",
+        "reading": "/kʌt daʊn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "do over",
+            "do without",
+            "drag on"
+          ]
+        }
+      },
+      {
+        "id": "do-over",
+        "term": "do over",
+        "meaning": "다시 하다",
+        "example": "We do over the task.",
+        "reading": "/duː ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "do without",
+            "drag on",
+            "draw up"
+          ]
+        }
+      },
+      {
+        "id": "do-without",
+        "term": "do without",
+        "meaning": "없이 지내다",
+        "example": "My friend do without a car.",
+        "reading": "/duː wɪˈðaʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "drag on",
+            "draw up",
+            "eat out"
+          ]
+        }
+      },
+      {
+        "id": "drag-on",
+        "term": "drag on",
+        "meaning": "질질 끌다",
+        "example": "They drag on for hours.",
+        "reading": "/dræɡ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "draw up",
+            "eat out",
+            "end up"
+          ]
+        }
+      },
+      {
+        "id": "draw-up",
+        "term": "draw up",
+        "meaning": "작성하다",
+        "example": "I draw up a contract.",
+        "reading": "/drɔː ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "eat out",
+            "end up",
+            "fall apart"
+          ]
+        }
+      },
+      {
+        "id": "eat-out",
+        "term": "eat out",
+        "meaning": "외식하다",
+        "example": "We eat out on Fridays.",
+        "reading": "/iːt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "end up",
+            "fall apart",
+            "fall behind"
+          ]
+        }
+      },
+      {
+        "id": "end-up",
+        "term": "end up",
+        "meaning": "결국 ~하게 되다",
+        "example": "My friend end up at the wrong place.",
+        "reading": "/end ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fall apart",
+            "fall behind",
+            "fall for"
+          ]
+        }
+      },
+      {
+        "id": "fall-apart",
+        "term": "fall apart",
+        "meaning": "무너지다",
+        "example": "They fall apart under stress.",
+        "reading": "/fɔːl əˈpɑːrt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fall behind",
+            "fall for",
+            "finish off"
+          ]
+        }
+      },
+      {
+        "id": "fall-behind",
+        "term": "fall behind",
+        "meaning": "뒤처지다",
+        "example": "I fall behind in class.",
+        "reading": "/fɔːl bɪˈhaɪnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fall for",
+            "finish off",
+            "focus on"
+          ]
+        }
+      },
+      {
+        "id": "fall-for",
+        "term": "fall for",
+        "meaning": "속다",
+        "example": "We fall for the trick.",
+        "reading": "/fɔːl fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "finish off",
+            "focus on",
+            "bring down"
+          ]
+        }
+      },
+      {
+        "id": "finish-off",
+        "term": "finish off",
+        "meaning": "끝내다",
+        "example": "My friend finish off the cake.",
+        "reading": "/ˈfɪnɪʃ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "focus on",
+            "bring down",
+            "bring in"
+          ]
+        }
+      },
+      {
+        "id": "focus-on",
+        "term": "focus on",
+        "meaning": "집중하다",
+        "example": "They focus on the goal.",
+        "reading": "/ˈfoʊkəs ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bring down",
+            "bring in",
+            "bring out"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-09",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 9,
+    "title": "Problem Solving",
+    "words": [
+      {
+        "id": "follow-up",
+        "term": "follow up",
+        "meaning": "후속 조치하다",
+        "example": "I follow up the email.",
+        "reading": "/ˈfɑːloʊ ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "knock down",
+            "lead to",
+            "leave behind"
+          ]
+        }
+      },
+      {
+        "id": "knock-down",
+        "term": "knock down",
+        "meaning": "쓰러뜨리다",
+        "example": "We knock down the sign.",
+        "reading": "/nɑːk daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "lead to",
+            "leave behind",
+            "live up to"
+          ]
+        }
+      },
+      {
+        "id": "lead-to",
+        "term": "lead to",
+        "meaning": "이어지다",
+        "example": "My friend lead to a delay.",
+        "reading": "/liːd tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "leave behind",
+            "live up to",
+            "make for"
+          ]
+        }
+      },
+      {
+        "id": "leave-behind",
+        "term": "leave behind",
+        "meaning": "남겨 두다",
+        "example": "They leave behind my bag.",
+        "reading": "/liːv bɪˈhaɪnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "live up to",
+            "make for",
+            "pass out"
+          ]
+        }
+      },
+      {
+        "id": "live-up-to",
+        "term": "live up to",
+        "meaning": "부응하다",
+        "example": "I live up to the promise.",
+        "reading": "/lɪv ʌp tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "make for",
+            "pass out",
+            "pick on"
+          ]
+        }
+      },
+      {
+        "id": "make-for",
+        "term": "make for",
+        "meaning": "향하다",
+        "example": "We make for the exit.",
+        "reading": "/meɪk fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pass out",
+            "pick on",
+            "pull over"
+          ]
+        }
+      },
+      {
+        "id": "pass-out",
+        "term": "pass out",
+        "meaning": "기절하다",
+        "example": "My friend pass out during the game.",
+        "reading": "/pæs aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pick on",
+            "pull over",
+            "put up with"
+          ]
+        }
+      },
+      {
+        "id": "pick-on",
+        "term": "pick on",
+        "meaning": "괴롭히다",
+        "example": "They pick on the new kid.",
+        "reading": "/pɪk ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pull over",
+            "put up with",
+            "reach out"
+          ]
+        }
+      },
+      {
+        "id": "pull-over",
+        "term": "pull over",
+        "meaning": "차를 세우다",
+        "example": "I pull over by the curb.",
+        "reading": "/pʊl ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put up with",
+            "reach out",
+            "rule out"
+          ]
+        }
+      },
+      {
+        "id": "put-up-with",
+        "term": "put up with",
+        "meaning": "참다",
+        "example": "We put up with the noise.",
+        "reading": "/pʊt ʌp wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "reach out",
+            "rule out",
+            "see off"
+          ]
+        }
+      },
+      {
+        "id": "reach-out",
+        "term": "reach out",
+        "meaning": "손을 내밀다",
+        "example": "My friend reach out to a neighbor.",
+        "reading": "/riːtʃ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "rule out",
+            "see off",
+            "settle down"
+          ]
+        }
+      },
+      {
+        "id": "rule-out",
+        "term": "rule out",
+        "meaning": "제외하다",
+        "example": "They rule out that option.",
+        "reading": "/ruːl aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "see off",
+            "settle down",
+            "show off"
+          ]
+        }
+      },
+      {
+        "id": "see-off",
+        "term": "see off",
+        "meaning": "배웅하다",
+        "example": "I see off my parents.",
+        "reading": "/siː ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "settle down",
+            "show off",
+            "sort out"
+          ]
+        }
+      },
+      {
+        "id": "settle-down",
+        "term": "settle down",
+        "meaning": "정착하다",
+        "example": "We settle down in one town.",
+        "reading": "/ˈsetəl daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "show off",
+            "sort out",
+            "step up"
+          ]
+        }
+      },
+      {
+        "id": "show-off",
+        "term": "show off",
+        "meaning": "자랑하다",
+        "example": "My friend show off my new phone.",
+        "reading": "/ʃoʊ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sort out",
+            "step up",
+            "stick with"
+          ]
+        }
+      },
+      {
+        "id": "sort-out",
+        "term": "sort out",
+        "meaning": "정리하다",
+        "example": "They sort out the files.",
+        "reading": "/sɔːrt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "step up",
+            "stick with",
+            "stop by"
+          ]
+        }
+      },
+      {
+        "id": "step-up",
+        "term": "step up",
+        "meaning": "강화하다",
+        "example": "I step up our efforts.",
+        "reading": "/step ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stick with",
+            "stop by",
+            "sum up"
+          ]
+        }
+      },
+      {
+        "id": "stick-with",
+        "term": "stick with",
+        "meaning": "계속하다",
+        "example": "We stick with the project.",
+        "reading": "/stɪk wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stop by",
+            "sum up",
+            "take in"
+          ]
+        }
+      },
+      {
+        "id": "stop-by",
+        "term": "stop by",
+        "meaning": "잠깐 들르다",
+        "example": "My friend stop by after class.",
+        "reading": "/stɑːp baɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "sum up",
+            "take in",
+            "team up"
+          ]
+        }
+      },
+      {
+        "id": "sum-up",
+        "term": "sum up",
+        "meaning": "요약하다",
+        "example": "They sum up the meeting.",
+        "reading": "/sʌm ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take in",
+            "team up",
+            "think ahead"
+          ]
+        }
+      },
+      {
+        "id": "take-in",
+        "term": "take in",
+        "meaning": "이해하다",
+        "example": "I take in the news.",
+        "reading": "/teɪk ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "team up",
+            "think ahead",
+            "track down"
+          ]
+        }
+      },
+      {
+        "id": "team-up",
+        "term": "team up",
+        "meaning": "협력하다",
+        "example": "We team up with another group.",
+        "reading": "/tiːm ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "think ahead",
+            "track down",
+            "try out"
+          ]
+        }
+      },
+      {
+        "id": "think-ahead",
+        "term": "think ahead",
+        "meaning": "앞을 내다보다",
+        "example": "My friend think ahead for the future.",
+        "reading": "/θɪŋk əˈhed/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "track down",
+            "try out",
+            "follow up"
+          ]
+        }
+      },
+      {
+        "id": "track-down",
+        "term": "track down",
+        "meaning": "추적하다",
+        "example": "They track down the source.",
+        "reading": "/træk daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "try out",
+            "follow up",
+            "knock down"
+          ]
+        }
+      },
+      {
+        "id": "try-out",
+        "term": "try out",
+        "meaning": "시험해 보다",
+        "example": "I try out the app.",
+        "reading": "/traɪ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "follow up",
+            "knock down",
+            "lead to"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-10",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 10,
+    "title": "Media And Action",
+    "words": [
+      {
+        "id": "tune-in",
+        "term": "tune in",
+        "meaning": "채널을 맞추다",
+        "example": "We tune in for the show.",
+        "reading": "/tuːn ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn back",
+            "turn to",
+            "walk away"
+          ]
+        }
+      },
+      {
+        "id": "turn-back",
+        "term": "turn back",
+        "meaning": "되돌아가다",
+        "example": "My friend turn back before the bridge.",
+        "reading": "/tɝːn bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "turn to",
+            "walk away",
+            "wear off"
+          ]
+        }
+      },
+      {
+        "id": "turn-to",
+        "term": "turn to",
+        "meaning": "의지하다",
+        "example": "They turn to my teacher.",
+        "reading": "/tɝːn tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "walk away",
+            "wear off",
+            "win over"
+          ]
+        }
+      },
+      {
+        "id": "walk-away",
+        "term": "walk away",
+        "meaning": "떠나 버리다",
+        "example": "I walk away from the argument.",
+        "reading": "/wɔːk əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wear off",
+            "win over",
+            "work on"
+          ]
+        }
+      },
+      {
+        "id": "wear-off",
+        "term": "wear off",
+        "meaning": "사라지다",
+        "example": "We wear off by midnight.",
+        "reading": "/wer ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "win over",
+            "work on",
+            "wrap up"
+          ]
+        }
+      },
+      {
+        "id": "win-over",
+        "term": "win over",
+        "meaning": "설득하다",
+        "example": "My friend win over the crowd.",
+        "reading": "/wɪn ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "work on",
+            "wrap up",
+            "zero in on"
+          ]
+        }
+      },
+      {
+        "id": "work-on",
+        "term": "work on",
+        "meaning": "작업하다",
+        "example": "They work on the design.",
+        "reading": "/wɝːk ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wrap up",
+            "zero in on",
+            "zoom in"
+          ]
+        }
+      },
+      {
+        "id": "wrap-up",
+        "term": "wrap up",
+        "meaning": "마무리하다",
+        "example": "I wrap up the lesson.",
+        "reading": "/ræp ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "zero in on",
+            "zoom in",
+            "bail out"
+          ]
+        }
+      },
+      {
+        "id": "zero-in-on",
+        "term": "zero in on",
+        "meaning": "집중하다",
+        "example": "We zero in on the key issue.",
+        "reading": "/ˈzɪroʊ ɪn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "zoom in",
+            "bail out",
+            "block out"
+          ]
+        }
+      },
+      {
+        "id": "zoom-in",
+        "term": "zoom in",
+        "meaning": "확대하다",
+        "example": "My friend zoom in on the image.",
+        "reading": "/zuːm ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "bail out",
+            "block out",
+            "branch out"
+          ]
+        }
+      },
+      {
+        "id": "bail-out",
+        "term": "bail out",
+        "meaning": "구해 주다",
+        "example": "They bail out my friend.",
+        "reading": "/beɪl aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "block out",
+            "branch out",
+            "brush up on"
+          ]
+        }
+      },
+      {
+        "id": "block-out",
+        "term": "block out",
+        "meaning": "차단하다",
+        "example": "I block out the noise.",
+        "reading": "/blɑːk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "branch out",
+            "brush up on",
+            "build up"
+          ]
+        }
+      },
+      {
+        "id": "branch-out",
+        "term": "branch out",
+        "meaning": "영역을 넓히다",
+        "example": "We branch out into new markets.",
+        "reading": "/bræntʃ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "brush up on",
+            "build up",
+            "buy out"
+          ]
+        }
+      },
+      {
+        "id": "brush-up-on",
+        "term": "brush up on",
+        "meaning": "복습하다",
+        "example": "My friend brush up on my English.",
+        "reading": "/brʌʃ ʌp ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "build up",
+            "buy out",
+            "cash in on"
+          ]
+        }
+      },
+      {
+        "id": "build-up",
+        "term": "build up",
+        "meaning": "쌓다",
+        "example": "They build up my strength.",
+        "reading": "/bɪld ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "buy out",
+            "cash in on",
+            "check over"
+          ]
+        }
+      },
+      {
+        "id": "buy-out",
+        "term": "buy out",
+        "meaning": "인수하다",
+        "example": "I buy out the company.",
+        "reading": "/baɪ aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cash in on",
+            "check over",
+            "close out"
+          ]
+        }
+      },
+      {
+        "id": "cash-in-on",
+        "term": "cash in on",
+        "meaning": "이익을 얻다",
+        "example": "We cash in on the trend.",
+        "reading": "/kæʃ ɪn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "check over",
+            "close out",
+            "crack down on"
+          ]
+        }
+      },
+      {
+        "id": "check-over",
+        "term": "check over",
+        "meaning": "점검하다",
+        "example": "My friend check over the machine.",
+        "reading": "/tʃek ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "close out",
+            "crack down on",
+            "cut in"
+          ]
+        }
+      },
+      {
+        "id": "close-out",
+        "term": "close out",
+        "meaning": "마감하다",
+        "example": "They close out the account.",
+        "reading": "/kloʊz aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "crack down on",
+            "cut in",
+            "deal with"
+          ]
+        }
+      },
+      {
+        "id": "crack-down-on",
+        "term": "crack down on",
+        "meaning": "단속하다",
+        "example": "I crack down on late payments.",
+        "reading": "/kræk daʊn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "cut in",
+            "deal with",
+            "dig into"
+          ]
+        }
+      },
+      {
+        "id": "cut-in",
+        "term": "cut in",
+        "meaning": "끼어들다",
+        "example": "We cut in during the talk.",
+        "reading": "/kʌt ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "deal with",
+            "dig into",
+            "ease off"
+          ]
+        }
+      },
+      {
+        "id": "deal-with",
+        "term": "deal with",
+        "meaning": "처리하다",
+        "example": "My friend deal with the complaint.",
+        "reading": "/diːl wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "dig into",
+            "ease off",
+            "face up to"
+          ]
+        }
+      },
+      {
+        "id": "dig-into",
+        "term": "dig into",
+        "meaning": "파고들다",
+        "example": "They dig into the data.",
+        "reading": "/dɪɡ ˈɪntuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "ease off",
+            "face up to",
+            "tune in"
+          ]
+        }
+      },
+      {
+        "id": "ease-off",
+        "term": "ease off",
+        "meaning": "누그러지다",
+        "example": "I ease off after noon.",
+        "reading": "/iːz ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "face up to",
+            "tune in",
+            "turn back"
+          ]
+        }
+      },
+      {
+        "id": "face-up-to",
+        "term": "face up to",
+        "meaning": "직면하다",
+        "example": "We face up to the truth.",
+        "reading": "/feɪs ʌp tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "tune in",
+            "turn back",
+            "turn to"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-11",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 11,
+    "title": "Advanced Use",
+    "words": [
+      {
+        "id": "fall-back-on",
+        "term": "fall back on",
+        "meaning": "의지하다",
+        "example": "My friend fall back on my savings.",
+        "reading": "/fɔːl bæk ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fight back",
+            "filter out",
+            "fit in"
+          ]
+        }
+      },
+      {
+        "id": "fight-back",
+        "term": "fight back",
+        "meaning": "맞서다",
+        "example": "They fight back against pressure.",
+        "reading": "/faɪt bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "filter out",
+            "fit in",
+            "gear up for"
+          ]
+        }
+      },
+      {
+        "id": "filter-out",
+        "term": "filter out",
+        "meaning": "걸러 내다",
+        "example": "I filter out bad comments.",
+        "reading": "/ˈfɪltər aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fit in",
+            "gear up for",
+            "go with"
+          ]
+        }
+      },
+      {
+        "id": "fit-in",
+        "term": "fit in",
+        "meaning": "잘 어울리다",
+        "example": "We fit in at school.",
+        "reading": "/fɪt ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "gear up for",
+            "go with",
+            "hand over"
+          ]
+        }
+      },
+      {
+        "id": "gear-up-for",
+        "term": "gear up for",
+        "meaning": "준비하다",
+        "example": "My friend gear up for the launch.",
+        "reading": "/ɡɪr ʌp fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "go with",
+            "hand over",
+            "head for"
+          ]
+        }
+      },
+      {
+        "id": "go-with",
+        "term": "go with",
+        "meaning": "잘 어울리다",
+        "example": "They go with this shirt.",
+        "reading": "/ɡoʊ wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "hand over",
+            "head for",
+            "iron out"
+          ]
+        }
+      },
+      {
+        "id": "hand-over",
+        "term": "hand over",
+        "meaning": "건네주다",
+        "example": "I hand over the keys.",
+        "reading": "/hænd ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "head for",
+            "iron out",
+            "jump in"
+          ]
+        }
+      },
+      {
+        "id": "head-for",
+        "term": "head for",
+        "meaning": "향하다",
+        "example": "We head for the station.",
+        "reading": "/hed fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "iron out",
+            "jump in",
+            "keep up with"
+          ]
+        }
+      },
+      {
+        "id": "iron-out",
+        "term": "iron out",
+        "meaning": "해결하다",
+        "example": "My friend iron out the problem.",
+        "reading": "/ˈaɪərn aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "jump in",
+            "keep up with",
+            "lean on"
+          ]
+        }
+      },
+      {
+        "id": "jump-in",
+        "term": "jump in",
+        "meaning": "끼어들다",
+        "example": "They jump in without waiting.",
+        "reading": "/dʒʌmp ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "keep up with",
+            "lean on",
+            "lock in"
+          ]
+        }
+      },
+      {
+        "id": "keep-up-with",
+        "term": "keep up with",
+        "meaning": "따라가다",
+        "example": "I keep up with the news.",
+        "reading": "/kiːp ʌp wɪð/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "lean on",
+            "lock in",
+            "look back on"
+          ]
+        }
+      },
+      {
+        "id": "lean-on",
+        "term": "lean on",
+        "meaning": "의지하다",
+        "example": "We lean on my family.",
+        "reading": "/liːn ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "lock in",
+            "look back on",
+            "map out"
+          ]
+        }
+      },
+      {
+        "id": "lock-in",
+        "term": "lock in",
+        "meaning": "확정하다",
+        "example": "My friend lock in the price.",
+        "reading": "/lɑːk ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "look back on",
+            "map out",
+            "narrow down"
+          ]
+        }
+      },
+      {
+        "id": "look-back-on",
+        "term": "look back on",
+        "meaning": "돌아보다",
+        "example": "They look back on my school days.",
+        "reading": "/lʊk bæk ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "map out",
+            "narrow down",
+            "opt out"
+          ]
+        }
+      },
+      {
+        "id": "map-out",
+        "term": "map out",
+        "meaning": "계획하다",
+        "example": "I map out the route.",
+        "reading": "/mæp aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "narrow down",
+            "opt out",
+            "own up to"
+          ]
+        }
+      },
+      {
+        "id": "narrow-down",
+        "term": "narrow down",
+        "meaning": "압축하다",
+        "example": "We narrow down the list.",
+        "reading": "/ˈnæroʊ daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "opt out",
+            "own up to",
+            "phase out"
+          ]
+        }
+      },
+      {
+        "id": "opt-out",
+        "term": "opt out",
+        "meaning": "빠지다",
+        "example": "My friend opt out of the program.",
+        "reading": "/ɑːpt aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "own up to",
+            "phase out",
+            "play along"
+          ]
+        }
+      },
+      {
+        "id": "own-up-to",
+        "term": "own up to",
+        "meaning": "인정하다",
+        "example": "They own up to the mistake.",
+        "reading": "/oʊn ʌp tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "phase out",
+            "play along",
+            "point to"
+          ]
+        }
+      },
+      {
+        "id": "phase-out",
+        "term": "phase out",
+        "meaning": "단계적으로 없애다",
+        "example": "I phase out old machines.",
+        "reading": "/feɪz aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "play along",
+            "point to",
+            "pull through"
+          ]
+        }
+      },
+      {
+        "id": "play-along",
+        "term": "play along",
+        "meaning": "맞장구치다",
+        "example": "We play along for fun.",
+        "reading": "/pleɪ əˈlɔːŋ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "point to",
+            "pull through",
+            "put up"
+          ]
+        }
+      },
+      {
+        "id": "point-to",
+        "term": "point to",
+        "meaning": "가리키다",
+        "example": "My friend point to the map.",
+        "reading": "/pɔɪnt tuː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "pull through",
+            "put up",
+            "read through"
+          ]
+        }
+      },
+      {
+        "id": "pull-through",
+        "term": "pull through",
+        "meaning": "회복하다",
+        "example": "They pull through after surgery.",
+        "reading": "/pʊl θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "put up",
+            "read through",
+            "ring back"
+          ]
+        }
+      },
+      {
+        "id": "put-up",
+        "term": "put up",
+        "meaning": "세우다",
+        "example": "I put up a tent.",
+        "reading": "/pʊt ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "read through",
+            "ring back",
+            "fall back on"
+          ]
+        }
+      },
+      {
+        "id": "read-through",
+        "term": "read through",
+        "meaning": "끝까지 읽다",
+        "example": "We read through the report.",
+        "reading": "/riːd θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "ring back",
+            "fall back on",
+            "fight back"
+          ]
+        }
+      },
+      {
+        "id": "ring-back",
+        "term": "ring back",
+        "meaning": "다시 전화하다",
+        "example": "My friend ring back my uncle.",
+        "reading": "/rɪŋ bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "fall back on",
+            "fight back",
+            "filter out"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "phrasal-verbs-core-12",
+    "language": "en",
+    "standardLevel": "phrasal_verbs",
+    "level": 7,
+    "order": 12,
+    "title": "Final Practice Set",
+    "words": [
+      {
+        "id": "roll-out",
+        "term": "roll out",
+        "meaning": "출시하다",
+        "example": "They roll out the update.",
+        "reading": "/roʊl aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "rope in",
+            "root for",
+            "scare away"
+          ]
+        }
+      },
+      {
+        "id": "rope-in",
+        "term": "rope in",
+        "meaning": "끌어들이다",
+        "example": "I rope in a volunteer.",
+        "reading": "/roʊp ɪn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "root for",
+            "scare away",
+            "screen out"
+          ]
+        }
+      },
+      {
+        "id": "root-for",
+        "term": "root for",
+        "meaning": "응원하다",
+        "example": "We root for our team.",
+        "reading": "/ruːt fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "scare away",
+            "screen out",
+            "settle for"
+          ]
+        }
+      },
+      {
+        "id": "scare-away",
+        "term": "scare away",
+        "meaning": "겁주어 쫓아내다",
+        "example": "My friend scare away the birds.",
+        "reading": "/sker əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "screen out",
+            "settle for",
+            "shop around"
+          ]
+        }
+      },
+      {
+        "id": "screen-out",
+        "term": "screen out",
+        "meaning": "걸러 내다",
+        "example": "They screen out weak candidates.",
+        "reading": "/skriːn aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "settle for",
+            "shop around",
+            "shrug off"
+          ]
+        }
+      },
+      {
+        "id": "settle-for",
+        "term": "settle for",
+        "meaning": "감수하다",
+        "example": "I settle for a smaller room.",
+        "reading": "/ˈsetəl fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "shop around",
+            "shrug off",
+            "size up"
+          ]
+        }
+      },
+      {
+        "id": "shop-around",
+        "term": "shop around",
+        "meaning": "여러 곳을 둘러보다",
+        "example": "We shop around before buying.",
+        "reading": "/ʃɑːp əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "shrug off",
+            "size up",
+            "smooth over"
+          ]
+        }
+      },
+      {
+        "id": "shrug-off",
+        "term": "shrug off",
+        "meaning": "대수롭지 않게 넘기다",
+        "example": "My friend shrug off the criticism.",
+        "reading": "/ʃrʌɡ ɔːf/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "size up",
+            "smooth over",
+            "speak out"
+          ]
+        }
+      },
+      {
+        "id": "size-up",
+        "term": "size up",
+        "meaning": "가늠하다",
+        "example": "They size up the situation.",
+        "reading": "/saɪz ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "smooth over",
+            "speak out",
+            "split up"
+          ]
+        }
+      },
+      {
+        "id": "smooth-over",
+        "term": "smooth over",
+        "meaning": "수습하다",
+        "example": "I smooth over the conflict.",
+        "reading": "/smuːð ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "speak out",
+            "split up",
+            "stand for"
+          ]
+        }
+      },
+      {
+        "id": "speak-out",
+        "term": "speak out",
+        "meaning": "공개적으로 말하다",
+        "example": "We speak out about the issue.",
+        "reading": "/spiːk aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "split up",
+            "stand for",
+            "stay away"
+          ]
+        }
+      },
+      {
+        "id": "split-up",
+        "term": "split up",
+        "meaning": "헤어지다",
+        "example": "My friend split up after the trip.",
+        "reading": "/splɪt ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stand for",
+            "stay away",
+            "stick around"
+          ]
+        }
+      },
+      {
+        "id": "stand-for",
+        "term": "stand for",
+        "meaning": "의미하다",
+        "example": "They stand for that symbol.",
+        "reading": "/stænd fɔːr/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stay away",
+            "stick around",
+            "take over"
+          ]
+        }
+      },
+      {
+        "id": "stay-away",
+        "term": "stay away",
+        "meaning": "멀리하다",
+        "example": "I stay away from junk food.",
+        "reading": "/steɪ əˈweɪ/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "stick around",
+            "take over",
+            "talk through"
+          ]
+        }
+      },
+      {
+        "id": "stick-around",
+        "term": "stick around",
+        "meaning": "계속 머물다",
+        "example": "We stick around after the show.",
+        "reading": "/stɪk əˈraʊnd/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "take over",
+            "talk through",
+            "tear up"
+          ]
+        }
+      },
+      {
+        "id": "take-over",
+        "term": "take over",
+        "meaning": "인수하다",
+        "example": "My friend take over the store.",
+        "reading": "/teɪk ˈoʊvər/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "talk through",
+            "tear up",
+            "think back"
+          ]
+        }
+      },
+      {
+        "id": "talk-through",
+        "term": "talk through",
+        "meaning": "차근차근 설명하다",
+        "example": "They talk through the process.",
+        "reading": "/tɔːk θruː/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "tear up",
+            "think back",
+            "top up"
+          ]
+        }
+      },
+      {
+        "id": "tear-up",
+        "term": "tear up",
+        "meaning": "찢어 버리다",
+        "example": "I tear up the letter.",
+        "reading": "/ter ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "think back",
+            "top up",
+            "toss out"
+          ]
+        }
+      },
+      {
+        "id": "think-back",
+        "term": "think back",
+        "meaning": "되돌아보다",
+        "example": "We think back on my childhood.",
+        "reading": "/θɪŋk bæk/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "top up",
+            "toss out",
+            "touch on"
+          ]
+        }
+      },
+      {
+        "id": "top-up",
+        "term": "top up",
+        "meaning": "충전하다",
+        "example": "My friend top up my card.",
+        "reading": "/tɑːp ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "toss out",
+            "touch on",
+            "wear down"
+          ]
+        }
+      },
+      {
+        "id": "toss-out",
+        "term": "toss out",
+        "meaning": "버리다",
+        "example": "They toss out old toys.",
+        "reading": "/tɔːs aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "touch on",
+            "wear down",
+            "whip up"
+          ]
+        }
+      },
+      {
+        "id": "touch-on",
+        "term": "touch on",
+        "meaning": "간단히 언급하다",
+        "example": "I touch on the topic.",
+        "reading": "/tʌtʃ ɑːn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wear down",
+            "whip up",
+            "wipe out"
+          ]
+        }
+      },
+      {
+        "id": "wear-down",
+        "term": "wear down",
+        "meaning": "지치게 하다",
+        "example": "We wear down the staff.",
+        "reading": "/wer daʊn/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "whip up",
+            "wipe out",
+            "roll out"
+          ]
+        }
+      },
+      {
+        "id": "whip-up",
+        "term": "whip up",
+        "meaning": "재빨리 만들다",
+        "example": "My friend whip up a snack.",
+        "reading": "/wɪp ʌp/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "wipe out",
+            "roll out",
+            "rope in"
+          ]
+        }
+      },
+      {
+        "id": "wipe-out",
+        "term": "wipe out",
+        "meaning": "완전히 없애다",
+        "example": "They wipe out the data.",
+        "reading": "/waɪp aʊt/",
+        "partOfSpeech": "verb",
+        "quiz": {
+          "distractors": [
+            "roll out",
+            "rope in",
+            "root for"
+          ]
+        }
+      }
+    ]
+  }
+]

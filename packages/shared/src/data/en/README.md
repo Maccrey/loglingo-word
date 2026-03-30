@@ -10,6 +10,7 @@ Use this folder for English learning datasets.
 - `cefr_b2`
 - `cefr_c1`
 - `cefr_c2`
+- `phrasal_verbs`
 
 ### Files To Create Per Level
 
@@ -17,6 +18,11 @@ Use this folder for English learning datasets.
 - Sentence assembly: `cefr-a1-sentence-expansion.json`
 
 Repeat the same pattern for every CEFR level.
+
+For the phrasal verb track, use:
+
+- Curriculum: `phrasal-verbs.json`
+- Sentence assembly: `phrasal-verbs-sentence-expansion.json`
 
 Target output for every English level:
 

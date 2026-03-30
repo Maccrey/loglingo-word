@@ -21,6 +21,18 @@ describe('curriculum', () => {
       'cefr-a1-places',
       'cefr-a1-actions',
       'travel-checkin',
+      'phrasal-verbs-core-01',
+      'phrasal-verbs-core-02',
+      'phrasal-verbs-core-03',
+      'phrasal-verbs-core-04',
+      'phrasal-verbs-core-05',
+      'phrasal-verbs-core-06',
+      'phrasal-verbs-core-07',
+      'phrasal-verbs-core-08',
+      'phrasal-verbs-core-09',
+      'phrasal-verbs-core-10',
+      'phrasal-verbs-core-11',
+      'phrasal-verbs-core-12',
       'japanese-greetings',
       'japanese-people',
       'japanese-time',
@@ -46,6 +58,15 @@ describe('curriculum', () => {
 
     expect(levelOneUnits).toHaveLength(25);
     expect(levelOneUnits.every((unit) => unit.level === 1)).toBe(true);
+  });
+
+  it('returns the english phrasal verb track with 300 words', () => {
+    const phrasalVerbUnits = getCurriculumByStandardLevel('en', 'phrasal_verbs');
+
+    expect(phrasalVerbUnits).toHaveLength(12);
+    expect(phrasalVerbUnits.flatMap((unit) => unit.words)).toHaveLength(300);
+    expect(phrasalVerbUnits[0]?.words[0]?.term).toBe('ask around');
+    expect(phrasalVerbUnits[11]?.words[24]?.term).toBe('wipe out');
   });
 
   it('filters curriculum units by language and standard level', () => {

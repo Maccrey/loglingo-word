@@ -4,6 +4,7 @@ import {
 } from '@wordflow/shared/curriculum';
 import germanCefrA1Units from '@wordflow/shared/data/de/cefr-a1.json';
 import cefrA1Units from '@wordflow/shared/data/en/cefr-a1.json';
+import phrasalVerbUnits from '@wordflow/shared/data/en/phrasal-verbs.json';
 import jlptN5Units from '@wordflow/shared/data/ja/jlpt-n5.json';
 import topik1Units from '@wordflow/shared/data/ko/topik-1.json';
 import hsk1Units from '@wordflow/shared/data/zh/hsk-1.json';
@@ -18,6 +19,10 @@ const germanCefrA1Seed: CurriculumUnit[] = germanCefrA1Units.map((unit) =>
 );
 
 const cefrA1Seed: CurriculumUnit[] = cefrA1Units.map((unit) =>
+  curriculumUnitSchema.parse(unit)
+);
+
+const phrasalVerbSeed: CurriculumUnit[] = phrasalVerbUnits.map((unit) =>
   curriculumUnitSchema.parse(unit)
 );
 
@@ -58,6 +63,7 @@ export const curriculumSeed: CurriculumUnit[] = [
       }
     ]
   },
+  ...phrasalVerbSeed,
   ...jlptN5Seed,
   {
     id: 'japanese-travel',

@@ -9,7 +9,8 @@ const cefrLevelOptions = [
   { value: 'cefr_b1', label: 'CEFR B1' },
   { value: 'cefr_b2', label: 'CEFR B2' },
   { value: 'cefr_c1', label: 'CEFR C1' },
-  { value: 'cefr_c2', label: 'CEFR C2' }
+  { value: 'cefr_c2', label: 'CEFR C2' },
+  { value: 'phrasal_verbs', label: 'Phrasal Verbs 300' }
 ] as const;
 
 const topikLevelOptions = [
@@ -45,6 +46,7 @@ export const supportedLearningLevels = [
   'cefr_b2',
   'cefr_c1',
   'cefr_c2',
+  'phrasal_verbs',
   'topik_1',
   'topik_2',
   'topik_3',

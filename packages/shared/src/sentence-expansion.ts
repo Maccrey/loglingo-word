@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import cefrA1SentenceAssemblySeed from './data/en/cefr-a1-sentence-expansion.json';
+import phrasalVerbSentenceAssemblySeed from './data/en/phrasal-verbs-sentence-expansion.json';
 import germanCefrA1SentenceAssemblySeed from './data/de/cefr-a1-sentence-expansion.json';
 import jlptN5SentenceAssemblySeed from './data/ja/jlpt-n5-sentence-expansion.json';
 import topik1SentenceAssemblySeed from './data/ko/topik-1-sentence-expansion.json';
@@ -69,6 +70,11 @@ const sentenceAssemblySeedEntries = [
     seed: cefrA1SentenceAssemblySeed
   },
   {
+    language: 'en',
+    level: 'phrasal_verbs',
+    seed: phrasalVerbSentenceAssemblySeed
+  },
+  {
     language: 'de',
     level: 'cefr_a1',
     seed: germanCefrA1SentenceAssemblySeed
@@ -124,6 +130,9 @@ export const sentenceAssemblyExercises: SentenceAssemblyExercise[] = [
 
 export const cefrA1SentenceAssemblyExercises: SentenceAssemblyExercise[] =
   sentenceAssemblyExercisesByLanguageLevel.get('en:cefr_a1') ?? [];
+
+export const phrasalVerbSentenceAssemblyExercises: SentenceAssemblyExercise[] =
+  sentenceAssemblyExercisesByLanguageLevel.get('en:phrasal_verbs') ?? [];
 
 export const germanCefrA1SentenceAssemblyExercises: SentenceAssemblyExercise[] =
   sentenceAssemblyExercisesByLanguageLevel.get('de:cefr_a1') ?? [];

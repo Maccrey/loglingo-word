@@ -5,6 +5,7 @@ import {
   germanCefrA1SentenceAssemblyExercises,
   hsk1SentenceAssemblyExercises,
   jlptN5SentenceAssemblyExercises,
+  phrasalVerbSentenceAssemblyExercises,
   topik1SentenceAssemblyExercises
 } from '@wordflow/shared/sentence-expansion';
 
@@ -22,6 +23,10 @@ describe('sentence session state', () => {
 
   it('loads 200 cefr a1 sentence exercises from json data', () => {
     expect(cefrA1SentenceAssemblyExercises).toHaveLength(200);
+  });
+
+  it('loads 300 phrasal verb sentence exercises from json data', () => {
+    expect(phrasalVerbSentenceAssemblyExercises).toHaveLength(300);
   });
 
   it('loads 200 german cefr a1 sentence exercises from json data', () => {
@@ -73,6 +78,9 @@ describe('sentence session state', () => {
     expect(
       getSentenceAssemblyExercisePool({ language: 'zh', level: 'hsk_1' })
     ).toHaveLength(200);
+    expect(
+      getSentenceAssemblyExercisePool({ language: 'en', level: 'phrasal_verbs' })
+    ).toHaveLength(300);
     expect(getSentenceAssemblyExercisePool({ language: 'en' }).length).toBeGreaterThan(0);
   });
 
@@ -117,6 +125,18 @@ describe('sentence session state', () => {
     expect(initial.exercise.level).toBe('cefr_a1');
     expect(initial.availableChoices.map((choice) => choice.text)).toContain('I');
     expect(initial.availableChoices.map((choice) => choice.text)).toContain('to school');
+  });
+
+  it('returns a phrasal verb exercise when the english phrasal verb track is selected', () => {
+    const initial = createDemoSentenceSession({
+      appLanguage: 'ko',
+      learningLanguage: 'en',
+      learningLevel: 'phrasal_verbs'
+    });
+
+    expect(initial.exercise.language).toBe('en');
+    expect(initial.exercise.level).toBe('phrasal_verbs');
+    expect(initial.exercise.title).toContain('Phrasal Verb Practice');
   });
 
   it('keeps english sentence goals in english word order', () => {

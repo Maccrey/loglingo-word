@@ -166,6 +166,21 @@ describe('settings ui', () => {
     ).toContain('JLPT N5');
   });
 
+  it('shows the phrasal verb track when english is selected', async () => {
+    const user = userEvent.setup();
+
+    render(<SettingsClient />);
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: '학습 언어' }),
+      'en'
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: '학습 레벨' }).textContent
+    ).toContain('Phrasal Verbs 300');
+  });
+
   it('shows added app languages and language-specific level systems', async () => {
     const user = userEvent.setup();
 
