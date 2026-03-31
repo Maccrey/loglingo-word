@@ -8,7 +8,8 @@
     "./chat": "./src/chat.ts",
     "./correction": "./src/correction.ts",
     "./prompt": "./src/prompt.ts",
-    "./recommendation": "./src/recommendation.ts"
+    "./recommendation": "./src/recommendation.ts",
+    "./openai-client": "./src/openai-client.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

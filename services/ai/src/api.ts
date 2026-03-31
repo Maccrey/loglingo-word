@@ -7,7 +7,13 @@ import {
   type AIChatMessage
 } from './chat';
 import { parseCorrectionResponse } from './correction';
-import { buildConversationPrompt, type ConversationUserLevel } from './prompt';
+import {
+  buildConversationPrompt,
+  getAiFriendGender,
+  getAiFriendName,
+  type AiFriendGender,
+  type ConversationUserLevel
+} from './prompt';
 
 const aiChatMessageSchema = z.object({
   userId: z.string().min(1),
@@ -23,6 +29,8 @@ export const aiChatRequestSchema = z.object({
   nativeLanguage: z.string().min(2),
   targetLanguage: z.string().min(2),
   userLevel: z.enum(['beginner', 'intermediate', 'advanced']),
+  // 유저 성별: AI 친구 실명 및 페르소나 결정에 사용. 기본값 female
+  userGender: z.enum(['male', 'female']).default('female'),
   message: z.string().min(1),
   createdAt: z.string().datetime(),
   recentMessages: z.array(aiChatMessageSchema).default([])
@@ -96,11 +104,16 @@ export async function handleAIChat(
     ...normalizedRecentMessages,
     userMessage
   ];
+  // AI 친구 성별 = 유저 성별의 반대
+  const aiFriendGender: AiFriendGender = getAiFriendGender(request.userGender ?? 'female');
+  const aiFriendName = getAiFriendName(request.targetLanguage, aiFriendGender);
   const prompt = buildConversationPrompt({
     nativeLanguage: request.nativeLanguage,
     targetLanguage: request.targetLanguage,
     userLevel: request.userLevel,
-    recentMessages: conversation
+    recentMessages: conversation,
+    aiFriendGender,
+    aiFriendName
   });
 
   await dependencies.repository.saveMany([userMessage]);

@@ -380,6 +380,63 @@ export default function SettingsClient(props: SettingsClientProps) {
             </select>
           </label>
 
+          {/* 성별 선택: AI 이성친구 대화 시 반대 이성 캐릭터를 결정하는 데 사용 */}
+          <div style={{ display: 'grid', gap: 8 }}>
+            <span>{t(locale, 'settings.gender')}</span>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-faded)' }}>
+              {t(locale, 'settings.gender_description')}
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                type="button"
+                id="settings-gender-male"
+                onClick={() =>
+                  setSettings((current) =>
+                    updateSettings(current, { gender: 'male' }, new Date().toISOString())
+                  )
+                }
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 999,
+                  border: '1px solid var(--border-pencil)',
+                  background:
+                    settings.gender === 'male'
+                      ? 'var(--accent-blue)'
+                      : 'transparent',
+                  color: 'var(--text-ink)',
+                  fontWeight: settings.gender === 'male' ? 700 : 400,
+                  cursor: 'pointer'
+                }}
+              >
+                🙋‍♂️ {t(locale, 'settings.gender_male')}
+              </button>
+              <button
+                type="button"
+                id="settings-gender-female"
+                onClick={() =>
+                  setSettings((current) =>
+                    updateSettings(current, { gender: 'female' }, new Date().toISOString())
+                  )
+                }
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 999,
+                  border: '1px solid var(--border-pencil)',
+                  background:
+                    settings.gender === 'female' || !settings.gender
+                      ? 'var(--accent-pink)'
+                      : 'transparent',
+                  color: 'var(--text-ink)',
+                  fontWeight:
+                    settings.gender === 'female' || !settings.gender ? 700 : 400,
+                  cursor: 'pointer'
+                }}
+              >
+                🙋‍♀️ {t(locale, 'settings.gender_female')}
+              </button>
+            </div>
+          </div>
+
           <div style={{ display: 'grid', gap: 8 }}>
             <span>{t(locale, 'settings.notifications')}</span>
             <button

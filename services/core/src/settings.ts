@@ -23,6 +23,8 @@ export type SettingsUpdate = Partial<
     | 'sessionQuestionCount'
     | 'notificationsEnabled'
     | 'premiumEnabled'
+    // 성별 업데이트 지원: 'male' | 'female'
+    | 'gender'
   >
 >;
 
@@ -64,6 +66,8 @@ export function createDefaultSettings(
     ),
     notificationsEnabled: true,
     premiumEnabled: false,
+    // 성별 기본값: female (대부분의 학습자를 여성으로 가정, AI 친구는 남성 민준)
+    gender: 'female',
     updatedAt: input.updatedAt
   });
 }

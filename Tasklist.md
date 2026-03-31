@@ -771,8 +771,132 @@
 - 상태: [ ] 미완료
 - 목적: Auth와 Hosting 배포 전 회귀를 줄이기 위한 최종 검증 루틴 확보
 - 구현:
-- lint, typecheck, 핵심 UI 테스트 묶음 실행
-- 설정, 학습, 고양이, 홈 주요 플로우 수동 점검 목록 작성
+  - lint, typecheck, 핵심 UI 테스트 묶음 실행
+  - 설정, 학습, 고양이, 홈 주요 플로우 수동 점검 목록 작성
 - 최소 단위 테스트:
-- 핵심 테스트 묶음 통과
-- 수동 검증 항목 완료 체크
+  - 핵심 테스트 묶음 통과
+  - 수동 검증 항목 완료 체크
+
+## 18. Phase 11. AI 이성친구 대화 채팅
+
+> PRD 4.9, UI.md 2.7 기준 구현
+
+### T11-1. 설정 성별 필드 추가
+
+- 상태: [ ] 미완료
+- 목적: 유저 성별을 저장하여 반대 이성 AI 캐릭터 자동 결정
+- 구현:
+  - `packages/shared/src/types.ts` — `userSettingsSchema`에 `gender: z.enum(['male', 'female']).default('female')` 추가
+  - `apps/web/src/lib/settingsStorage.ts` — `migrateStoredSettings`에 gender 마이그레이션 처리
+  - `apps/web/src/app/settings/SettingsClient.tsx` — 성별 선택 토글 UI 추가
+  - `locales/ko.json`, `locales/en.json` — i18n 키 추가
+- 최소 단위 테스트:
+  - gender 필드 기본값 테스트
+  - 마이그레이션 시 누락 필드 처리 테스트
+- 완료 커밋: `설정 성별 필드 및 UI 추가`
+
+### T11-2. 결제 카탈로그 채팅 연장 상품 추가
+
+- 상태: [ ] 미완료
+- 목적: 채팅 1시간 연장 단발성 결제 상품 등록
+- 구현:
+  - `services/payment/src/catalog.ts` — `chat.extend_1h` 상품 추가 ($1.00)
+  - `PaymentProductId` 타입에 `'chat.extend_1h'` 추가
+- 최소 단위 테스트:
+  - 상품 ID 조회 테스트
+  - 가격 레이블 확인 테스트
+- 완료 커밋: `채팅 1시간 연장 결제 상품 추가`
+
+### T11-3. 채팅 세션 시간 관리 모듈 구현
+
+- 상태: [ ] 미완료
+- 목적: 하루 사용 시간 추적, 허용 시간 관리
+- 구현:
+  - `apps/web/src/lib/chatSessionStorage.ts` 신규 생성
+  - `getAllowedMinutes(isPremium)`: 구독 30분 / 비구독 0분 기본
+  - `getDailyUsedMinutes()`: 오늘 사용 분 반환
+  - `addUsedMinutes(delta)`: 사용 시간 누적
+  - `addAllowedMinutes(delta)`: 결제 후 허용 시간 +60분
+  - `isSessionExpired(isPremium)`: 시간 초과 여부
+  - LocalStorage 키: `chat_session_{YYYY-MM-DD}`
+- 최소 단위 테스트:
+  - 구독자 30분 기본 허용 테스트
+  - 비구독자 0분 기본 테스트
+  - 시간 누적 및 초과 판별 테스트
+  - 날짜 변경 시 리셋 테스트
+- 완료 커밋: `채팅 세션 시간 관리 모듈 구현`
+
+### T11-4. AI 프롬프트 이성친구 페르소나 확장
+
+- 상태: [ ] 미완료
+- 목적: 학습어·레벨·성별 기반 자연스러운 이성친구 대화 유도
+- 구현:
+  - `services/ai/src/prompt.ts` — 이성친구 페르소나 프롬프트
+  - 학습 언어별 AI 이름 매핑 (주석으로 언어별 이름 문서화, 새 언어 추가 시 반드시 이름도 추가)
+  - 원어민 어드바이스 요청 포함
+  - `services/ai/src/api.ts` — `aiGender` 파라미터 추가
+- 최소 단위 테스트:
+  - 성별별 AI 이름 결정 테스트
+  - 프롬프트 구조 포함 여부 테스트
+- 완료 커밋: `AI 이성친구 페르소나 프롬프트 구현`
+
+### T11-5. OpenAI 실제 클라이언트 연동
+
+- 상태: [ ] 미완료
+- 목적: mockCompletionClient를 GPT-4o로 교체, env 없으면 mock fallback
+- 구현:
+  - `services/ai/src/openai-client.ts` 신규 생성
+  - `OPENAI_API_KEY` 환경변수 체크 후 실제/mock 분기
+  - `apps/web/src/app/api/chat/route.ts` — 클라이언트 교체
+- 최소 단위 테스트:
+  - env 없을 때 mock fallback 테스트
+  - 요청 구조 검증 테스트
+- 완료 커밋: `OpenAI GPT-4o 실제 클라이언트 연동`
+
+### T11-6. 구독 유도 모달 컴포넌트 구현
+
+- 상태: [ ] 미완료
+- 목적: 비구독자 채팅 접근 시 구독 유도 / $1 단발 결제 유도
+- 구현:
+  - `apps/web/src/components/SubscriptionRequiredModal.tsx` 신규
+  - "구독하러 가기" → `/settings`
+  - "또는 $1로 1시간 이용" → `chat.extend_1h` 결제 플로우
+  - 블러 오버레이, 닫기 버튼 없음
+- 최소 단위 테스트:
+  - 렌더링 테스트
+  - 구독 버튼 이동 테스트
+- 완료 커밋: `구독 유도 모달 구현`
+
+### T11-7. 채팅 시간 제한 모달 컴포넌트 구현
+
+- 상태: [ ] 미완료
+- 목적: 시간 소진 시 "내일 또 만나요" 안내 + 연장 결제
+- 구현:
+  - `apps/web/src/components/ChatTimeLimitModal.tsx` 신규
+  - "내일 또 만나요 💕" 제목
+  - "1시간 연장하기" ($1) 버튼 → 결제 후 allowedMinutes +60
+  - 소프트 푸시업 애니메이션
+- 최소 단위 테스트:
+  - 렌더링 테스트
+  - 연장 버튼 클릭 후 콜백 테스트
+- 완료 커밋: `채팅 시간 제한 모달 구현`
+
+### T11-8. ChatClient 전면 개편
+
+- 상태: [ ] 미완료
+- 목적: 설정 기반 AI 친구 프로필, 타이머, 접근 제어 통합
+- 구현:
+  - `apps/web/src/app/chat/ChatClient.tsx` 수정
+  - AI 친구 프로필 영역 (이름, 아바타 emoji, 남은 시간)
+  - settingsStorage에서 gender/learningLanguage/appLanguage/learningLevel 읽기
+  - API 호출 시 설정값 + aiGender 전달
+  - 타이머: 30초마다 usedMinutes 누적
+  - 비구독자 진입 → SubscriptionRequiredModal
+  - 시간 소진 → ChatTimeLimitModal
+  - "원어민이라면 이렇게 말해요" 교정 패널 섹션 추가
+- 최소 단위 테스트:
+  - 비구독자 모달 노출 테스트
+  - 시간 제한 모달 노출 테스트
+  - 설정값이 API 요청에 포함되는지 테스트
+- 완료 커밋: `ChatClient AI 이성친구 채팅 전면 개편`
+

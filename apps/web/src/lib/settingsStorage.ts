@@ -48,6 +48,8 @@ function migrateStoredSettings(raw: unknown): UserSettings {
     learningLevel?: string;
     sessionQuestionCount?: number;
     appLanguage?: string;
+    // 성별 마이그레이션: 기존 데이터에 없는 경우 기본값 'female' 사용
+    gender?: string;
   };
   const learningLanguage: SupportedLearningLanguage = isSupportedLearningLanguage(
     candidate.learningLanguage ?? ''
@@ -63,6 +65,11 @@ function migrateStoredSettings(raw: unknown): UserSettings {
     candidate.appLanguage && isSupportedAppLanguage(candidate.appLanguage)
       ? candidate.appLanguage
       : base.appLanguage;
+  // 기존 데이터에 gender 없으면 'female'로 기본 설정
+  const gender =
+    candidate.gender === 'male' || candidate.gender === 'female'
+      ? candidate.gender
+      : 'female';
 
   return updateSettings(
     {
@@ -77,7 +84,8 @@ function migrateStoredSettings(raw: unknown): UserSettings {
         : {}),
       ...(candidate.premiumEnabled !== undefined
         ? { premiumEnabled: candidate.premiumEnabled }
-        : {})
+        : {}),
+      gender
     },
     {
       learningLanguage,

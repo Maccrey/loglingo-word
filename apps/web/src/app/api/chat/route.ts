@@ -4,8 +4,7 @@ import {
   FirestoreAIChatRepository,
   InMemoryAIChatRepository,
   aiChatRequestSchema,
-  handleAIChat,
-  type AIChatCompletionClient
+  handleAIChat
 } from '@wordflow/ai/api';
 
 import {
@@ -13,21 +12,15 @@ import {
   hasFirebaseAdminConfig
 } from '../../../lib/firebase-admin';
 
+// HIGH-RISK-UNREVIEWED: OpenAI API 키 처리 포함 — 서버 사이드 전용
+import { createCompletionClient } from '@wordflow/ai/openai-client';
+
 const repository = hasFirebaseAdminConfig()
   ? new FirestoreAIChatRepository(createFirestoreAIChatStore())
   : new InMemoryAIChatRepository();
 
-const mockCompletionClient: AIChatCompletionClient = {
-  async complete(input) {
-    return {
-      assistantMessage: `Let's improve this in ${input.targetLanguage}: ${input.userMessage}`,
-      correctionRaw: JSON.stringify({
-        corrected: input.userMessage,
-        feedback: '문장을 조금 더 자연스럽게 다듬어 보세요.'
-      })
-    };
-  }
-};
+// OPENAI_API_KEY 있으면 실제 GPT-4o, 없으면 mock fallback
+const completionClient = createCompletionClient();
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +28,7 @@ export async function POST(request: Request) {
     const input = aiChatRequestSchema.parse(json);
     const result = await handleAIChat(input, {
       repository,
-      client: mockCompletionClient
+      client: completionClient
     });
 
     return NextResponse.json(result, { status: 200 });

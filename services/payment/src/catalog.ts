@@ -1,7 +1,9 @@
 export type PaymentProductId =
   | 'premium.monthly'
   | 'language_pack.plus'
-  | 'ai_tutor.pro';
+  | 'ai_tutor.pro'
+  // 채팅 1시간 연장: 구독자/비구독자 모두 $1로 1시간씩 추가 가능 (무제한 반복)
+  | 'chat.extend_1h';
 
 export type UserEntitlement = {
   adFree: boolean;
@@ -49,6 +51,21 @@ const paymentProducts: PaymentProduct[] = [
       adFree: true,
       unlockedLanguages: [],
       aiTutorExtended: true
+    }
+  },
+  {
+    // 채팅 1시간 연장 상품: 구독 여부에 관계없이 $1로 1시간 추가 사용 가능
+    // 비구독자: 기본 0분 → 결제 후 60분
+    // 구독자: 기본 30분 소진 후 → 결제 후 +60분
+    // 연장 횟수 무제한
+    id: 'chat.extend_1h',
+    name: 'AI 채팅 1시간 연장',
+    description: 'AI 이성친구와 1시간 더 대화할 수 있습니다.',
+    priceLabel: '$1.00',
+    entitlements: {
+      adFree: false,
+      unlockedLanguages: [],
+      aiTutorExtended: false
     }
   }
 ];

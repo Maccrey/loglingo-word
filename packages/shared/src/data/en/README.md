@@ -19,11 +19,6 @@ Use this folder for English learning datasets.
 
 Repeat the same pattern for every CEFR level.
 
-For the phrasal verb track, use:
-
-- Curriculum: `phrasal-verbs.json`
-- Sentence assembly: `phrasal-verbs-sentence-expansion.json`
-
 Target output for every English level:
 
 - `200` sentence assembly exercises per level

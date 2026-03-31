@@ -59,6 +59,8 @@ export const userSettingsSchema = z.object({
   sessionQuestionCount: z.number().int().min(1).max(50),
   notificationsEnabled: z.boolean(),
   premiumEnabled: z.boolean(),
+  // 성별: 반대 이성 AI 친구 캐릭터 결정에 사용. 기본값 female
+  gender: z.enum(['male', 'female']).default('female'),
   updatedAt: z.string().datetime()
 });
 
