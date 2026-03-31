@@ -339,13 +339,15 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
         <div
           style={{
             marginTop: 14,
-            width: '100%',
+            alignSelf: 'stretch',
+            boxSizing: 'border-box',
             borderRadius: 14,
             padding: '12px 14px',
             background: 'rgba(244, 67, 54, 0.12)',
             border: '1px solid rgba(244, 67, 54, 0.3)',
             color: 'var(--text-ink)',
-            lineHeight: 1.5
+            lineHeight: 1.5,
+            textAlign: 'center'
           }}
         >
           하루 동안 돌봄 방문이 없어서 치료가 필요해요. 치료하지 않은 채 3일이 더 지나면 고양이가 죽습니다.
@@ -354,13 +356,15 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
         <div
           style={{
             marginTop: 14,
-            width: '100%',
+            alignSelf: 'stretch',
+            boxSizing: 'border-box',
             borderRadius: 14,
             padding: '12px 14px',
             background: 'rgba(255, 213, 79, 0.18)',
             border: '1px solid var(--accent-yellow)',
             color: 'var(--text-ink)',
-            lineHeight: 1.5
+            lineHeight: 1.5,
+            textAlign: 'center'
           }}
         >
           스트레스 경고 구간이에요. 학습 포인트가 있으면 먼저 놀아주는 편이 안전합니다.
@@ -372,13 +376,15 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
           role="alert"
           style={{
             marginTop: 14,
-            width: '100%',
+            alignSelf: 'stretch',
+            boxSizing: 'border-box',
             borderRadius: 14,
             padding: '12px 14px',
             background: 'var(--accent-yellow)',
             border: '1px solid var(--border-pencil)',
             display: 'grid',
-            gap: 8
+            gap: 8,
+            textAlign: 'center'
           }}
         >
           <p style={{ margin: 0, color: 'var(--text-ink)', lineHeight: 1.5 }}>
@@ -387,6 +393,7 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
           <Link
             href="/learn"
             style={{
+              margin: '0 auto',
               width: 'fit-content',
               borderRadius: 999,
               padding: '8px 14px',
