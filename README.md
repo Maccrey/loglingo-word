@@ -51,6 +51,7 @@ pnpm dev
 
 단어 연습 화면의 발음 재생은 브라우저 `speechSynthesis` 대신 서버 경유 `XTTS-v2`를 우선 사용하도록 바뀌었다.
 `XTTS_API_URL` 이 설정되어 있으면 `/api/tts`가 해당 엔진으로 합성 요청을 보내고, 엔진이 꺼져 있거나 응답에 실패하면 브라우저 내장 음성으로 fallback 한다.
+같은 단어/언어 조합은 브라우저 세션에서 재사용하고, `/api/tts` 응답도 캐시 가능하게 설정해 XTTS 호출 수를 최대한 줄였다.
 
 ```env
 XTTS_API_URL=http://127.0.0.1:8020/tts
@@ -74,6 +75,9 @@ XTTS_API_KEY=
 
 - `audio/*` 바이너리 본문
 - `audioBase64`, `audio`, `wav`, `url`, `audioUrl`, `file_url` 중 하나를 포함한 JSON
+
+비용을 가장 아끼려면 `Firebase Hosting`은 그대로 두고, `XTTS`는 필요할 때만 별도 서버를 켜는 하이브리드 구성이 적합하다.
+`XTTS_API_URL`이 비어 있거나 XTTS 서버가 내려가 있으면 단어 학습은 브라우저 음성으로 계속 동작한다.
 
 ## 현재 구현 상태
 

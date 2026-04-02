@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 export const runtime = 'nodejs';
 
+const CACHE_CONTROL_HEADER = 'public, max-age=31536000, immutable';
+
 const ttsRequestSchema = z.object({
   text: z.string().trim().min(1).max(240),
   language: z.enum(['en', 'ko', 'ja', 'zh', 'de'])
@@ -35,7 +37,7 @@ async function forwardAudioResponse(response: Response) {
     status: 200,
     headers: {
       'Content-Type': contentType,
-      'Cache-Control': 'no-store'
+      'Cache-Control': CACHE_CONTROL_HEADER
     }
   });
 }
@@ -55,7 +57,7 @@ async function resolveJsonAudio(payload: Record<string, unknown>) {
       status: 200,
       headers: {
         'Content-Type': 'audio/wav',
-        'Cache-Control': 'no-store'
+        'Cache-Control': CACHE_CONTROL_HEADER
       }
     });
   }
@@ -110,7 +112,7 @@ export async function POST(request: Request) {
         speaker: process.env.XTTS_DEFAULT_SPEAKER ?? 'Ana Florence',
         split_sentences: false
       }),
-      cache: 'no-store'
+      cache: 'force-cache'
     });
 
     if (!upstreamResponse.ok) {
@@ -134,4 +136,21 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message }, { status: 502 });
   }
+}
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+
+  return POST(
+    new Request(request.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: url.searchParams.get('text') ?? '',
+        language: url.searchParams.get('language') ?? 'en'
+      })
+    })
+  );
 }

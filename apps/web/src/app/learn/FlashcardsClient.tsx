@@ -135,6 +135,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   const { grantLearningReward, grantLearningPoints, flushSync } = useCat();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+  const cachedAudioUrlsRef = useRef<Map<string, string>>(new Map());
 
   const [storedSettings, setStoredSettings] = useState(() =>
     readStoredSettingsSnapshot()
@@ -226,11 +227,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   const stopWordAudio = useCallback(() => {
     audioRef.current?.pause();
     audioRef.current = null;
-
-    if (audioUrlRef.current) {
-      URL.revokeObjectURL(audioUrlRef.current);
-      audioUrlRef.current = null;
-    }
+    audioUrlRef.current = null;
   }, []);
 
   const speakWord = useCallback(
@@ -241,16 +238,24 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
 
       try {
         stopWordAudio();
+        const cacheKey = `${storedSettings.learningLanguage}:${text.trim().toLowerCase()}`;
+        const cachedAudioUrl = cachedAudioUrlsRef.current.get(cacheKey);
 
-        const response = await fetch('/api/tts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            text,
-            language: storedSettings.learningLanguage
-          })
+        if (cachedAudioUrl) {
+          const cachedAudio = new Audio(cachedAudioUrl);
+          audioUrlRef.current = cachedAudioUrl;
+          audioRef.current = cachedAudio;
+          await cachedAudio.play();
+          return;
+        }
+
+        const ttsUrl = new URL('/api/tts', window.location.origin);
+        ttsUrl.searchParams.set('text', text);
+        ttsUrl.searchParams.set('language', storedSettings.learningLanguage);
+
+        const response = await fetch(ttsUrl.toString(), {
+          method: 'GET',
+          cache: 'force-cache'
         });
 
         if (!response.ok) {
@@ -261,6 +266,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
 
+        cachedAudioUrlsRef.current.set(cacheKey, audioUrl);
         audioUrlRef.current = audioUrl;
         audioRef.current = audio;
         await audio.play();
@@ -306,6 +312,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
 
   useEffect(() => () => {
     stopWordAudio();
+    cachedAudioUrlsRef.current.forEach((url) => {
+      URL.revokeObjectURL(url);
+    });
+    cachedAudioUrlsRef.current.clear();
   }, [stopWordAudio]);
 
   /* ── 학습 진행 저장 ── */
