@@ -12,6 +12,11 @@ import {
   calculateGrowthDays
 } from '../../../../packages/shared/src/cat';
 import { type LearningActivity } from '../../../../packages/shared/src/point';
+
+// 동기화 타이머 관리를 위한 모듈 스코프 변수
+let catSyncTimer: NodeJS.Timeout | null = null;
+let pointSyncTimer: NodeJS.Timeout | null = null;
+const SYNC_DELAY_MS = 30000; // 30초 디바운스
 import type { AppEnv } from '../../../../packages/shared/src/env';
 import { createPointLedgerEntry, getPointBalance } from '../../../../services/core/src/point';
 import { processLearningEventToCatPoints } from '../../../../services/core/src/point-integration';
@@ -188,32 +193,59 @@ export function useCat() {
         return;
       }
 
-      void syncCat(auth.userId, {
-        ...nextCat,
-        userId: auth.userId
-      });
+      // 고양이 상태 동기화 디바운싱
+      if (catSyncTimer) clearTimeout(catSyncTimer);
+      catSyncTimer = setTimeout(() => {
+        void syncCat(auth.userId, {
+          ...nextCat,
+          userId: auth.userId
+        });
+        catSyncTimer = null;
+      }, SYNC_DELAY_MS);
     },
     [auth.isAuthenticated, auth.userId, syncCat]
   );
 
   const persistPointLedgers = useCallback(
-    (userId: string, nextLedgers: PointLedger[], pendingLedgers: PointLedger[] = nextLedgers) => {
+    (_userId: string, nextLedgers: PointLedger[], _newEntries: PointLedger[]) => {
       saveStoredCatLedgers(nextLedgers);
 
       if (!auth.isAuthenticated) {
         return;
       }
 
-      void syncPendingPoints(
-        auth.userId,
-        pendingLedgers.map((ledger) => ({
-          ...ledger,
-          userId: auth.userId
-        }))
-      );
+      // 포인트 렛저 동기화 디바운싱
+      if (pointSyncTimer) clearTimeout(pointSyncTimer);
+      pointSyncTimer = setTimeout(() => {
+        void syncPendingPoints(
+          auth.userId,
+          nextLedgers.map((ledger) => ({
+            ...ledger,
+            userId: auth.userId
+          }))
+        );
+        pointSyncTimer = null;
+      }, SYNC_DELAY_MS);
     },
     [auth.isAuthenticated, auth.userId, syncPendingPoints]
   );
+
+  // 즉시 동기화(Flush)를 위한 헬퍼 (학습 종료 등 중요 시점)
+  const flushSync = useCallback(async () => {
+    if (!auth.isAuthenticated || !cat) return;
+    
+    if (catSyncTimer) {
+      clearTimeout(catSyncTimer);
+      catSyncTimer = null;
+      await syncCat(auth.userId, cat);
+    }
+    
+    if (pointSyncTimer) {
+      clearTimeout(pointSyncTimer);
+      pointSyncTimer = null;
+      await syncPendingPoints(auth.userId, ledgers);
+    }
+  }, [auth.isAuthenticated, auth.userId, cat, ledgers, syncCat, syncPendingPoints]);
 
   const publishCatGrowthUpdate = useCallback(
     (previousCat: Cat | null, nextCat: Cat) => {
@@ -520,5 +552,6 @@ export function useCat() {
     handlePlay,
     handleHeal,
     resetCat,
+    flushSync
   };
 }

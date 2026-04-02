@@ -13,6 +13,7 @@
  */
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 type Props = {
   /** 오늘 사용한 총 시간(분) — 안내 메시지 표시용 */
@@ -142,6 +143,34 @@ export function ChatTimeLimitModal({ usedMinutes, onExtendSuccess }: Props) {
         >
           {isPurchasing ? '처리 중...' : '💬 1시간 연장하기 ($1)'}
         </button>
+
+        {/* 홈으로 가기 버튼 */}
+        <Link
+          href="/"
+          style={{
+            display: 'block',
+            marginTop: '1rem',
+            padding: '0.875rem',
+            color: '#b05080',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            textDecoration: 'none',
+            border: '1px solid #f9dbe8',
+            borderRadius: '16px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255, 255, 255, 0.8)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = '#f472b6';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255, 255, 255, 0.4)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = '#f9dbe8';
+          }}
+        >
+          🏠 홈으로 돌아가기
+        </Link>
 
         <p
           style={{

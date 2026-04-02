@@ -208,8 +208,34 @@ function isRecoverableFirestoreReadError(error: unknown): boolean {
     'unavailable',
     'failed-precondition',
     'offline',
-    'deadline-exceeded'
+    'deadline-exceeded',
+    'resource-exhausted'
   ].includes(normalizedCode);
+}
+
+function isResourceExhausted(error: unknown): boolean {
+  if (!(error instanceof FirebaseError)) {
+    return false;
+  }
+
+  const normalizedCode = error.code.includes('/')
+    ? error.code.split('/')[1] ?? error.code
+    : error.code;
+
+  return normalizedCode === 'resource-exhausted';
+}
+
+async function safeFirestoreWrite(operation: () => Promise<void>): Promise<void> {
+  try {
+    await operation();
+  } catch (error) {
+    if (isResourceExhausted(error)) {
+      console.warn('[firebase-client] Firestore write skipped because quota was exhausted.');
+      return;
+    }
+
+    throw error;
+  }
 }
 
 export async function loadFirebaseUserProfile(uid: string): Promise<FirebaseUserProfile | null> {
@@ -555,10 +581,12 @@ export async function loadFirebaseFeedPosts(): Promise<LearningResultPost[]> {
 }
 
 export async function saveFirebaseFeedPost(post: LearningResultPost) {
-  await setDoc(
-    doc(getFirestoreDb(), 'feed_posts', post.id),
-    learningResultPostSchema.parse(post),
-    { merge: true }
+  await safeFirestoreWrite(() =>
+    setDoc(
+      doc(getFirestoreDb(), 'feed_posts', post.id),
+      learningResultPostSchema.parse(post),
+      { merge: true }
+    )
   );
 }
 
@@ -586,9 +614,11 @@ export async function loadFirebaseFeedComments(
 }
 
 export async function saveFirebaseFeedComment(comment: FeedComment) {
-  await setDoc(
-    doc(getFirestoreDb(), 'feed_comments', comment.id),
-    feedCommentSchema.parse(comment),
-    { merge: true }
+  await safeFirestoreWrite(() =>
+    setDoc(
+      doc(getFirestoreDb(), 'feed_comments', comment.id),
+      feedCommentSchema.parse(comment),
+      { merge: true }
+    )
   );
 }

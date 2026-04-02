@@ -13,6 +13,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Link from 'next/link';
 
 type Props = {
   /** $1 단발 결제 성공 시 호출 (채팅 창 활성화) */
@@ -143,7 +144,6 @@ export function SubscriptionRequiredModal({ onPurchaseSuccess }: Props) {
           또는
         </p>
 
-        {/* 단발 결제 버튼 */}
         <button
           onClick={handlePurchaseExtend}
           disabled={isPurchasing}
@@ -157,11 +157,48 @@ export function SubscriptionRequiredModal({ onPurchaseSuccess }: Props) {
             fontSize: '0.9rem',
             border: '2px solid #f0c080',
             borderRadius: '14px',
-            cursor: isPurchasing ? 'not-allowed' : 'pointer'
+            cursor: isPurchasing ? 'not-allowed' : 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            if (!isPurchasing) {
+              (e.currentTarget as HTMLButtonElement).style.background = '#ffe8cc';
+            }
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = isPurchasing ? '#e0d5c5' : '#fff3e0';
           }}
         >
           {isPurchasing ? '처리 중...' : '$1로 1시간 이용하기 💬'}
         </button>
+
+        {/* 홈으로 가기 버튼 */}
+        <Link
+          href="/"
+          style={{
+            display: 'block',
+            marginTop: '1rem',
+            padding: '0.75rem',
+            color: '#7a5c2e',
+            fontWeight: 600,
+            fontSize: '0.9rem',
+            textDecoration: 'none',
+            border: '1px solid #ead6b0',
+            borderRadius: '14px',
+            background: 'rgba(255, 255, 255, 0.5)',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255, 255, 255, 0.9)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = '#f7a34b';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255, 255, 255, 0.5)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = '#ead6b0';
+          }}
+        >
+          🏠 홈으로 돌아가기
+        </Link>
 
         <p
           style={{

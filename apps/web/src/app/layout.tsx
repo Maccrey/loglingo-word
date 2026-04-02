@@ -9,7 +9,7 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ko">
-      <body>
+      <body suppressHydrationWarning>
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
