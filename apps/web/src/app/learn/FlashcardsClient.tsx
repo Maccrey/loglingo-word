@@ -32,7 +32,6 @@ import { useTimedLearningReward } from '../../lib/useTimedLearningReward';
 import { getTodayLearnedSnapshot, saveTodayLearned } from '../../lib/dailyProgressStorage';
 
 import { calculateRecommendedStudyOutcome } from '@wordflow/core/gamification';
-import { type StudyRating } from '@wordflow/core/learning';
 import { calculateLeaderboardScore } from '@wordflow/leaderboard';
 import {
   createStudyComebackPost,
@@ -41,11 +40,11 @@ import {
 
 import {
   answerMiniRecall,
+  advanceCurrentCard,
   createFlashcardSession,
   DAILY_WORD_GOAL,
   flipCurrentCard,
   getCurrentCard,
-  rateCurrentCard
 } from './flashcards';
 
 // 미니 사이클 포인트
@@ -91,30 +90,6 @@ const badgeStyle: React.CSSProperties = {
   border: '1px dashed var(--border-pencil)'
 };
 
-const ratingButtonPalette: Record<
-  StudyRating,
-  { background: string; color: string; emoji: string; label: string }
-> = {
-  easy: {
-    background: 'var(--accent-green)',
-    color: 'var(--text-ink)',
-    emoji: '😄',
-    label: '쉬워요'
-  },
-  normal: {
-    background: 'var(--accent-blue)',
-    color: 'var(--text-ink)',
-    emoji: '🙂',
-    label: '보통이에요'
-  },
-  hard: {
-    background: 'var(--accent-orange)',
-    color: 'var(--text-ink)',
-    emoji: '😅',
-    label: '어려워요'
-  }
-};
-
 /* ────────────────────────────────── 헬퍼 함수 ────────────────────────────────── */
 function getPhaseLabel(phase: string, batchCompleted: number, batchSize: number): string {
   if (phase === 'mini_recall') {
@@ -154,7 +129,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
             progressList: auth.isAuthenticated
               ? readStoredLearningProgressSnapshot()
               : [],
-            limit: DAILY_WORD_GOAL
+            limit: readStoredSettingsSnapshot().sessionQuestionCount
           }
     )
   );
@@ -172,9 +147,12 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
   }>({ status: 'idle', selectedTerm: '' });
 
   const completionTrackedRef = useRef(false);
+  const latestProgressRef = useRef(readStoredLearningProgressSnapshot());
+  const latestSettingsRef = useRef(readStoredSettingsSnapshot());
+  const remoteProgressDirtyRef = useRef(false);
 
   const currentCard = getCurrentCard(session);
-  const reviewedCount = session.logs.length;
+  const reviewedCount = session.seenWordIds.length;
   const totalCount = session.cards.length;
   const completed = session.phase === 'done';
   const isMiniRecall = session.phase === 'mini_recall';
@@ -207,6 +185,13 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
 
   const fallbackSpeakWord = useCallback((text: string) => {
     if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (
+      typeof SpeechSynthesisUtterance === 'undefined' ||
+      typeof window.speechSynthesis === 'undefined'
+    ) {
       return;
     }
 
@@ -297,7 +282,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
           progressList: auth.isAuthenticated
             ? readStoredLearningProgressSnapshot()
             : [],
-          limit: DAILY_WORD_GOAL
+          limit: nextSettings.sessionQuestionCount
         })
       );
     }
@@ -309,6 +294,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       window.removeEventListener(USER_SETTINGS_UPDATED_EVENT, syncFromStoredSettings);
     };
   }, [auth.isAuthenticated, props.focusWordIds]);
+
+  useEffect(() => {
+    latestSettingsRef.current = storedSettings;
+  }, [storedSettings]);
 
   useEffect(() => () => {
     stopWordAudio();
@@ -323,17 +312,73 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     if (props.focusWordIds && props.focusWordIds.length > 0) {
       return;
     }
+
+    const progress = Object.values(session.progressMap);
+    latestProgressRef.current = progress;
+
     if (!auth.isAuthenticated) {
       return;
     }
 
-    const progress = Object.values(session.progressMap);
     saveStoredLearningProgress(progress);
+    remoteProgressDirtyRef.current = true;
+  }, [auth.isAuthenticated, props.focusWordIds, session.progressMap]);
+
+  useEffect(() => {
+    if (
+      props.focusWordIds && props.focusWordIds.length > 0 ||
+      !auth.isAuthenticated ||
+      !remoteProgressDirtyRef.current ||
+      session.completedCycles <= 0
+    ) {
+      return;
+    }
+
     void auth.saveLearningState({
-      settings: readStoredSettingsSnapshot(),
-      progress
+      settings: latestSettingsRef.current,
+      progress: latestProgressRef.current
     });
-  }, [auth, auth.isAuthenticated, props.focusWordIds, session.progressMap]);
+  }, [
+    auth,
+    auth.isAuthenticated,
+    props.focusWordIds,
+    session.completedCycles
+  ]);
+
+  useEffect(() => {
+    if (props.focusWordIds && props.focusWordIds.length > 0) {
+      return;
+    }
+
+    const flushProgress = () => {
+      if (!auth.isAuthenticated || !remoteProgressDirtyRef.current) {
+        return;
+      }
+
+      void auth.saveLearningState({
+        settings: latestSettingsRef.current,
+        progress: latestProgressRef.current
+      }).then(async () => {
+        await auth.flushSaveLearningState?.();
+        remoteProgressDirtyRef.current = false;
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        flushProgress();
+      }
+    };
+
+    window.addEventListener('pagehide', flushProgress);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', flushProgress);
+      flushProgress();
+    };
+  }, [auth, auth.isAuthenticated, props.focusWordIds]);
 
   /* ── 레벨 자동 승급 ── */
   useEffect(() => {
@@ -372,6 +417,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     );
 
     saveStoredSettings(nextSettings);
+    latestSettingsRef.current = nextSettings;
     setAutoAdvanceMessage(
       `현재 레벨 단어의 90% 이상을 암기해서 다음 레벨 ${getLearningLevelLabel(nextSettings.learningLanguage, nextLevel)}(으)로 자동 승급되었습니다! 🚀`
     );
@@ -458,9 +504,14 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
 
         // 세션 종료 결과 저장 후 최종 데이터 강제 동기화 (디바운싱 대기 방지)
         await Promise.all([
+          auth.saveLearningState({
+            settings: latestSettingsRef.current,
+            progress: latestProgressRef.current
+          }),
           flushSync(),
-          auth.flushSaveLearningState()
+          auth.flushSaveLearningState?.()
         ]);
+        remoteProgressDirtyRef.current = false;
 
         if (!result) {
           return;
@@ -555,7 +606,11 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
       setRecallFeedback({ status: 'idle', selectedTerm: '' });
 
       setSession((current) => {
-        const result = answerMiniRecall(current, selectedTerm);
+        const result = answerMiniRecall(
+          current,
+          selectedTerm,
+          new Date().toISOString()
+        );
 
         // 미니 사이클 완료 시 포인트 지급 및 로컬 저장
         if (result.cycleJustCompleted) {
@@ -774,7 +829,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
               margin: '0 auto',
               width: '100%'
             }}>
-              <div style={{
+              <div style={{ 
                 background: 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '24px',
@@ -813,7 +868,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                 }}>
                   <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '16px' }}>
                     <div style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.25rem' }}>학습 단어</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#334155' }}>{session.logs.length}개</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#334155' }}>{session.seenWordIds.length}개</div>
                   </div>
                   <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '16px' }}>
                     <div style={{ fontSize: '0.875rem', color: '#3b82f6', marginBottom: '0.25rem' }}>획득 포인트</div>
@@ -839,17 +894,20 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                     background: '#f1f5f9',
                     borderRadius: '12px'
                   }}>
-                    {session.logs.map((log, i) => {
-                      const word = session.cards.find(c => c.word.id === log.wordId)?.word;
+                    {session.seenWordIds.map((wordId, i) => {
+                      const word = session.cards.find(c => c.word.id === wordId)?.word;
+                      const struggled = session.logs.some(
+                        (log) => log.wordId === wordId && log.rating === 'hard'
+                      );
                       return (
                         <span key={i} style={{
                           padding: '4px 12px',
                           background: 'white',
                           borderRadius: '20px',
                           fontSize: '0.875rem',
-                          color: log.rating === 'hard' ? '#ef4444' : '#475569',
-                          border: log.rating === 'hard' ? '1px solid #fee2e2' : '1px solid #e2e8f0',
-                          fontWeight: log.rating === 'hard' ? 600 : 400
+                          color: struggled ? '#ef4444' : '#475569',
+                          border: struggled ? '1px solid #fee2e2' : '1px solid #e2e8f0',
+                          fontWeight: struggled ? 600 : 400
                         }}>
                           {word?.term}
                         </span>
@@ -1218,7 +1276,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                         color: 'var(--text-faded)'
                       }}
                     >
-                      이 단어가 얼마나 기억에 남았나요? 난이도를 선택해주세요.
+                      뜻과 예문을 다시 확인하고, 준비가 되면 다음 카드로 넘어가세요.
                     </p>
                   </div>
                 )}
@@ -1250,60 +1308,55 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                       (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
                     }}
                   >
-                    의미 확인하기 →
+                    카드 뒤집기
                   </button>
                 )}
 
-                {/* 난이도 버튼 (뒤집힌 상태에서만) */}
+                {/* 다음 버튼 (뒤집힌 상태에서만) */}
                 {session.flipped && (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                      gap: 10
-                    }}
+                  <div style={{ display: 'grid', gap: 10 }}
                   >
-                    {(['easy', 'normal', 'hard'] as const).map((rating) => {
-                      const palette = ratingButtonPalette[rating];
-
-                      return (
-                        <button
-                          key={rating}
-                          type="button"
-                          onClick={() =>
-                            setSession((s) =>
-                              rateCurrentCard(s, rating, new Date().toISOString())
-                            )
-                          }
-                          style={{
-                            border: '1px solid var(--border-pencil)',
-                            borderRadius: 18,
-                            padding: '16px 10px',
-                            fontSize: 14,
-                            fontWeight: 700,
-                            background: palette.background,
-                            color: palette.color,
-                            boxShadow: 'var(--shadow-card)',
-                            cursor: 'pointer',
-                            display: 'grid',
-                            gap: 4,
-                            placeItems: 'center',
-                            transition: 'transform 0.15s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLButtonElement).style.transform =
-                              'translateY(-2px)';
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLButtonElement).style.transform =
-                              'translateY(0)';
-                          }}
-                        >
-                          <span style={{ fontSize: 22 }}>{palette.emoji}</span>
-                          <span>{palette.label}</span>
-                        </button>
-                      );
-                    })}
+                    <button
+                      type="button"
+                      onClick={() => setSession((s) => advanceCurrentCard(s))}
+                      style={{
+                        border: 0,
+                        borderRadius: 18,
+                        padding: '18px',
+                        fontSize: 16,
+                        fontWeight: 700,
+                        background: 'var(--accent-green)',
+                        color: 'var(--text-ink)',
+                        boxShadow: 'var(--shadow-card)',
+                        cursor: 'pointer',
+                        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+                      }}
+                    >
+                      다음으로 →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleFlip}
+                      style={{
+                        border: '1px solid var(--border-pencil)',
+                        borderRadius: 18,
+                        padding: '14px 18px',
+                        fontSize: 14,
+                        fontWeight: 700,
+                        background: 'rgba(255,255,255,0.7)',
+                        color: 'var(--text-ink)',
+                        boxShadow: 'var(--shadow-card)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      다시 뒤집어서 보기
+                    </button>
                   </div>
                 )}
               </div>

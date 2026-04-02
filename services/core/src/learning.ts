@@ -167,34 +167,24 @@ export function applyStudyRating(
 
   switch (rating) {
     case 'easy':
+    case 'normal': {
+      const nextCorrectStreak = previousProgress.correctStreak + 1;
+      const nextReviewAt =
+        nextCorrectStreak >= 3 ? undefined : addDays(reviewedAt, 1);
+
       nextProgress = {
         wordId,
-        correctStreak: previousProgress.correctStreak + 1,
+        correctStreak: nextCorrectStreak,
         storageStrength: Number(
-          (previousProgress.storageStrength + 0.5).toFixed(2)
+          Math.min(2, previousProgress.storageStrength + 0.3).toFixed(2)
         ),
         retrievalStrength: Number(
-          (previousProgress.retrievalStrength + 0.4).toFixed(2)
+          Math.min(2, previousProgress.retrievalStrength + 0.25).toFixed(2)
         ),
-        nextReviewAt: addDays(
-          reviewedAt,
-          Math.max(3, (previousProgress.correctStreak + 1) * 2)
-        )
+        ...(nextReviewAt ? { nextReviewAt } : {})
       };
       break;
-    case 'normal':
-      nextProgress = {
-        wordId,
-        correctStreak: previousProgress.correctStreak + 1,
-        storageStrength: Number(
-          (previousProgress.storageStrength + 0.3).toFixed(2)
-        ),
-        retrievalStrength: Number(
-          (previousProgress.retrievalStrength + 0.2).toFixed(2)
-        ),
-        nextReviewAt: addDays(reviewedAt, 1)
-      };
-      break;
+    }
     case 'hard':
       nextProgress = {
         wordId,
@@ -205,7 +195,7 @@ export function applyStudyRating(
         retrievalStrength: Number(
           Math.max(0.1, previousProgress.retrievalStrength - 0.3).toFixed(2)
         ),
-        nextReviewAt: addMinutes(reviewedAt, 10)
+        nextReviewAt: reviewedAt
       };
       break;
   }

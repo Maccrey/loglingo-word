@@ -6,10 +6,45 @@ import {
   enqueueWrongWord,
   updateWrongWordQueue
 } from '../../services/core/src/learning';
+import type { CurriculumUnit } from '../../packages/shared/src/curriculum';
+
+const testCurriculum: CurriculumUnit[] = [
+  {
+    id: 'unit-1',
+    title: 'test-unit',
+    words: [
+      {
+        id: 'hello',
+        term: 'hello',
+        meaning: '안녕',
+        reading: null,
+        example: 'Hello there.',
+        tags: []
+      },
+      {
+        id: 'thanks',
+        term: 'thanks',
+        meaning: '고마워',
+        reading: null,
+        example: 'Thanks a lot.',
+        tags: []
+      },
+      {
+        id: 'subway',
+        term: 'subway',
+        meaning: '지하철',
+        reading: null,
+        example: 'Take the subway.',
+        tags: []
+      }
+    ]
+  }
+];
 
 describe('learning queue', () => {
   it('places due review cards before new cards', () => {
     const queue = buildStudyQueue({
+      curriculum: testCurriculum,
       now: '2026-03-25T12:00:00.000Z',
       progress: [
         {
@@ -32,6 +67,7 @@ describe('learning queue', () => {
 
   it('re-exposes wrong answers before the normal review queue', () => {
     const queue = buildStudyQueue({
+      curriculum: testCurriculum,
       now: '2026-03-25T12:00:00.000Z',
       wrongWordIds: ['hello'],
       progress: [
@@ -58,6 +94,7 @@ describe('learning queue', () => {
 
   it('falls back to new cards when there is no progress data', () => {
     const queue = buildStudyQueue({
+      curriculum: testCurriculum,
       now: '2026-03-25T12:00:00.000Z',
       limit: 2
     });
@@ -69,10 +106,10 @@ describe('learning queue', () => {
 });
 
 describe('study progress updates', () => {
-  it('increases strengths after an easy answer', () => {
+  it('schedules the next review for tomorrow after a correct answer', () => {
     const result = applyStudyRating(
       'hello',
-      'easy',
+      'normal',
       '2026-03-25T12:00:00.000Z',
       {
         wordId: 'hello',
@@ -84,13 +121,31 @@ describe('study progress updates', () => {
     );
 
     expect(result.progress.correctStreak).toBe(2);
-    expect(result.progress.storageStrength).toBe(1.5);
-    expect(result.progress.retrievalStrength).toBe(1.2);
-    expect(result.progress.nextReviewAt).toBe('2026-03-29T12:00:00.000Z');
+    expect(result.progress.storageStrength).toBe(1.3);
+    expect(result.progress.retrievalStrength).toBe(1.05);
+    expect(result.progress.nextReviewAt).toBe('2026-03-26T12:00:00.000Z');
     expect(result.log.nextProgress.wordId).toBe('hello');
   });
 
-  it('resets streak and schedules a quick retry after a hard answer', () => {
+  it('marks a word as mastered after three consecutive correct answers', () => {
+    const result = applyStudyRating(
+      'hello',
+      'normal',
+      '2026-03-25T12:00:00.000Z',
+      {
+        wordId: 'hello',
+        correctStreak: 2,
+        storageStrength: 1.2,
+        retrievalStrength: 1,
+        nextReviewAt: '2026-03-26T12:00:00.000Z'
+      }
+    );
+
+    expect(result.progress.correctStreak).toBe(3);
+    expect(result.progress.nextReviewAt).toBeUndefined();
+  });
+
+  it('resets streak and schedules an immediate retry after a hard answer', () => {
     const result = applyStudyRating(
       'hello',
       'hard',
@@ -107,7 +162,7 @@ describe('study progress updates', () => {
     expect(result.progress.correctStreak).toBe(0);
     expect(result.progress.storageStrength).toBe(0.5);
     expect(result.progress.retrievalStrength).toBe(0.3);
-    expect(result.progress.nextReviewAt).toBe('2026-03-25T12:10:00.000Z');
+    expect(result.progress.nextReviewAt).toBe('2026-03-25T12:00:00.000Z');
   });
 
   it('creates progress for a first-time study result', () => {
@@ -121,7 +176,7 @@ describe('study progress updates', () => {
     expect(result.progress.wordId).toBe('passport');
     expect(result.progress.correctStreak).toBe(1);
     expect(result.progress.storageStrength).toBe(0.7);
-    expect(result.progress.retrievalStrength).toBe(0.6);
+    expect(result.progress.retrievalStrength).toBe(0.65);
   });
 });
 

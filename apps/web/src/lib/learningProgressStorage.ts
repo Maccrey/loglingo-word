@@ -7,11 +7,7 @@ const LEARNING_PROGRESS_KEY = 'mock_learning_progress';
 export function isWordMastered(progress: VocabProgress): boolean {
   const parsed = vocabProgressSchema.parse(progress);
 
-  return (
-    parsed.correctStreak >= 2 &&
-    parsed.storageStrength >= 1 &&
-    parsed.retrievalStrength >= 0.8
-  );
+  return parsed.correctStreak >= 3;
 }
 
 export function loadStoredLearningProgress(): VocabProgress[] {

@@ -64,6 +64,7 @@ export type FlashcardSessionState = {
   // 로그
   logs: StudyLogEntry[];
   lastRating?: StudyRating;
+  seenWordIds: string[];
 
   // 오늘 세션에서 새로 익힌 단어 수 (미니 리콜 완료 기준)
   todayLearnedCount: number;
@@ -162,7 +163,7 @@ export function createFlashcardSession(input?: {
       ? focusedCards
       : buildStudyQueue({
           curriculum,
-          now: '2026-03-25T12:00:00.000Z',
+          now: new Date().toISOString(),
           progress: progressList,
           wrongWordIds: [],
           limit
@@ -181,6 +182,7 @@ export function createFlashcardSession(input?: {
       progressList.map((item) => [item.wordId, item])
     ),
     logs: [],
+    seenWordIds: [],
     todayLearnedCount: 0,
     completedCycles: 0
   };
@@ -222,24 +224,14 @@ export function flipCurrentCard(
  * 단어 카드에 난이도를 선택하면 다음 카드로 넘어갑니다.
  * 5개 배치가 완료되면 미니 리콜 단계로 전환합니다.
  */
-export function rateCurrentCard(
-  state: FlashcardSessionState,
-  rating: StudyRating,
-  reviewedAt: string
+export function advanceCurrentCard(
+  state: FlashcardSessionState
 ): FlashcardSessionState {
   const currentCard = state.cards[state.currentIndex];
 
   if (!currentCard || state.phase !== 'introduce') {
     return state;
   }
-
-  const currentProgress = state.progressMap[currentCard.word.id];
-  const { progress, log } = applyStudyRating(
-    currentCard.word.id,
-    rating,
-    reviewedAt,
-    currentProgress
-  );
 
   const nextBatchCompleted = state.batchCompletedCount + 1;
   const nextIndex = state.currentIndex + 1;
@@ -281,19 +273,18 @@ export function rateCurrentCard(
     phase: nextPhase,
     batchCompletedCount: shouldStartMiniRecall ? 0 : nextBatchCompleted,
     miniRecall,
-    lastRating: rating,
-    progressMap: {
-      ...state.progressMap,
-      [progress.wordId]: progress
-    },
-    logs: [...state.logs, log],
-    wrongWordQueue: updateWrongWordQueue(
-      state.wrongWordQueue,
-      currentCard.word.id,
-      rating,
-      reviewedAt
-    )
+    seenWordIds: state.seenWordIds.includes(currentCard.word.id)
+      ? state.seenWordIds
+      : [...state.seenWordIds, currentCard.word.id]
   };
+}
+
+export function rateCurrentCard(
+  state: FlashcardSessionState,
+  _rating: StudyRating,
+  _reviewedAt: string
+): FlashcardSessionState {
+  return advanceCurrentCard(state);
 }
 
 /**
@@ -303,7 +294,8 @@ export function rateCurrentCard(
  */
 export function answerMiniRecall(
   state: FlashcardSessionState,
-  selectedTerm: string
+  selectedTerm: string,
+  reviewedAt: string
 ): FlashcardSessionState & { cycleJustCompleted: boolean } {
   if (state.phase !== 'mini_recall' || !state.miniRecall) {
     return { ...state, cycleJustCompleted: false };
@@ -317,6 +309,14 @@ export function answerMiniRecall(
   }
 
   const isCorrect = selectedTerm === currentQuestion.correctTerm;
+  const rating: StudyRating = isCorrect ? 'normal' : 'hard';
+  const currentProgress = state.progressMap[currentQuestion.wordId];
+  const { progress, log } = applyStudyRating(
+    currentQuestion.wordId,
+    rating,
+    reviewedAt,
+    currentProgress
+  );
   const nextRecallIndex = recall.currentIndex + 1;
   const isLastQuestion = nextRecallIndex >= recall.questions.length;
 
@@ -332,6 +332,18 @@ export function answerMiniRecall(
     return {
       ...state,
       miniRecall: updatedRecall,
+      lastRating: rating,
+      progressMap: {
+        ...state.progressMap,
+        [progress.wordId]: progress
+      },
+      logs: [...state.logs, log],
+      wrongWordQueue: updateWrongWordQueue(
+        state.wrongWordQueue,
+        currentQuestion.wordId,
+        rating,
+        reviewedAt
+      ),
       cycleJustCompleted: false
     };
   }
@@ -346,6 +358,18 @@ export function answerMiniRecall(
     miniRecall: null,
     todayLearnedCount: state.todayLearnedCount + recall.questions.length,
     completedCycles: state.completedCycles + 1,
+    lastRating: rating,
+    progressMap: {
+      ...state.progressMap,
+      [progress.wordId]: progress
+    },
+    logs: [...state.logs, log],
+    wrongWordQueue: updateWrongWordQueue(
+      state.wrongWordQueue,
+      currentQuestion.wordId,
+      rating,
+      reviewedAt
+    ),
     cycleJustCompleted: true // 포인트 부여 트리거
   };
 }

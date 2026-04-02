@@ -11,9 +11,9 @@ describe('learning progress storage helpers', () => {
     expect(
       isWordMastered({
         wordId: 'hello',
-        correctStreak: 2,
-        storageStrength: 1.2,
-        retrievalStrength: 0.9
+        correctStreak: 3,
+        storageStrength: 0.9,
+        retrievalStrength: 0.7
       })
     ).toBe(true);
     expect(
@@ -33,19 +33,19 @@ describe('learning progress storage helpers', () => {
         [
           {
             wordId: 'hello',
-            correctStreak: 2,
+            correctStreak: 3,
             storageStrength: 1.2,
             retrievalStrength: 1
           },
           {
             wordId: 'thanks',
-            correctStreak: 2,
+            correctStreak: 3,
             storageStrength: 1.1,
             retrievalStrength: 0.8
           },
           {
             wordId: 'subway',
-            correctStreak: 2,
+            correctStreak: 3,
             storageStrength: 1.3,
             retrievalStrength: 0.9
           }
@@ -68,7 +68,7 @@ describe('learning progress storage helpers', () => {
         [
           {
             wordId: 'hello',
-            correctStreak: 2,
+            correctStreak: 3,
             storageStrength: 1.2,
             retrievalStrength: 1
           }
@@ -77,7 +77,7 @@ describe('learning progress storage helpers', () => {
     ).toEqual([
       {
         wordId: 'hello',
-        correctStreak: 2,
+        correctStreak: 3,
         storageStrength: 1.2,
         retrievalStrength: 1
       }
