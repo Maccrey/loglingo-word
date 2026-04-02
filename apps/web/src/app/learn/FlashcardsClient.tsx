@@ -1314,12 +1314,18 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
 
                 {/* 다음 버튼 (뒤집힌 상태에서만) */}
                 {session.flipped && (
-                  <div style={{ display: 'grid', gap: 10 }}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 10,
+                      alignItems: 'stretch'
+                    }}
                   >
                     <button
                       type="button"
                       onClick={() => setSession((s) => advanceCurrentCard(s))}
                       style={{
+                        flex: 1,
                         border: 0,
                         borderRadius: 18,
                         padding: '18px',
@@ -1344,11 +1350,13 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
                       type="button"
                       onClick={handleFlip}
                       style={{
+                        flexShrink: 0,
                         border: '1px solid var(--border-pencil)',
                         borderRadius: 18,
                         padding: '14px 18px',
                         fontSize: 14,
                         fontWeight: 700,
+                        whiteSpace: 'nowrap',
                         background: 'rgba(255,255,255,0.7)',
                         color: 'var(--text-ink)',
                         boxShadow: 'var(--shadow-card)',
