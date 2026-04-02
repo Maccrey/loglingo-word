@@ -10,7 +10,7 @@ import type { Cat } from '../../packages/shared/src/cat/types';
 describe('Cat Growth and Rewards Module', () => {
   const mockEnv = {
     CAT_HUNGRY_HOURS: 12,
-    CAT_SICK_HOURS: 48,
+    CAT_SICK_HOURS: 24,
     CAT_STAGE_LEGACY_DAYS: 365,
   };
 
@@ -50,8 +50,8 @@ describe('Cat Growth and Rewards Module', () => {
     });
 
     it('should NOT accumulate active days when cat is sick', () => {
-      // Sick cat (neglected for 61 hours), hasn't been updated for 24 hours
-      const cat = createMockCat(10, 61, 24);
+      // Sick cat (neglected for 25 hours), hasn't been updated for 24 hours
+      const cat = createMockCat(10, 25, 24);
       const result = calculateGrowthDays(cat, Date.now(), mockEnv);
 
       // Active days should not increase

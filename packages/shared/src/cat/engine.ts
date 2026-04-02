@@ -52,7 +52,16 @@ export function getTreatmentRequiredAt(
     return cat.treatmentRequiredAt;
   }
 
-  const inferredTreatmentRequiredAt = getLastCareAt(cat) + MS_PER_DAY;
+  const feedTreatmentRequiredAt = cat.lastFedAt + thresholds.CAT_SICK_HOURS * MS_PER_HOUR;
+  const washTreatmentRequiredAt =
+    cat.lastWashedAt + thresholds.CAT_SICK_AFTER_SMELLY_HOURS * MS_PER_HOUR;
+  const playTreatmentRequiredAt =
+    cat.lastPlayedAt + thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR;
+  const inferredTreatmentRequiredAt = Math.min(
+    feedTreatmentRequiredAt,
+    washTreatmentRequiredAt,
+    playTreatmentRequiredAt
+  );
 
   if (currentTime >= inferredTreatmentRequiredAt) {
     return inferredTreatmentRequiredAt;
@@ -67,10 +76,10 @@ const DEFAULT_THRESHOLDS: EnvThresholds = {
   CAT_STRESSED_HOURS: 24,
   CAT_STRESS_AFTER_PLAY_MISS_HOURS: 3,
   CAT_STRESS_WARNING_LIMIT_HOURS: 12,
-  CAT_SICK_AFTER_NO_PLAY_HOURS: 15,
-  CAT_SICK_AFTER_SMELLY_HOURS: 72,
-  CAT_DEATH_AFTER_NO_FEED_DAYS: 7,
-  CAT_SICK_HOURS: 48,
+  CAT_SICK_AFTER_NO_PLAY_HOURS: 24,
+  CAT_SICK_AFTER_SMELLY_HOURS: 24,
+  CAT_DEATH_AFTER_NO_FEED_DAYS: 3,
+  CAT_SICK_HOURS: 24,
   CAT_CRITICAL_HOURS: 24,
   CAT_DEAD_DAYS: 3,
   CAT_STAGE_JUNIOR_DAYS: 30,
@@ -148,35 +157,13 @@ export function getStressState(
  * 가장 오래 방치된 시간(min of interaction times)을 기준으로 판정
  */
 export function calculateSeverityStatus(cat: Cat, currentTime: number, thresholds: EnvThresholds): 'healthy' | 'sick' | 'critical' | 'dead' {
-  const feedElapsed = currentTime - cat.lastFedAt;
-  const washElapsed = currentTime - cat.lastWashedAt;
-  const playElapsed = currentTime - cat.lastPlayedAt;
   const treatmentRequiredAt = getTreatmentRequiredAt(cat, currentTime, thresholds);
-  const criticalMs = thresholds.CAT_CRITICAL_HOURS * MS_PER_HOUR;
-
-  if (feedElapsed >= thresholds.CAT_DEATH_AFTER_NO_FEED_DAYS * MS_PER_DAY) {
-    return 'dead';
-  }
 
   if (treatmentRequiredAt) {
     if ((currentTime - treatmentRequiredAt) >= thresholds.CAT_DEAD_DAYS * MS_PER_DAY) {
       return 'dead';
     }
 
-    return 'sick';
-  }
-
-  if (
-    washElapsed >= (thresholds.CAT_SICK_AFTER_SMELLY_HOURS * MS_PER_HOUR) + criticalMs ||
-    playElapsed >= (thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR) + criticalMs
-  ) {
-    return 'critical';
-  }
-
-  if (
-    washElapsed >= thresholds.CAT_SICK_AFTER_SMELLY_HOURS * MS_PER_HOUR ||
-    playElapsed >= thresholds.CAT_SICK_AFTER_NO_PLAY_HOURS * MS_PER_HOUR
-  ) {
     return 'sick';
   }
 

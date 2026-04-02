@@ -10,7 +10,7 @@ describe('Cat Care Actions Service', () => {
     CAT_COST_PLAY: 200,
     CAT_COST_HEAL: 1000,
     CAT_HUNGRY_HOURS: 12,
-    CAT_SICK_HOURS: 48,
+    CAT_SICK_HOURS: 24,
     CAT_CRITICAL_HOURS: 24,
     CAT_DEAD_DAYS: 3,
   };
@@ -53,23 +53,14 @@ describe('Cat Care Actions Service', () => {
     expect(result.error).toMatch(/Not enough points/);
   });
 
-  it('T3-4 & T3-5: should heal sick cat using medicine and heal critical cat using injection', () => {
-    // Sick cat = neglected for 12 + 48 = 60 hours
-    const sickCat = createMockCat(61, 61, 61);
+  it('T3-4: should heal a sick cat using medicine', () => {
+    const sickCat = createMockCat(25, 25, 25);
     const now = Date.now();
     const healSickResult = performCatCareAction(sickCat, 'heal', 2000, now, mockEnv);
 
     expect(healSickResult.success).toBe(true);
     expect(healSickResult.newCat.lastFedAt).toBe(now);
     expect(healSickResult.newCat.dailyCareCompletion).toBeUndefined();
-
-    // Critical cat = neglected for 12 + 48 + 24 = 84 hours
-    const criticalCat = createMockCat(85, 85, 85);
-    const healCriticalResult = performCatCareAction(criticalCat, 'heal', 2000, now, mockEnv);
-
-    expect(healCriticalResult.success).toBe(true);
-    expect(healCriticalResult.newCat.lastFedAt).toBe(now);
-    expect(healCriticalResult.newCat.dailyCareCompletion).toBeUndefined();
   });
 
   it('T3-6: should block heal if cat is not sick or critical', () => {
