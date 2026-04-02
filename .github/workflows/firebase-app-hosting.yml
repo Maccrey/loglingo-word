@@ -1,0 +1,46 @@
+name: Firebase App Hosting Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      FIREBASE_APP_HOSTING_BACKEND_ID: ${{ secrets.FIREBASE_APP_HOSTING_BACKEND_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@latest
+
+      - name: Write service account key
+        run: printf '%s' '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$RUNNER_TEMP/firebase-service-account.json"
+
+      - name: Inject backend id into firebase.json
+        run: |
+          node -e "
+          const fs = require('fs');
+          const file = JSON.parse(fs.readFileSync('firebase.json', 'utf8'));
+          if (!file.apphosting?.length) throw new Error('firebase.json apphosting config is missing.');
+          file.apphosting[0].backendId = process.env.FIREBASE_APP_HOSTING_BACKEND_ID;
+          fs.writeFileSync('firebase.json', JSON.stringify(file, null, 2));
+          "
+
+      - name: Deploy to Firebase App Hosting
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+        run: firebase deploy --project "$FIREBASE_PROJECT_ID" --only "apphosting:$FIREBASE_APP_HOSTING_BACKEND_ID"

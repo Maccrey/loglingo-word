@@ -36,6 +36,19 @@
 
 이후 `main` 브랜치에 커밋이 푸시될 때마다 자동 배포된다.
 
+저장소 안에도 GitHub Actions 기반 대안 자동 배포를 추가했다.
+[firebase-app-hosting.yml](/Users/maccrey/Development/Loglingo_word/.github/workflows/firebase-app-hosting.yml) 은 `main` push 시 `firebase deploy --only apphosting:BACKEND_ID`를 실행한다.
+
+필요한 GitHub Secrets:
+
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_APP_HOSTING_BACKEND_ID`
+- `FIREBASE_SERVICE_ACCOUNT`
+
+`FIREBASE_SERVICE_ACCOUNT` 는 App Hosting 배포 권한이 있는 서비스 계정 JSON 전체 문자열이다.
+
+루트 [firebase.json](/Users/maccrey/Development/Loglingo_word/firebase.json) 은 App Hosting 소스 배포용 기본 설정을 포함한다.
+
 ## 필요한 환경 변수
 
 App Hosting에서는 콘솔 또는 `apphosting.yaml`을 통해 환경 변수를 넣을 수 있다.
