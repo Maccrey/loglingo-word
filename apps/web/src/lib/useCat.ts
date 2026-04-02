@@ -181,7 +181,8 @@ export function useCat() {
       lastFedAt: now,
       lastWashedAt: now,
       lastPlayedAt: now,
-      activeDays: 0
+      activeDays: 0,
+      dailyCareCompletion: {}
     };
   }, []);
 

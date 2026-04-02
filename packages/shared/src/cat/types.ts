@@ -3,6 +3,13 @@ import { CAT_STAGES, CAT_STATUSES, CAT_CARE_ACTIONS } from './constants';
 export type CatStage = typeof CAT_STAGES[number];
 export type CatStatus = typeof CAT_STATUSES[number];
 export type CatCareActionType = typeof CAT_CARE_ACTIONS[number];
+export type CatDailyCareAction = Extract<CatCareActionType, 'feed' | 'wash' | 'play'>;
+
+export interface CatDailyCareCompletion {
+  feed?: string;
+  wash?: string;
+  play?: string;
+}
 
 export interface Cat {
   id: string;
@@ -17,6 +24,7 @@ export interface Cat {
   lastPlayedAt: number;
   // Accumulated health/growth metrics
   activeDays: number;
+  dailyCareCompletion?: CatDailyCareCompletion;
   // Used for keeping alive without interaction
   resurrectedAt?: number;
   treatmentRequiredAt?: number;

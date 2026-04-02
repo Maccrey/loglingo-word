@@ -1,4 +1,4 @@
-import type { Cat, CatCareActionType } from './types';
+import type { Cat, CatCareActionType, CatDailyCareAction } from './types';
 import { type EnvThresholds, getCatThresholds, calculateCatStatus } from './engine';
 
 export interface ActionResult {
@@ -12,6 +12,22 @@ function createErrorResult(cat: Cat, message: string): ActionResult {
   return { success: false, cost: 0, newCat: cat, error: message };
 }
 
+function getLocalDayKey(timestamp: number): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function markDailyCareCompleted(cat: Cat, action: CatDailyCareAction, currentTime: number) {
+  return {
+    ...(cat.dailyCareCompletion ?? {}),
+    [action]: getLocalDayKey(currentTime)
+  };
+}
+
 /**
  * T3-1. 먹이주기 액션 구현
  */
@@ -23,7 +39,12 @@ export function feedCat(cat: Cat, currentPoints: number, currentTime: number, th
   return {
     success: true,
     cost,
-    newCat: { ...cat, lastFedAt: currentTime, updatedAt: currentTime },
+    newCat: {
+      ...cat,
+      lastFedAt: currentTime,
+      updatedAt: currentTime,
+      dailyCareCompletion: markDailyCareCompleted(cat, 'feed', currentTime)
+    },
   };
 }
 
@@ -38,7 +59,12 @@ export function batheCat(cat: Cat, currentPoints: number, currentTime: number, t
   return {
     success: true,
     cost,
-    newCat: { ...cat, lastWashedAt: currentTime, updatedAt: currentTime },
+    newCat: {
+      ...cat,
+      lastWashedAt: currentTime,
+      updatedAt: currentTime,
+      dailyCareCompletion: markDailyCareCompleted(cat, 'wash', currentTime)
+    },
   };
 }
 
@@ -53,7 +79,12 @@ export function playWithCat(cat: Cat, currentPoints: number, currentTime: number
   return {
     success: true,
     cost,
-    newCat: { ...cat, lastPlayedAt: currentTime, updatedAt: currentTime },
+    newCat: {
+      ...cat,
+      lastPlayedAt: currentTime,
+      updatedAt: currentTime,
+      dailyCareCompletion: markDailyCareCompleted(cat, 'play', currentTime)
+    },
   };
 }
 

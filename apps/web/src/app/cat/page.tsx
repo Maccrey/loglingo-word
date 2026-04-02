@@ -8,6 +8,7 @@ import { BackButton } from '../../components/BackButton';
 import { resolveLocale } from '../i18n';
 import { useCat } from '../../lib/useCat';
 import { getCatImagePath } from '../../lib/catImage';
+import { getDailyCareChecklist } from '../../lib/careChecklist';
 
 const MOCK_ENV: Partial<EnvThresholds> = {
   CAT_HUNGRY_HOURS: 12,
@@ -98,25 +99,6 @@ function buildCatSlots(cat: { id: string; name: string; stage: string }) {
       requirement: '1년 육성 보상으로 새끼 고양이를 해금하면 열립니다.'
     }
   ];
-}
-
-function isSameLocalDay(left: number, right: number): boolean {
-  const leftDate = new Date(left);
-  const rightDate = new Date(right);
-
-  return (
-    leftDate.getFullYear() === rightDate.getFullYear() &&
-    leftDate.getMonth() === rightDate.getMonth() &&
-    leftDate.getDate() === rightDate.getDate()
-  );
-}
-
-function getDailyCareChecklist(cat: Cat, now: number) {
-  return [
-    { action: 'feed', label: '밥주기', done: isSameLocalDay(cat.lastFedAt, now) },
-    { action: 'wash', label: '씻기기', done: isSameLocalDay(cat.lastWashedAt, now) },
-    { action: 'play', label: '놀아주기', done: isSameLocalDay(cat.lastPlayedAt, now) }
-  ] as const;
 }
 
 function getRecommendedCareAction(
@@ -286,6 +268,7 @@ export default function CatDetailScreen() {
           alt="Cat Large View"
           width={300}
           height={300}
+          priority
           style={{
             width: 300,
             height: 300,
@@ -321,7 +304,7 @@ export default function CatDetailScreen() {
                 fontWeight: 600
               }}
             >
-              {item.done ? `오늘 완료: ${item.label}` : `오늘 필요: ${item.label}`}
+              {item.done ? `오늘 완료: ${item.label}` : `오늘 할일: ${item.label}`}
             </span>
           ))}
         </div>

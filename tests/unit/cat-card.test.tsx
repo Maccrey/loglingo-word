@@ -100,7 +100,7 @@ describe('cat card', () => {
     ).toBeTruthy();
     expect(
       screen.getByRole('button', { name: /놀아주기/ }).getAttribute('style')
-    ).toContain('background: rgb(29, 78, 216)');
+    ).toContain('background: var(--accent-blue)');
   });
 
   it('shows the stage-specific medicine overlay after treatment', () => {

@@ -73,9 +73,9 @@ describe('cat detail page', () => {
     expect(screen.getByText('급식 타이머')).toBeTruthy();
     expect(screen.getByText('청결 타이머')).toBeTruthy();
     expect(screen.getByText('놀이 타이머')).toBeTruthy();
-    expect(screen.getByText('오늘 완료: 밥주기')).toBeTruthy();
-    expect(screen.getByText('오늘 완료: 씻기기')).toBeTruthy();
-    expect(screen.getByText('오늘 완료: 놀아주기')).toBeTruthy();
+    expect(screen.getByText('오늘 할일: 밥주기')).toBeTruthy();
+    expect(screen.getByText('오늘 할일: 씻기기')).toBeTruthy();
+    expect(screen.getByText('오늘 할일: 놀아주기')).toBeTruthy();
     expect(screen.getByRole('button', { name: /밥주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /놀아주기/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /씻기기/ })).toBeTruthy();

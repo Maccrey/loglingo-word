@@ -42,6 +42,7 @@ describe('Cat Care Actions Service', () => {
     expect(result.success).toBe(true);
     expect(result.cost).toBe(100);
     expect(result.newCat.lastFedAt).toBe(now);
+    expect(result.newCat.dailyCareCompletion?.feed).toBeDefined();
   });
 
   it('T3-1: should fail to feed if not enough points', () => {
@@ -60,6 +61,7 @@ describe('Cat Care Actions Service', () => {
 
     expect(healSickResult.success).toBe(true);
     expect(healSickResult.newCat.lastFedAt).toBe(now);
+    expect(healSickResult.newCat.dailyCareCompletion).toBeUndefined();
 
     // Critical cat = neglected for 12 + 48 + 24 = 84 hours
     const criticalCat = createMockCat(85, 85, 85);
@@ -67,6 +69,7 @@ describe('Cat Care Actions Service', () => {
 
     expect(healCriticalResult.success).toBe(true);
     expect(healCriticalResult.newCat.lastFedAt).toBe(now);
+    expect(healCriticalResult.newCat.dailyCareCompletion).toBeUndefined();
   });
 
   it('T3-6: should block heal if cat is not sick or critical', () => {

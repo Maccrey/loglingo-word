@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { buildCatStateSnapshot, getCatThresholds, type Cat, type CatStatus, type EnvThresholds } from '@wordflow/shared/cat';
 import { useCat } from '../lib/useCat';
 import { getCatImagePath } from '../lib/catImage';
+import { getDailyCareChecklist } from '../lib/careChecklist';
 
 const careActionCosts = {
   feed: 100,
@@ -61,27 +62,8 @@ function getRequiredCare(status: CatStatus) {
     case 'dead':
       return { label: '복구 정책', cost: 0 };
     default:
-      return { label: '밥주기', cost: careActionCosts.feed };
+      return null;
   }
-}
-
-function isSameLocalDay(left: number, right: number): boolean {
-  const leftDate = new Date(left);
-  const rightDate = new Date(right);
-
-  return (
-    leftDate.getFullYear() === rightDate.getFullYear() &&
-    leftDate.getMonth() === rightDate.getMonth() &&
-    leftDate.getDate() === rightDate.getDate()
-  );
-}
-
-function getDailyCareChecklist(cat: Cat, now: number) {
-  return [
-    { action: 'feed', label: '밥주기', done: isSameLocalDay(cat.lastFedAt, now) },
-    { action: 'wash', label: '씻기기', done: isSameLocalDay(cat.lastWashedAt, now) },
-    { action: 'play', label: '놀아주기', done: isSameLocalDay(cat.lastPlayedAt, now) }
-  ] as const;
 }
 
 function getRecommendedCareAction(
@@ -221,7 +203,9 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
     now,
     snapshot.isStressWarning
   );
-  const missingPoints = Math.max(0, requiredCare.cost - points);
+  const missingPoints = requiredCare
+    ? Math.max(0, requiredCare.cost - points)
+    : 0;
 
   return (
     <section 
@@ -259,6 +243,7 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
           alt={`${cat.stage} cat feeling ${snapshot.status}`}
           width={240}
           height={240}
+          priority
           style={{
             width: '100%',
             height: '100%',
@@ -295,9 +280,17 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
           ? '지금 필요한 돌봄: 고양이 다시 키우기'
           : snapshot.status === 'sick' || snapshot.status === 'critical'
             ? '지금 필요한 돌봄: 치료하기'
+            : snapshot.status === 'hungry'
+              ? '지금 필요한 돌봄: 밥주기'
+              : snapshot.status === 'smelly'
+                ? '지금 필요한 돌봄: 씻기기'
+                : snapshot.status === 'stressed'
+                  ? '지금 필요한 돌봄: 놀아주기'
+                  : snapshot.isStressWarning
+                    ? '지금 필요한 돌봄: 놀아주기'
             : missingDailyCare
-              ? `지금 필요한 돌봄: 오늘 ${missingDailyCare.label}`
-              : `지금 필요한 돌봄: ${requiredCare.label}`}
+              ? `지금 필요한 돌봄: 오늘 할일 ${missingDailyCare.label}`
+              : '지금 필요한 돌봄: 오늘 돌봄 완료'}
       </p>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
@@ -314,7 +307,7 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
               fontWeight: 600
             }}
           >
-            {item.done ? `오늘 완료: ${item.label}` : `오늘 필요: ${item.label}`}
+            {item.done ? `오늘 완료: ${item.label}` : `오늘 할일: ${item.label}`}
           </span>
         ))}
       </div>
@@ -371,7 +364,7 @@ export default function CatCard({ headerAccessory }: CatCardProps) {
         </div>
       ) : null}
 
-      {missingPoints > 0 && requiredCare.cost > 0 ? (
+      {requiredCare && missingPoints > 0 && requiredCare.cost > 0 ? (
         <div
           role="alert"
           style={{
