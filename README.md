@@ -47,6 +47,34 @@ pnpm install
 pnpm dev
 ```
 
+## XTTS 기반 단어 TTS
+
+단어 연습 화면의 발음 재생은 브라우저 `speechSynthesis` 대신 서버 경유 `XTTS-v2`를 우선 사용하도록 바뀌었다.
+`XTTS_API_URL` 이 설정되어 있으면 `/api/tts`가 해당 엔진으로 합성 요청을 보내고, 엔진이 꺼져 있거나 응답에 실패하면 브라우저 내장 음성으로 fallback 한다.
+
+```env
+XTTS_API_URL=http://127.0.0.1:8020/tts
+XTTS_DEFAULT_SPEAKER=Ana Florence
+# 선택
+XTTS_API_KEY=
+```
+
+업스트림 XTTS 서비스는 아래 JSON 형식의 요청을 받도록 맞추면 된다.
+
+```json
+{
+  "text": "hello",
+  "language": "en",
+  "speaker": "Ana Florence",
+  "split_sentences": false
+}
+```
+
+응답은 다음 둘 중 하나면 된다.
+
+- `audio/*` 바이너리 본문
+- `audioBase64`, `audio`, `wav`, `url`, `audioUrl`, `file_url` 중 하나를 포함한 JSON
+
 ## 현재 구현 상태
 
 - 홈 대시보드에서 대표 고양이 카드와 `바로 학습 시작` 패널을 같은 행에 배치했다.

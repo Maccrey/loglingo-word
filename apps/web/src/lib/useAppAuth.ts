@@ -32,6 +32,37 @@ import {
   upsertLearningProgress
 } from './learningProgressStorage';
 
+/**
+ * ── Firestore 쓰기 최적화 (Debouncing) ──
+ * 학습 진척도(progress)와 설정(settings)은 빈번하게 변경되므로
+ * 이들을 모아 30초마다 한 번씩 Firestore에 동기화합니다.
+ */
+let pendingLearningState: {
+  userId: string;
+  input: { settings: UserSettings; progress: VocabProgress[] };
+} | null = null;
+
+let learningSyncTimer: ReturnType<typeof setTimeout> | null = null;
+const SYNC_DEBOUNCE_MS = 30000;
+
+async function performLearningSync() {
+  if (!pendingLearningState) return;
+
+  const { userId, input } = pendingLearningState;
+  pendingLearningState = null;
+
+  if (learningSyncTimer) {
+    clearTimeout(learningSyncTimer);
+    learningSyncTimer = null;
+  }
+
+  try {
+    await saveFirebaseLearningState(userId, input);
+  } catch (error) {
+    console.error('[useAppAuth] Failed to sync learning state to Firestore:', error);
+  }
+}
+
 export type AppAuthStatus = 'loading' | 'guest' | 'authenticated';
 
 type AppAuthState = {
@@ -42,6 +73,45 @@ type AppAuthState = {
   needsTermsConsent: boolean;
   authReady: boolean;
 };
+
+const guestState = (): AppAuthState => ({
+  status: 'guest',
+  userId: createFallbackSettings().userId,
+  displayName: null,
+  email: null,
+  needsTermsConsent: false,
+  authReady: true
+});
+
+const loadingState = (): AppAuthState => ({
+  status: 'loading',
+  userId: createFallbackSettings().userId,
+  displayName: null,
+  email: null,
+  needsTermsConsent: false,
+  authReady: false
+});
+
+let appAuthState: AppAuthState = loadingState();
+const appAuthListeners = new Set<(state: AppAuthState) => void>();
+let authObserverInitialized = false;
+
+function setAppAuthState(nextState: AppAuthState) {
+  appAuthState = nextState;
+
+  appAuthListeners.forEach((listener) => {
+    listener(appAuthState);
+  });
+}
+
+function subscribeToAppAuth(listener: (state: AppAuthState) => void) {
+  appAuthListeners.add(listener);
+  listener(appAuthState);
+
+  return () => {
+    appAuthListeners.delete(listener);
+  };
+}
 
 function isMoreRecent(left?: string, right?: string): boolean {
   if (!left) {
@@ -71,116 +141,139 @@ function mergeSettings(
   });
 }
 
-export function useAppAuth() {
-  const [state, setState] = useState<AppAuthState>({
-    status: 'loading',
-    userId: createFallbackSettings().userId,
-    displayName: null,
-    email: null,
-    needsTermsConsent: false,
-    authReady: false
-  });
+function shouldSyncAuthProfile(
+  profile: Awaited<ReturnType<typeof loadFirebaseUserProfile>>,
+  user: {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+  }
+): boolean {
+  if (!profile) {
+    return true;
+  }
 
-  useEffect(() => {
-    if (!hasFirebaseWebConfig()) {
-      setState({
-        status: 'guest',
-        userId: createFallbackSettings().userId,
-        displayName: null,
-        email: null,
-        needsTermsConsent: false,
-        authReady: true
-      });
-      return;
-    }
+  return (
+    profile.email !== user.email ||
+    profile.displayName !== user.displayName ||
+    profile.photoURL !== user.photoURL
+  );
+}
 
-    const unsubscribe = observeFirebaseAuth(async (user) => {
-      if (!user) {
-        setState({
-          status: 'guest',
-          userId: createFallbackSettings().userId,
-          displayName: null,
-          email: null,
-          needsTermsConsent: false,
-          authReady: true
-        });
-        return;
-      }
+async function hydrateAuthenticatedUser(user: {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+}) {
+  let profile: Awaited<ReturnType<typeof loadFirebaseUserProfile>> = null;
 
-      const [profile, learningState] = await Promise.all([
-        loadFirebaseUserProfile(user.uid),
-        loadFirebaseLearningState(user.uid)
-      ]);
-      const localSettings = readStoredSettingsSnapshot();
-      const localProgress = readStoredLearningProgressSnapshot();
-      const mergedSettings = mergeSettings(
-        userSettingsSchema.parse({
-          ...localSettings,
-          userId: user.uid
-        }),
-        learningState?.settings ?? null,
-        user.uid
-      );
-      const mergedProgress = upsertLearningProgress(
-        learningState?.progress ?? [],
-        localProgress
-      );
+  try {
+    const [loadedProfile, learningState, homeSummary] = await Promise.all([
+      loadFirebaseUserProfile(user.uid),
+      loadFirebaseLearningState(user.uid),
+      loadFirebaseHomeSummary(user.uid)
+    ]);
+    profile = loadedProfile;
 
-      saveStoredSettings(mergedSettings);
-      saveStoredLearningProgress(mergedProgress);
+    const localSettings = readStoredSettingsSnapshot();
+    const localProgress = readStoredLearningProgressSnapshot();
+    const mergedSettings = mergeSettings(
+      userSettingsSchema.parse({
+        ...localSettings,
+        userId: user.uid
+      }),
+      learningState?.settings ?? null,
+      user.uid
+    );
+    const mergedProgress = upsertLearningProgress(
+      learningState?.progress ?? [],
+      localProgress
+    );
+
+    saveStoredSettings(mergedSettings);
+    saveStoredLearningProgress(mergedProgress);
+    if (shouldSyncAuthProfile(profile, user)) {
       await saveFirebaseUserProfile(user.uid, {
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
         lastLoginAt: new Date().toISOString()
       });
-      await saveFirebaseLearningState(user.uid, {
-        settings: mergedSettings,
-        progress: mergedProgress
-      });
-      await saveFirebaseHomeSummary(
-        user.uid,
-        (await loadFirebaseHomeSummary(user.uid)) ?? {
-          userId: user.uid,
-          currentStreak: 0,
-          todayCompleted: 0,
-          studyMinutesToday: 0,
-          dailyGoalTarget: 10,
-          updatedAt: new Date().toISOString()
-        }
-      );
-
-      setState({
-        status: 'authenticated',
-        userId: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        needsTermsConsent: !profile?.termsAcceptedAt,
-        authReady: true
-      });
+    }
+    await saveFirebaseLearningState(user.uid, {
+      settings: mergedSettings,
+      progress: mergedProgress
     });
+
+    if (!homeSummary) {
+      await saveFirebaseHomeSummary(user.uid, {
+        userId: user.uid,
+        currentStreak: 0,
+        todayCompleted: 0,
+        studyMinutesToday: 0,
+        dailyGoalTarget: 10,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error('[useAppAuth] Failed to hydrate Firebase auth state:', error);
+  }
+
+  setAppAuthState({
+    status: 'authenticated',
+    userId: user.uid,
+    displayName: user.displayName,
+    email: user.email,
+    needsTermsConsent: !profile?.termsAcceptedAt,
+    authReady: true
+  });
+}
+
+function ensureAppAuthInitialized() {
+  if (authObserverInitialized) {
+    return;
+  }
+
+  authObserverInitialized = true;
+
+  if (!hasFirebaseWebConfig()) {
+    setAppAuthState(guestState());
+    return;
+  }
+
+  observeFirebaseAuth((user) => {
+    if (!user) {
+      setAppAuthState(guestState());
+      return;
+    }
+
+    void hydrateAuthenticatedUser(user);
+  });
+}
+
+export function useAppAuth() {
+  const [state, setState] = useState<AppAuthState>(appAuthState);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToAppAuth(setState);
+    ensureAppAuthInitialized();
 
     return () => unsubscribe();
   }, []);
 
   const signIn = useCallback(async () => {
-    setState((current) => ({
-      ...current,
+    setAppAuthState({
+      ...appAuthState,
       status: 'loading',
       authReady: false
-    }));
+    });
 
     try {
       return await signInWithGooglePopup();
     } catch (error) {
-      setState({
-        status: 'guest',
-        userId: createFallbackSettings().userId,
-        displayName: null,
-        email: null,
-        needsTermsConsent: false,
-        authReady: true
-      });
+      setAppAuthState(guestState());
       throw error;
     }
   }, []);
@@ -216,11 +309,32 @@ export function useAppAuth() {
         return false;
       }
 
-      await saveFirebaseLearningState(state.userId, input);
+      // 로컬 대기열에 저장
+      pendingLearningState = {
+        userId: state.userId,
+        input
+      };
+
+      // 타이머가 없으면 새로 설정
+      if (!learningSyncTimer) {
+        learningSyncTimer = setTimeout(() => {
+          void performLearningSync();
+        }, SYNC_DEBOUNCE_MS);
+      }
+
       return true;
     },
     [state.status, state.userId]
   );
+
+  /**
+   * 대기 중인 모든 학습 상태를 Firestore에 즉시 반영합니다.
+   * 세션 종료나 앱 언마운트 시 호출하여 데이터 누락을 방지합니다.
+   */
+  const flushSaveLearningState = useCallback(async () => {
+    if (!pendingLearningState) return;
+    await performLearningSync();
+  }, []);
 
   const signOutUser = useCallback(async () => {
     await signOutFirebaseUser();
@@ -265,6 +379,7 @@ export function useAppAuth() {
     signOut: signOutUser,
     acceptTerms,
     saveLearningState,
+    flushSaveLearningState,
     recordLearningSession
   };
 }
