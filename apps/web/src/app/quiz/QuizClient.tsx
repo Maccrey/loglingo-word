@@ -8,6 +8,7 @@ import {
   readStoredSettingsSnapshot,
   USER_SETTINGS_UPDATED_EVENT
 } from '../../lib/settingsStorage';
+import { readStoredLearningProgressSnapshot } from '../../lib/learningProgressStorage';
 import { useAppAuth } from '../../lib/useAppAuth';
 import { useCat } from '../../lib/useCat';
 import { publishFeedPost } from '../../lib/feedPublishing';
@@ -103,7 +104,8 @@ export default function QuizClient(props: QuizClientProps) {
       learningLanguage: createFallbackSettings().learningLanguage,
       learningLevel: createFallbackSettings().learningLevel,
       questionCount: createFallbackSettings().sessionQuestionCount,
-      randomizeQuestions: false
+      randomizeQuestions: false,
+      progressList: readStoredLearningProgressSnapshot()
     })
   );
   const [mode, setMode] = useState<QuizMode>('multiple');
@@ -133,7 +135,8 @@ export default function QuizClient(props: QuizClientProps) {
           learningLanguage: nextSettings.learningLanguage,
           learningLevel: nextSettings.learningLevel,
           questionCount: nextSettings.sessionQuestionCount,
-          randomizeQuestions: true
+          randomizeQuestions: true,
+          progressList: readStoredLearningProgressSnapshot()
         })
       );
     }
@@ -167,7 +170,8 @@ export default function QuizClient(props: QuizClientProps) {
         setSession((current) =>
           advanceQuizQuestion(current, {
             learningLanguage: storedSettings.learningLanguage,
-            learningLevel: storedSettings.learningLevel
+            learningLevel: storedSettings.learningLevel,
+            progressList: readStoredLearningProgressSnapshot()
           })
         );
       }, 1500);
@@ -180,7 +184,8 @@ export default function QuizClient(props: QuizClientProps) {
         setSession((current) =>
           advanceQuizQuestion(current, {
             learningLanguage: storedSettings.learningLanguage,
-            learningLevel: storedSettings.learningLevel
+            learningLevel: storedSettings.learningLevel,
+            progressList: readStoredLearningProgressSnapshot()
           })
         );
       }, 1500);
@@ -444,7 +449,8 @@ export default function QuizClient(props: QuizClientProps) {
                           learningLanguage: storedSettings.learningLanguage,
                           learningLevel: storedSettings.learningLevel,
                           questionCount: storedSettings.sessionQuestionCount,
-                          randomizeQuestions: true
+                          randomizeQuestions: true,
+                          progressList: readStoredLearningProgressSnapshot()
                         })
                       )
                     }

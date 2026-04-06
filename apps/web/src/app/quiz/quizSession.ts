@@ -11,6 +11,8 @@ import {
   type SupportedLearningLanguage,
   type SupportedLearningLevel
 } from '@wordflow/shared/learning-preferences';
+import { type VocabProgress } from '@wordflow/shared/types';
+import { isWordMastered } from '../../lib/learningProgressStorage';
 
 export type QuizFeedback = {
   status: 'idle' | 'success' | 'error';
@@ -66,17 +68,27 @@ function buildBaseQuestionWordIds(
   learningLanguage: SupportedLearningLanguage,
   learningLevel: SupportedLearningLevel,
   questionCount: number,
-  randomizeQuestions = true
+  randomizeQuestions = true,
+  progressList?: VocabProgress[]
 ) {
   const curriculum = getCurriculumByStandardLevel(
     learningLanguage,
     learningLevel
   );
   const words = curriculum.flatMap((unit) => unit.words);
+  const masteredWordIds = new Set(
+    (progressList ?? [])
+      .filter((p) => isWordMastered(p))
+      .map((p) => p.wordId)
+  );
+
+  const unmasteredWords = words.filter((word) => !masteredWordIds.has(word.id));
+  const pool = unmasteredWords.length > 0 ? unmasteredWords : words;
+
   const baseQuestionCount = Math.max(10, questionCount);
   const wordIds = (
-    randomizeQuestions ? shuffleItems(words.map((word) => word.id)) : words.map((word) => word.id)
-  ).slice(0, Math.max(1, Math.min(baseQuestionCount, words.length)));
+    randomizeQuestions ? shuffleItems(pool.map((word) => word.id)) : pool.map((word) => word.id)
+  ).slice(0, Math.max(1, Math.min(baseQuestionCount, pool.length)));
 
   return wordIds;
 }
@@ -214,6 +226,7 @@ export function createDemoQuizSession(input?: {
   learningLevel?: SupportedLearningLevel;
   questionCount?: number;
   randomizeQuestions?: boolean;
+  progressList?: VocabProgress[];
 }): QuizSessionState {
   const learningLanguage = input?.learningLanguage ?? 'en';
   const learningLevel =
@@ -222,7 +235,8 @@ export function createDemoQuizSession(input?: {
     learningLanguage,
     learningLevel,
     input?.questionCount ?? 10,
-    input?.randomizeQuestions ?? true
+    input?.randomizeQuestions ?? true,
+    input?.progressList
   );
 
   return {
@@ -442,6 +456,7 @@ export function advanceQuizQuestion(
     learningLanguage?: SupportedLearningLanguage;
     learningLevel?: SupportedLearningLevel;
     randomizeQuestions?: boolean;
+    progressList?: VocabProgress[];
   }
 ): QuizSessionState {
   if (state.completed || state.reviewRound) {
