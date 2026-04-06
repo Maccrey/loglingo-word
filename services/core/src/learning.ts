@@ -169,8 +169,9 @@ export function applyStudyRating(
     case 'easy':
     case 'normal': {
       const nextCorrectStreak = previousProgress.correctStreak + 1;
-      const nextReviewAt =
-        nextCorrectStreak >= 3 ? undefined : addDays(reviewedAt, 1);
+      // 첫 번째 시도에서 맞췄거나, 오답 후 3번 연속 정답 시 바로 마스터(제외)
+      const isMastered = !currentProgress || nextCorrectStreak >= 3;
+      const nextReviewAt = isMastered ? undefined : addDays(reviewedAt, 1);
 
       nextProgress = {
         wordId,

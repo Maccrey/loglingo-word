@@ -21,7 +21,8 @@ describe('learning progress storage helpers', () => {
         wordId: 'passport',
         correctStreak: 1,
         storageStrength: 0.9,
-        retrievalStrength: 0.8
+        retrievalStrength: 0.8,
+        nextReviewAt: '2026-04-06T00:00:00.000Z'
       })
     ).toBe(false);
   });

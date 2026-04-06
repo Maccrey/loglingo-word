@@ -7,7 +7,10 @@ const LEARNING_PROGRESS_KEY = 'mock_learning_progress';
 export function isWordMastered(progress: VocabProgress): boolean {
   const parsed = vocabProgressSchema.parse(progress);
 
-  return parsed.correctStreak >= 3;
+  // 단어가 완전히 암기되었는지 여부는 첫 번에 맞춰서(nextReviewAt 이 undefined 됨) 이거나
+  // 틀렸던 단어를 3번 연속 맞춰서(correctStreak >= 3) 달성됩니다.
+  // 객체 속성에 nextReviewAt이 없으면(undefined) 리뷰 일정이 없으므로 완전 마스터 상태입니다.
+  return parsed.correctStreak >= 3 || parsed.nextReviewAt === undefined;
 }
 
 export function loadStoredLearningProgress(): VocabProgress[] {

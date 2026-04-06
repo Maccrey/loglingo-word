@@ -126,9 +126,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         : {
             learningLanguage: readStoredSettingsSnapshot().learningLanguage,
             learningLevel: readStoredSettingsSnapshot().learningLevel,
-            progressList: auth.isAuthenticated
-              ? readStoredLearningProgressSnapshot()
-              : [],
+            progressList: readStoredLearningProgressSnapshot(),
             limit: readStoredSettingsSnapshot().sessionQuestionCount
           }
     )
@@ -279,9 +277,7 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
         createFlashcardSession({
           learningLanguage: nextSettings.learningLanguage,
           learningLevel: nextSettings.learningLevel,
-          progressList: auth.isAuthenticated
-            ? readStoredLearningProgressSnapshot()
-            : [],
+          progressList: readStoredLearningProgressSnapshot(),
           limit: nextSettings.sessionQuestionCount
         })
       );
@@ -316,12 +312,10 @@ export default function FlashcardsClient(props: FlashcardsClientProps) {
     const progress = Object.values(session.progressMap);
     latestProgressRef.current = progress;
 
-    if (!auth.isAuthenticated) {
-      return;
-    }
-
     saveStoredLearningProgress(progress);
-    remoteProgressDirtyRef.current = true;
+    if (auth.isAuthenticated) {
+      remoteProgressDirtyRef.current = true;
+    }
   }, [auth.isAuthenticated, props.focusWordIds, session.progressMap]);
 
   useEffect(() => {
