@@ -99,8 +99,8 @@ describe('Cat Status Transition Engine', () => {
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
     });
 
-    it('should return dead when treatment is delayed for three days after sickness starts', () => {
-      const cat = createMockCat(97, 10, 10);
+    it('should return dead when total neglect reaches three days', () => {
+      const cat = createMockCat(72, 10, 10);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('dead');
     });
 
@@ -109,8 +109,8 @@ describe('Cat Status Transition Engine', () => {
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('sick');
     });
 
-    it('should die when a sick cat is left untreated for three more days', () => {
-      const cat = createMockCat(96, 96, 96);
+    it('should die when a cat is left completely untreated for three days', () => {
+      const cat = createMockCat(72, 72, 72);
       expect(calculateCatStatus(cat, Date.now(), mockEnv)).toBe('dead');
     });
     
@@ -163,7 +163,7 @@ describe('Cat Status Transition Engine', () => {
     });
 
     it('should detect fatal neglect through shouldCatDie', () => {
-      expect(shouldCatDie(createMockCat(97, 10, 10), Date.now(), mockEnv)).toBe(true);
+      expect(shouldCatDie(createMockCat(72, 10, 10), Date.now(), mockEnv)).toBe(true);
       expect(shouldCatDie(createMockCat(10, 10, 10), Date.now(), mockEnv)).toBe(false);
     });
   });

@@ -157,13 +157,20 @@ export function getStressState(
  * 가장 오래 방치된 시간(min of interaction times)을 기준으로 판정
  */
 export function calculateSeverityStatus(cat: Cat, currentTime: number, thresholds: EnvThresholds): 'healthy' | 'sick' | 'critical' | 'dead' {
+  const maxNeglectHours = Math.max(
+    currentTime - cat.lastFedAt,
+    currentTime - cat.lastWashedAt,
+    currentTime - cat.lastPlayedAt
+  );
+
+  // 마지막 액션으로부터 총 N일이 경과하면 사망
+  if (maxNeglectHours >= thresholds.CAT_DEATH_AFTER_NO_FEED_DAYS * MS_PER_DAY) {
+    return 'dead';
+  }
+
   const treatmentRequiredAt = getTreatmentRequiredAt(cat, currentTime, thresholds);
 
   if (treatmentRequiredAt) {
-    if ((currentTime - treatmentRequiredAt) >= thresholds.CAT_DEAD_DAYS * MS_PER_DAY) {
-      return 'dead';
-    }
-
     return 'sick';
   }
 
