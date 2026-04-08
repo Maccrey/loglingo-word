@@ -15,6 +15,11 @@
  *   - bonusMinutes: 결제로 추가된 허용 시간(분)
  */
 
+import {
+  readStoredSettingsSnapshot,
+  saveStoredSettingsQuietly
+} from './settingsStorage';
+
 // --- 상수 ---
 
 /** 구독자 기본 허용 시간 (분) */
@@ -48,14 +53,16 @@ function readSession(): ChatDaySession {
     return { usedSeconds: 0, bonusMinutes: 0 };
   }
   try {
-    const raw = localStorage.getItem(todayKey());
-    if (!raw) {
+    const settings = readStoredSettingsSnapshot();
+    const usage = settings.chatUsage;
+    
+    if (!usage || usage.date !== todayKey()) {
       return { usedSeconds: 0, bonusMinutes: 0 };
     }
-    const parsed = JSON.parse(raw) as Partial<ChatDaySession>;
+    
     return {
-      usedSeconds: typeof parsed.usedSeconds === 'number' ? parsed.usedSeconds : 0,
-      bonusMinutes: typeof parsed.bonusMinutes === 'number' ? parsed.bonusMinutes : 0
+      usedSeconds: usage.usedSeconds ?? 0,
+      bonusMinutes: usage.bonusMinutes ?? 0
     };
   } catch {
     return { usedSeconds: 0, bonusMinutes: 0 };
@@ -66,7 +73,17 @@ function writeSession(session: ChatDaySession): void {
   if (typeof window === 'undefined') {
     return;
   }
-  localStorage.setItem(todayKey(), JSON.stringify(session));
+  const settings = readStoredSettingsSnapshot();
+  const updated = {
+    ...settings,
+    chatUsage: {
+      date: todayKey(),
+      usedSeconds: session.usedSeconds,
+      bonusMinutes: session.bonusMinutes
+    },
+    updatedAt: new Date().toISOString()
+  };
+  saveStoredSettingsQuietly(updated);
 }
 
 // --- 공개 API ---
@@ -91,19 +108,27 @@ export function getAllowedMinutes(isPremium: boolean): number {
 }
 
 /**
+ * 남은 사용 가능 시간(초)을 반환한다. 0이 최솟값.
+ */
+export function getRemainingSeconds(isPremium: boolean): number {
+  const allowedMinutes = getAllowedMinutes(isPremium);
+  const session = readSession();
+  return Math.max(0, allowedMinutes * 60 - session.usedSeconds);
+}
+
+/**
  * 남은 사용 가능 시간(분)을 반환한다. 0이 최솟값.
+ * (화면에 대략적인 분만 그려야 할 경우 사용 가능하지만 초 단위 처리를 권장한다.)
  */
 export function getRemainingMinutes(isPremium: boolean): number {
-  const allowed = getAllowedMinutes(isPremium);
-  const used = getDailyUsedMinutes();
-  return Math.max(0, allowed - used);
+  return Math.floor(getRemainingSeconds(isPremium) / 60);
 }
 
 /**
  * 오늘 허용된 시간을 모두 소진했는지 여부를 반환한다.
  */
 export function isSessionExpired(isPremium: boolean): boolean {
-  return getRemainingMinutes(isPremium) <= 0;
+  return getRemainingSeconds(isPremium) <= 0;
 }
 
 /**
@@ -137,5 +162,11 @@ export function __resetTodaySession(): void {
   if (typeof window === 'undefined') {
     return;
   }
-  localStorage.removeItem(todayKey());
+  const settings = readStoredSettingsSnapshot();
+  const updated = {
+    ...settings,
+    chatUsage: undefined,
+    updatedAt: new Date().toISOString()
+  };
+  saveStoredSettingsQuietly(updated);
 }

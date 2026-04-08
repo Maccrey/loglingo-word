@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getPaymentProductById, type PaymentProductId } from './catalog';
 
 export const checkoutSessionRequestSchema = z.object({
-  productId: z.enum(['premium.monthly', 'language_pack.plus', 'ai_tutor.pro']),
+  productId: z.enum(['premium.monthly', 'premium.yearly', 'language_pack.plus', 'ai_tutor.pro', 'chat.extend_1h']),
   userId: z.string().min(1),
   successUrl: z.string().url(),
   cancelUrl: z.string().url()

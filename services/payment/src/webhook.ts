@@ -10,7 +10,7 @@ export const polarWebhookSchema = z.object({
   type: z.literal('checkout.session.completed'),
   data: z.object({
     userId: z.string().min(1),
-    productId: z.enum(['premium.monthly', 'language_pack.plus', 'ai_tutor.pro'])
+    productId: z.enum(['premium.monthly', 'premium.yearly', 'language_pack.plus', 'ai_tutor.pro', 'chat.extend_1h'])
   })
 });
 

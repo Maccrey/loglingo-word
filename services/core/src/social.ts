@@ -13,11 +13,11 @@ export type CreateLearningResultPostInput = {
   earnedPoints: number;
   streak: number;
   createdAt: string;
-  type?: LearningResultPost['type'];
-  title?: string;
-  userDisplayName?: string;
-  eventKey?: string;
-  achievedSentence?: string;
+  type?: LearningResultPost['type'] | undefined;
+  title?: string | undefined;
+  userDisplayName?: string | undefined;
+  eventKey?: string | undefined;
+  achievedSentence?: string | undefined;
 };
 
 export type AutoLearningResultPostInput = {

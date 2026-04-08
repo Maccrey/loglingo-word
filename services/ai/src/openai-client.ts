@@ -19,7 +19,8 @@ class MockCompletionClient implements AIChatCompletionClient {
       correctionRaw: JSON.stringify({
         corrected: input.userMessage,
         feedback: `[Mock] This is a simulated correction. Add OPENAI_API_KEY to enable real AI responses. (${nativeLang}: 테스트 모드 — OPENAI_API_KEY를 설정하면 실제 AI 응답이 활성화됩니다.)`
-      })
+      }),
+      learnRaw: null
     };
   }
 }
@@ -71,14 +72,30 @@ class OpenAICompletionClient implements AIChatCompletionClient {
 
     const rawContent = data.choices[0]?.message?.content ?? '';
 
-    // JSON 교정 블록 분리: 마지막 {...} 추출
-    const jsonMatch = rawContent.match(/\{[^{}]*"corrected"[^{}]*\}/s);
-    const correctionRaw = jsonMatch ? jsonMatch[0] : JSON.stringify({ corrected: '', feedback: '' });
-    const assistantMessage = rawContent.replace(jsonMatch?.[0] ?? '', '').trim();
+    // correction JSON 블록 분리: {"corrected":...} 형태
+    const correctionMatch = rawContent.match(/\{"corrected"[^{}]*\}/s);
+    const correctionRaw = correctionMatch
+      ? correctionMatch[0]
+      : JSON.stringify({ corrected: '', feedback: '' });
+
+    // _learn JSON 블록 분리: {"_learn":{...}} 형태
+    const learnMatch = rawContent.match(/\{"_learn":\s*\{[^{}]*\}\}/s);
+
+    // 화면 표시용 메시지: 두 JSON 블록을 모두 제거
+    let assistantMessage = rawContent;
+    if (correctionMatch?.[0]) {
+      assistantMessage = assistantMessage.replace(correctionMatch[0], '');
+    }
+    if (learnMatch?.[0]) {
+      assistantMessage = assistantMessage.replace(learnMatch[0], '');
+    }
+    assistantMessage = assistantMessage.trim();
 
     return {
       assistantMessage: assistantMessage || rawContent,
-      correctionRaw
+      correctionRaw,
+      // _learn 블록을 클라이언트에 전달해 학습 이력 갱신에 활용
+      learnRaw: learnMatch?.[0] ?? null
     };
   }
 }

@@ -215,3 +215,28 @@ export function createFirestoreLeaderboardStore(): LeaderboardDocumentStore {
     }
   };
 }
+
+export async function getFirestoreUserSettings(userId: string): Promise<Record<string, any> | null> {
+  const firestore = getFirestore(getFirebaseAdminApp());
+  const snapshot = await firestore.collection('user_learning').doc(userId).get();
+  if (!snapshot.exists) return null;
+  const data = snapshot.data();
+  return data?.settings ?? null;
+}
+
+export async function updateFirestoreUserSettings(
+  userId: string,
+  settingsPatch: Record<string, any>
+): Promise<void> {
+  const firestore = getFirestore(getFirebaseAdminApp());
+  
+  // We want to merge just the settings object partially.
+  // user_learning doc has { userId, settings, progress, updatedAt }
+  await firestore.collection('user_learning').doc(userId).set(
+    {
+      settings: settingsPatch,
+      updatedAt: new Date().toISOString()
+    },
+    { merge: true }
+  );
+}

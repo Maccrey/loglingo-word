@@ -85,6 +85,9 @@ function migrateStoredSettings(raw: unknown): UserSettings {
       ...(candidate.premiumEnabled !== undefined
         ? { premiumEnabled: candidate.premiumEnabled }
         : {}),
+      ...(candidate.premiumValidUntil !== undefined
+        ? { premiumValidUntil: candidate.premiumValidUntil }
+        : {}),
       gender
     },
     {
@@ -114,6 +117,10 @@ export function saveStoredSettings(settings: UserSettings) {
   notifySettingsUpdated();
 }
 
+export function saveStoredSettingsQuietly(settings: UserSettings) {
+  window.localStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(settings));
+}
+
 export function readStoredSettingsSnapshot(): UserSettings {
   if (typeof window === 'undefined') {
     return createFallbackSettings();
@@ -121,3 +128,4 @@ export function readStoredSettingsSnapshot(): UserSettings {
 
   return loadStoredSettings() ?? createFallbackSettings();
 }
+// Trigger Webpack HMR

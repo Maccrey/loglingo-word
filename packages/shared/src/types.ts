@@ -51,6 +51,12 @@ export const chatMessageSchema = z.object({
   createdAt: z.string().datetime()
 });
 
+export const chatUsageSchema = z.object({
+  date: z.string().min(1),
+  usedSeconds: z.number().int().min(0),
+  bonusMinutes: z.number().int().min(0)
+});
+
 export const userSettingsSchema = z.object({
   userId: z.string().min(1),
   appLanguage: z.enum(supportedAppLanguages),
@@ -59,10 +65,20 @@ export const userSettingsSchema = z.object({
   sessionQuestionCount: z.number().int().min(1).max(50),
   notificationsEnabled: z.boolean(),
   premiumEnabled: z.boolean(),
+  premiumValidUntil: z.string().datetime().nullable().optional(),
+  chatUsage: chatUsageSchema.optional(),
   // 성별: 반대 이성 AI 친구 캐릭터 결정에 사용. 기본값 female
   gender: z.enum(['male', 'female']).default('female'),
   updatedAt: z.string().datetime()
 });
+
+export function isSubscriptionActive(settings: { premiumEnabled?: boolean; premiumValidUntil?: string | null | undefined }): boolean {
+  if (!settings.premiumEnabled) return false;
+  if (settings.premiumValidUntil) {
+    return new Date() <= new Date(settings.premiumValidUntil);
+  }
+  return true; // Legacy support
+}
 
 export const learningResultPostSchema = z.object({
   id: z.string().min(1),
@@ -122,3 +138,4 @@ export type LearningResultPost = z.infer<typeof learningResultPostSchema>;
 export type FeedComment = z.infer<typeof feedCommentSchema>;
 export type UserDashboardStats = z.infer<typeof userDashboardStatsSchema>;
 export type UserHomeSummary = z.infer<typeof userHomeSummarySchema>;
+export type ChatUsage = z.infer<typeof chatUsageSchema>;

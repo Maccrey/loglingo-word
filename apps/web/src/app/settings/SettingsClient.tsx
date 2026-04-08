@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react';
 import {
   supportedAppLanguages,
   type SupportedAppLanguage,
-  userSettingsSchema
+  userSettingsSchema,
+  isSubscriptionActive
 } from '@wordflow/shared/types';
 import {
   getPaymentProducts,
@@ -34,6 +35,7 @@ import {
 import { useAppAuth } from '../../lib/useAppAuth';
 import { AuthRequiredModal } from '../../components/AuthRequiredModal';
 import { TermsConsentModal } from '../../components/TermsConsentModal';
+import { PlanSelectionModal } from '../../components/PlanSelectionModal';
 
 const surfaceStyle: Record<string, string | number> = {
   minHeight: '100vh',
@@ -129,8 +131,12 @@ export default function SettingsClient(props: SettingsClientProps) {
   >([]);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [showPlanModal, setShowPlanModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const auth = useAppAuth();
+  
+  const premiumMonthly = products.find(p => p.id === 'premium.monthly');
+  const premiumYearly = products.find(p => p.id === 'premium.yearly');
   const entitlements: UserEntitlement =
     resolveEntitlementsForProducts(purchasedProductIds);
   const learningLevelOptions =
@@ -472,8 +478,12 @@ export default function SettingsClient(props: SettingsClientProps) {
           <div style={{ display: 'grid', gap: 8 }}>
             <span>{t(locale, 'settings.premium')}</span>
             <p style={{ margin: 0 }}>
-              {settings.premiumEnabled
-                ? t(locale, 'settings.subscription_active')
+              {isSubscriptionActive(settings)
+                ? `${t(locale, 'settings.subscription_active')} ${
+                    settings.premiumValidUntil
+                      ? `(~ ${new Date(settings.premiumValidUntil).toLocaleDateString()})`
+                      : ''
+                  }`
                 : t(locale, 'settings.subscription_free')}
             </p>
           </div>
@@ -526,7 +536,11 @@ export default function SettingsClient(props: SettingsClientProps) {
         <section style={{ ...panelStyle, display: 'grid', gap: 16 }}>
           <div style={badgeStyle}>{t(locale, 'settings.billing')}</div>
           <div style={{ display: 'grid', gap: 12 }}>
-            {products.map((product) => (
+            {products
+              .filter(p => p.id !== 'premium.yearly') // Yearly is grouped inside the modal
+              .map((product) => {
+              const isPremiumOption = product.id === 'premium.monthly';
+              return (
               <article
                 key={product.id}
                 style={{
@@ -546,8 +560,8 @@ export default function SettingsClient(props: SettingsClientProps) {
                     flexWrap: 'wrap'
                   }}
                 >
-                  <strong>{product.name}</strong>
-                  <span>{product.priceLabel}</span>
+                  <strong>{isPremiumOption ? 'Premium Subscription' : product.name}</strong>
+                  <span>{isPremiumOption ? `${premiumMonthly?.priceLabel} or ${premiumYearly?.priceLabel}` : product.priceLabel}</span>
                 </div>
                 <p style={{ margin: 0, color: 'var(--text-faded)' }}>
                   {product.description}
@@ -555,7 +569,13 @@ export default function SettingsClient(props: SettingsClientProps) {
                 <button
                   type="button"
                   aria-label={`${t(locale, 'settings.buy_product')} ${product.id}`}
-                  onClick={() => void startCheckout(product.id)}
+                  onClick={() => {
+                    if (isPremiumOption) {
+                      setShowPlanModal(true);
+                    } else {
+                      void startCheckout(product.id);
+                    }
+                  }}
                   style={{
                     width: 'fit-content',
                     border: '1px solid var(--btn-primary-border)',
@@ -572,7 +592,7 @@ export default function SettingsClient(props: SettingsClientProps) {
                   {t(locale, 'settings.premium_cta')}
                 </button>
               </article>
-            ))}
+            )})}
           </div>
 
           <div style={{ display: 'grid', gap: 8 }}>
@@ -604,6 +624,18 @@ export default function SettingsClient(props: SettingsClientProps) {
           ) : null}
         </section>
       </div>
+
+      {showPlanModal && premiumMonthly && premiumYearly && (
+        <PlanSelectionModal
+          monthlyProduct={premiumMonthly}
+          yearlyProduct={premiumYearly}
+          onClose={() => setShowPlanModal(false)}
+          onSelect={(productId) => {
+            setShowPlanModal(false);
+            void startCheckout(productId);
+          }}
+        />
+      )}
     </main>
   );
 }

@@ -33,7 +33,12 @@ export const aiChatRequestSchema = z.object({
   userGender: z.enum(['male', 'female']).default('female'),
   message: z.string().min(1),
   createdAt: z.string().datetime(),
-  recentMessages: z.array(aiChatMessageSchema).default([])
+  recentMessages: z.array(aiChatMessageSchema).default([]),
+  /**
+   * 누적 학습 이력 요약텍스트 (chatLearningStorage.formatProgressForPrompt 결과).
+   * 시스템 프롬프트에 주입해 재학습을 방지한다.
+   */
+  learningProgressSummary: z.string().optional()
 });
 
 export type AIChatRequest = z.infer<typeof aiChatRequestSchema>;
@@ -41,6 +46,8 @@ export type AIChatRequest = z.infer<typeof aiChatRequestSchema>;
 export type AIChatCompletionResult = {
   assistantMessage: string;
   correctionRaw: string;
+  /** AI가 _learn 블록으로 반환한 원시 JSON 문자열. 없으면 null. */
+  learnRaw: string | null;
 };
 
 export type AIChatCompletionInput = {
@@ -69,6 +76,8 @@ export type AIChatMessageDocumentStore = {
 export type AIChatSuccessResponse = {
   messages: AIChatMessage[];
   prompt: string;
+  /** AI가 반환한 _learn JSON 원문. 없으면 null. */
+  learnRaw: string | null;
 };
 
 function normalizeAIChatMessage(
@@ -113,7 +122,10 @@ export async function handleAIChat(
     userLevel: request.userLevel,
     recentMessages: conversation,
     aiFriendGender,
-    aiFriendName
+    aiFriendName,
+    ...(request.learningProgressSummary
+      ? { learningProgressSummary: request.learningProgressSummary }
+      : {})
   });
 
   await dependencies.repository.saveMany([userMessage]);
@@ -150,7 +162,9 @@ export async function handleAIChat(
 
     return {
       messages: [userMessage, ...generatedMessages],
-      prompt
+      prompt,
+      // _learn 블록을 클라이언트에 전달 → 누적 학습 이력 갱신에 활용
+      learnRaw: completion.learnRaw ?? null
     };
   } catch {
     throw new Error('AI 채팅 응답 생성에 실패했습니다.');

@@ -27,7 +27,7 @@ export interface Cat {
   dailyCareCompletion?: CatDailyCareCompletion;
   // Used for keeping alive without interaction
   resurrectedAt?: number;
-  treatmentRequiredAt?: number;
+  treatmentRequiredAt?: number | undefined;
 }
 
 export interface CatCareAction {

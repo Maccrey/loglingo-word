@@ -132,9 +132,6 @@ function getRecommendedCareAction(
       return 'wash';
     case 'stressed':
       return 'play';
-    case 'sick':
-    case 'critical':
-      return 'heal';
     default:
       return 'feed';
   }
@@ -371,7 +368,7 @@ export default function CatDetailScreen() {
               <button onClick={() => handleAction(handleWash, 'wash')} style={btnStyle(careActionPalette.wash, recommendedCareAction === 'wash')}>🛁 씻기기 (150pt)</button>
             </>
           )}
-          {(snapshot.status === 'sick' || snapshot.status === 'critical') && snapshot.status !== 'dead' && (
+          {(snapshot.status === 'sick' || snapshot.status === 'critical') && (
             <button onClick={() => handleAction(handleHeal, 'medicine')} style={btnStyle(careActionPalette.heal, recommendedCareAction === 'heal')}>💊 치료하기 (1000pt)</button>
           )}
         </div>

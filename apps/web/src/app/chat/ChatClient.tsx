@@ -12,6 +12,7 @@ import { useAppAuth } from '../../lib/useAppAuth';
 import { AuthRequiredModal } from '../../components/AuthRequiredModal';
 import { TermsConsentModal } from '../../components/TermsConsentModal';
 import { SubscriptionRequiredModal } from '../../components/SubscriptionRequiredModal';
+import { isSubscriptionActive } from '@wordflow/shared/types';
 import { ChatTimeLimitModal } from '../../components/ChatTimeLimitModal';
 import {
   addBonusTime,
@@ -19,13 +20,27 @@ import {
   getAllowedMinutes,
   getDailyUsedMinutes,
   getRemainingMinutes,
+  getRemainingSeconds,
   isSessionExpired
 } from '../../lib/chatSessionStorage';
 import { readStoredSettingsSnapshot } from '../../lib/settingsStorage';
+import { readStoredLearningProgressSnapshot } from '../../lib/learningProgressStorage';
 import {
   getAiFriendGender,
   getAiFriendName
 } from '@wordflow/ai/prompt';
+import {
+  loadChatHistory,
+  saveChatHistory
+} from '../../lib/chatHistoryStorage';
+import {
+  loadLearningProgress,
+  saveLearningProgress,
+  applyLearnUpdate,
+  parseLearnBlock,
+  formatProgressForPrompt,
+  type LearningProgress
+} from '../../lib/chatLearningStorage';
 
 // --- 스타일 상수 ---
 
@@ -129,16 +144,24 @@ export default function ChatClient(props: ChatClientProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const settings = readStoredSettingsSnapshot();
-    setIsPremium(settings.premiumEnabled);
-    setUserGender(settings.gender ?? 'female');
-    setTargetLang(settings.learningLanguage ?? 'en');
-    setNativeLang(settings.appLanguage ?? locale);
-    setUserLevel(settings.learningLevel ?? 'beginner');
+    const handleSettingsUpdated = () => {
+      const settings = readStoredSettingsSnapshot();
+      setIsPremium(isSubscriptionActive(settings));
+      setUserGender(settings.gender ?? 'female');
+      setTargetLang(settings.learningLanguage ?? 'en');
+      setNativeLang(settings.appLanguage ?? locale);
+      setUserLevel(settings.learningLevel ?? 'beginner');
+    };
+
+    handleSettingsUpdated();
     setIsMounted(true);
-  // 의도적으로 마운트 시 1회만 실행
+
+    window.addEventListener('user-settings-updated', handleSettingsUpdated);
+    return () => {
+      window.removeEventListener('user-settings-updated', handleSettingsUpdated);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [locale]);
 
   // AI 친구 정보 (설정 로드 후 결정)
   const aiFriendGender = getAiFriendGender(userGender);
@@ -150,12 +173,26 @@ export default function ChatClient(props: ChatClientProps) {
   const langFlag = langFlagMap[targetLang] ?? '🌍';
 
   // 대화 상태
+  // 초기값은 빈 배열 — 마운트 후 userId가 확정되면 localStorage에서 복원한다.
   const [messages, setMessages] = useState<AIChatMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const conversationScrollRef = useRef<HTMLDivElement | null>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
+
+  /** AI로 전송할 최근 메시지 최대 개수 — 8개(4회 왕복)로 제한해 토큰 비용 절감 */
+  const RECENT_MESSAGES_LIMIT = 8;
+
+  // 누적 학습 이력 (날짜 없이 영구 보관)
+  const [learningProgress, setLearningProgress] = useState<LearningProgress>({
+    coveredTopics: [],
+    learnedItems: [],
+    weakPoints: [],
+    currentStage: 1,
+    sessionCount: 0,
+    lastDate: ''
+  });
 
   // 모달 상태
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -165,7 +202,22 @@ export default function ChatClient(props: ChatClientProps) {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [usedMinutes, setUsedMinutes] = useState(0);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const logUsageRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // --- userId/targetLang 확정 후 채팅 기록 및 학습 이력 복원 ---
+  useEffect(() => {
+    if (!auth.userId || !targetLang) return;
+
+    // 채팅 표시 기록 복원 (언어별 격리)
+    const history = loadChatHistory(auth.userId, targetLang);
+    if (history.length > 0) {
+      setMessages(history);
+    }
+
+    // 누적 학습 이력 복원
+    const progress = loadLearningProgress(auth.userId, targetLang);
+    setLearningProgress(progress);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth.userId, targetLang]);
 
   // --- 최초 진입 시 접근 제어 ---
   useEffect(() => {
@@ -180,72 +232,81 @@ export default function ChatClient(props: ChatClientProps) {
         setShowSubscriptionModal(true);
         return;
       }
+    } else {
+      setShowSubscriptionModal(false);
     }
 
     // 이미 시간 소진된 경우
     if (isSessionExpired(isPremium)) {
       setShowTimeLimitModal(true);
+    } else {
+      setShowTimeLimitModal(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.isAuthenticated, auth.isGuest]);
+  }, [auth.isAuthenticated, auth.isGuest, isPremium]);
 
-  // --- 1초 카운트다운 (화면 표시용) ---
+  // --- 1초 카운트다운 및 실시간 로컬스토리지 기록 ---
   useEffect(() => {
     if (!auth.isAuthenticated || auth.isGuest) {
       return;
     }
 
-    // 초기 잔여 시간을 정확히 계산 (분 * 60 + 잔여 초)
-    const initialRemaining = getRemainingMinutes(isPremium) * 60;
+    // 초기 잔여 시간을 정확히 계산 (초 단위)
+    const initialRemaining = getRemainingSeconds(isPremium);
     setRemainingSeconds(initialRemaining);
 
     countdownRef.current = setInterval(() => {
       setRemainingSeconds((prev) => {
         const next = prev - 1;
+        
+        // 매 초마다 1초씩 사용 시간 증가 기록
+        addUsedSeconds(1);
+
         if (next <= 0) {
           if (countdownRef.current) clearInterval(countdownRef.current);
           setShowTimeLimitModal(true);
         }
         return Math.max(0, next);
       });
+      // UI용 분 업데이트 (필요시)
+      setUsedMinutes(getDailyUsedMinutes());
+
+      // Firestore 동기화 (useAppAuth 내부 30초 디바운스로 폭주 방지)
+      void auth.saveLearningState({
+        settings: readStoredSettingsSnapshot(),
+        progress: readStoredLearningProgressSnapshot()
+      });
     }, 1_000);
 
     return () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
+      void auth.flushSaveLearningState();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.isAuthenticated, auth.isGuest, isPremium]);
 
-  // --- 30초마다 LocalStorage에 사용 시간 기록 (실사용 집계용) ---
-  useEffect(() => {
-    if (!auth.isAuthenticated || auth.isGuest) {
-      return;
-    }
-
-    logUsageRef.current = setInterval(() => {
-      addUsedSeconds(30);
-      setUsedMinutes(getDailyUsedMinutes());
-    }, 30_000);
-
-    return () => {
-      if (logUsageRef.current) clearInterval(logUsageRef.current);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.isAuthenticated, auth.isGuest]);
-
   // 연장 성공 후 카운트다운 재시작 헬퍼
   function restartCountdown(isPrem: boolean) {
     if (countdownRef.current) clearInterval(countdownRef.current);
-    const newRemaining = getRemainingMinutes(isPrem) * 60;
+    const newRemaining = getRemainingSeconds(isPrem);
     setRemainingSeconds(newRemaining);
     countdownRef.current = setInterval(() => {
       setRemainingSeconds((prev) => {
         const next = prev - 1;
+
+        addUsedSeconds(1);
+
         if (next <= 0) {
           if (countdownRef.current) clearInterval(countdownRef.current);
           setShowTimeLimitModal(true);
         }
         return Math.max(0, next);
+      });
+      setUsedMinutes(getDailyUsedMinutes());
+
+      void auth.saveLearningState({
+        settings: readStoredSettingsSnapshot(),
+        progress: readStoredLearningProgressSnapshot()
       });
     }, 1_000);
   }
@@ -354,7 +415,10 @@ export default function ChatClient(props: ChatClientProps) {
           userGender,
           message: draft,
           createdAt: new Date().toISOString(),
-          recentMessages: messages
+          // 최근 RECENT_MESSAGES_LIMIT 개만 AI에 전송 (토큰 비용 절감: 8개 = 4회 왕복)
+          recentMessages: messages.slice(-RECENT_MESSAGES_LIMIT),
+          // 누적 학습 이력 요약을 프롬프트에 주입 (재학습 방지)
+          learningProgressSummary: formatProgressForPrompt(learningProgress) || undefined
         })
       });
       const payload = (await response.json()) as
@@ -369,7 +433,30 @@ export default function ChatClient(props: ChatClientProps) {
         );
       }
 
-      setMessages((current) => [...current, ...payload.messages]);
+      // API 응답에서 _learn 블록이 있으면 학습 이력 갱신
+      const responseBody = payload as { messages: AIChatMessage[]; learnRaw?: string | null };
+      if (auth.userId && responseBody.learnRaw) {
+        const learnUpdate = parseLearnBlock(responseBody.learnRaw);
+        if (learnUpdate) {
+          setLearningProgress((prev) => {
+            const updated = applyLearnUpdate(
+              { ...prev, sessionCount: prev.sessionCount + 1 },
+              learnUpdate
+            );
+            saveLearningProgress(auth.userId!, targetLang, updated);
+            return updated;
+          });
+        }
+      }
+
+      setMessages((current) => {
+        const updated = [...current, ...payload.messages];
+        // localStorage에 실시간 저장 — 페이지 이탈 후 복원용
+        if (auth.userId) {
+          saveChatHistory(auth.userId, targetLang, updated);
+        }
+        return updated;
+      });
       setDraft('');
     } catch (requestError) {
       setError(

@@ -1,5 +1,6 @@
 export type PaymentProductId =
   | 'premium.monthly'
+  | 'premium.yearly'
   | 'language_pack.plus'
   | 'ai_tutor.pro'
   // 채팅 1시간 연장: 구독자/비구독자 모두 $1로 1시간씩 추가 가능 (무제한 반복)
@@ -24,7 +25,18 @@ const paymentProducts: PaymentProduct[] = [
     id: 'premium.monthly',
     name: 'Premium Monthly',
     description: '광고 제거와 추가 언어 학습 권한을 제공합니다.',
-    priceLabel: '$9.99/mo',
+    priceLabel: '$5.00/mo',
+    entitlements: {
+      adFree: true,
+      unlockedLanguages: ['ja', 'es', 'fr'],
+      aiTutorExtended: false
+    }
+  },
+  {
+    id: 'premium.yearly',
+    name: 'Premium Yearly',
+    description: '1년 동안 광고 제거와 추가 언어 학습 권한을 제공합니다.',
+    priceLabel: '$50.00/yr',
     entitlements: {
       adFree: true,
       unlockedLanguages: ['ja', 'es', 'fr'],
@@ -46,7 +58,7 @@ const paymentProducts: PaymentProduct[] = [
     id: 'ai_tutor.pro',
     name: 'AI Tutor Pro',
     description: '확장된 AI 대화와 교정 기능을 제공합니다.',
-    priceLabel: '$12.99/mo',
+    priceLabel: '$8.00/mo',
     entitlements: {
       adFree: true,
       unlockedLanguages: [],

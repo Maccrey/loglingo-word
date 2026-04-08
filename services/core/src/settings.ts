@@ -23,6 +23,7 @@ export type SettingsUpdate = Partial<
     | 'sessionQuestionCount'
     | 'notificationsEnabled'
     | 'premiumEnabled'
+    | 'premiumValidUntil'
     // 성별 업데이트 지원: 'male' | 'female'
     | 'gender'
   >
