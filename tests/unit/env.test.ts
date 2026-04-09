@@ -39,6 +39,7 @@ describe('parseEnv', () => {
     expect(parsed.CAT_SICK_AFTER_NO_PLAY_HOURS).toBe(15);
     expect(parsed.CAT_SICK_AFTER_SMELLY_HOURS).toBe(72);
     expect(parsed.CAT_DEATH_AFTER_NO_FEED_DAYS).toBe(7);
+    expect(parsed.OPENAI_API_MODEL).toBe('gpt-4o-mini');
   });
 
   it('coerces string numbers for cat and point configurations', () => {

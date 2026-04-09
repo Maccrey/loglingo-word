@@ -1,13 +1,14 @@
 /**
  * openai-client.ts
  *
- * OpenAI GPT-4o 기반 채팅 완성 클라이언트.
+ * OpenAI gpt-4o-mini 기반 채팅 완성 클라이언트.
  * OPENAI_API_KEY 환경변수가 없으면 mock 응답으로 fallback한다.
  *
  * HIGH-RISK-UNREVIEWED: 외부 API 키 처리 포함
  */
 
 import type { AIChatCompletionClient, AIChatCompletionInput, AIChatCompletionResult } from './api';
+import { parseEnv } from '@wordflow/shared/env';
 
 // --- Mock 클라이언트 (OPENAI_API_KEY 없을 때 사용) ---
 
@@ -31,7 +32,7 @@ class OpenAICompletionClient implements AIChatCompletionClient {
   private readonly apiKey: string;
   private readonly model: string;
 
-  constructor(apiKey: string, model = 'gpt-4o') {
+  constructor(apiKey: string, model = 'gpt-4o-mini') {
     this.apiKey = apiKey;
     this.model = model;
   }
@@ -107,7 +108,9 @@ class OpenAICompletionClient implements AIChatCompletionClient {
  * Next.js API Route(서버 사이드)에서만 호출해야 한다.
  */
 export function createCompletionClient(): AIChatCompletionClient {
-  const apiKey = process.env['OPENAI_API_KEY'];
+  const env = parseEnv(process.env);
+  const apiKey = env.OPENAI_API_KEY;
+  const model = env.OPENAI_API_MODEL;
 
   if (!apiKey) {
     console.warn(
@@ -116,5 +119,5 @@ export function createCompletionClient(): AIChatCompletionClient {
     return new MockCompletionClient();
   }
 
-  return new OpenAICompletionClient(apiKey);
+  return new OpenAICompletionClient(apiKey, model);
 }
