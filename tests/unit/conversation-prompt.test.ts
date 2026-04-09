@@ -57,7 +57,9 @@ describe('conversation prompt builder', () => {
             'A more natural sentence is: I went to the station yesterday.',
           createdAt: '2026-03-26T00:00:01.000Z'
         })
-      ]
+      ],
+      aiFriendGender: 'female',
+      aiFriendName: 'Emily'
     });
 
     expect(prompt).toContain('[user] I go to station yesterday.');
