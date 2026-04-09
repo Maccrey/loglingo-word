@@ -82,6 +82,18 @@
 - 완료 커밋:
 - `고양이 도메인 타입 정의`
 
+### T0-4. AI 모델 환경 변수화 및 모델 교체
+
+- 상태: [x] 완료
+- 목적: 운영자가 .env 수정만으로 AI 모델을 유연하게 교체
+- 구현:
+  - `packages/shared/src/env.ts` — `OPENAI_API_MODEL` 스키마 추가
+  - `services/ai/src/openai-client.ts` — 환경 변수 기반 모델 로드
+  - `apps/web/.env.local` — 모델 기본값(gpt-4o-mini) 추가
+- 최소 단위 테스트:
+  - 환경 변수 파싱 및 기본값 적용 테스트
+- 완료 커밋: `AI 모델 환경 변수화 및 gpt-4o-mini 전환`
+
 ## 6. Phase 1. 포인트 시스템
 
 ### T1-1. 학습 포인트 계산 함수 구현
@@ -826,32 +838,31 @@
   - 날짜 변경 시 리셋 테스트
 - 완료 커밋: `채팅 세션 시간 관리 모듈 구현`
 
-### T11-4. AI 프롬프트 이성친구 페르소나 확장
+### T11-4. AI 프롬프트 이성친구 페르소나 확장 및 5단계 코칭 지침 반영
 
-- 상태: [ ] 미완료
-- 목적: 학습어·레벨·성별 기반 자연스러운 이성친구 대화 유도
+- 상태: [x] 완료
+- 목적: 학습어·레벨·성별 기반 자연스러운 대화 유도 및 5단계 공식 코칭 방법론 적용
 - 구현:
-  - `services/ai/src/prompt.ts` — 이성친구 페르소나 프롬프트
-  - 학습 언어별 AI 이름 매핑 (주석으로 언어별 이름 문서화, 새 언어 추가 시 반드시 이름도 추가)
-  - 원어민 어드바이스 요청 포함
-  - `services/ai/src/api.ts` — `aiGender` 파라미터 추가
+  - `services/ai/src/prompt.ts` — 5단계 코칭 지침(Pre-study, Core, Expansion, Patterns, Application) 반영
+  - 학습 언어별 AI 이름 매핑 및 성별 기반 페르소나 결정 로직
+  - 누적 학습 이력(learningProgressSummary) 및 현재 단계(Stage) 반영 최적화
+  - 모국어/학습어 설정 기반 동적 가이드 생성
 - 최소 단위 테스트:
-  - 성별별 AI 이름 결정 테스트
-  - 프롬프트 구조 포함 여부 테스트
-- 완료 커밋: `AI 이성친구 페르소나 프롬프트 구현`
+  - 성별 및 언어별 AI 이름 매핑 테스트
+  - 프롬프트 구성 요소(5단계 지침) 포함 여부 검증
+- 완료 커밋: `AI 5단계 코칭 지침 및 페르소나 프롬프트 구현`
 
 ### T11-5. OpenAI 실제 클라이언트 연동
 
-- 상태: [ ] 미완료
-- 목적: mockCompletionClient를 GPT-4o로 교체, env 없으면 mock fallback
+- 상태: [x] 완료
+- 목적: GPT-4o-mini(기본값) 연동 및 환경 변수 기반 모델 관리
 - 구현:
-  - `services/ai/src/openai-client.ts` 신규 생성
-  - `OPENAI_API_KEY` 환경변수 체크 후 실제/mock 분기
-  - `apps/web/src/app/api/chat/route.ts` — 클라이언트 교체
+  - `services/ai/src/openai-client.ts` — OPENAI_API_KEY 유무에 따른 실제/mock 분기
+  - `OPENAI_API_MODEL` 환경 변수 지원
 - 최소 단위 테스트:
   - env 없을 때 mock fallback 테스트
-  - 요청 구조 검증 테스트
-- 완료 커밋: `OpenAI GPT-4o 실제 클라이언트 연동`
+  - 요청 구조 및 모델명 전달 검증
+- 완료 커밋: `AI 모델 환경 변수화 및 gpt-4o-mini 전환`
 
 ### T11-6. 구독 유도 모달 컴포넌트 구현
 
